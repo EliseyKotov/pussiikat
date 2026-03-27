@@ -1,1 +1,11 @@
-
+{
+  "functions": {
+    "api/telegram.js": {
+      "memory": 128,
+      "maxDuration": 10
+    }
+  },
+  "env": {
+    "TELEGRAM_TOKEN": "@TELEGRAM_TOKEN"
+  }
+}
