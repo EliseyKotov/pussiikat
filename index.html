@@ -127,11 +127,6 @@
             outline: none;
         }
 
-        .settings-btn:hover {
-            transform: scale(1.1) rotate(15deg);
-            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.5);
-        }
-
         .settings-btn:active {
             transform: scale(0.95) rotate(0deg);
         }
@@ -145,13 +140,6 @@
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             backdrop-filter: blur(10px);
             box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
-        }
-
-        .stat:hover {
-            background: linear-gradient(135deg, rgba(100, 200, 255, 0.25) 0%, rgba(56, 189, 248, 0.15) 100%);
-            border-color: rgba(100, 200, 255, 0.6);
-            transform: translateY(-4px);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 10px 30px rgba(56, 189, 248, 0.2);
         }
 
         .stat-label {
@@ -245,7 +233,7 @@
 
         .cat-scene {
             position: relative;
-            margin: 15px auto;
+            margin: 8px auto;
             width: 280px;
             height: 240px;
             display: flex;
@@ -274,6 +262,7 @@
             transition: opacity 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
             z-index: 1;
             filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
+            pointer-events: none;
         }
 
         .bed-item.visible {
@@ -291,14 +280,11 @@
             transition: filter 0.3s;
             -webkit-user-drag: none;
             -webkit-user-select: none;
+            touch-action: none;
         }
 
         .cat:active {
             filter: drop-shadow(0 5px 15px rgba(100, 200, 255, 0.3));
-        }
-
-        .cat:hover {
-            filter: drop-shadow(0 20px 50px rgba(100, 200, 255, 0.6));
         }
 
         .bowl-item {
@@ -312,6 +298,7 @@
             transition: opacity 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
             z-index: 3;
             filter: drop-shadow(0 8px 25px rgba(0, 0, 0, 0.3));
+            pointer-events: none;
         }
 
         .bowl-item.visible {
@@ -329,6 +316,7 @@
             transition: opacity 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
             z-index: 2;
             filter: drop-shadow(0 8px 25px rgba(0, 0, 0, 0.3));
+            pointer-events: none;
         }
 
         .toy-item.visible {
@@ -350,6 +338,7 @@
             animation: pulse 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
             box-shadow: 0 10px 30px rgba(244, 114, 182, 0.4);
             will-change: transform;
+            pointer-events: none;
         }
 
         @keyframes pulse {
@@ -434,7 +423,7 @@
         .button-group {
             display: flex;
             gap: 12px;
-            margin: 10px 0 12px 0;
+            margin: 4px 0 12px 0;
             flex-wrap: wrap;
             flex-shrink: 0;
         }
@@ -457,12 +446,7 @@
             outline: none;
             -webkit-appearance: none;
             appearance: none;
-        }
-
-        .btn:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 15px 40px rgba(56, 189, 248, 0.5),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            touch-action: manipulation;
         }
 
         .btn:active {
@@ -483,14 +467,14 @@
         }
 
         #questContainer {
-            margin: 8px 0;
+            margin: 4px 0;
             flex-shrink: 0;
             min-height: 45px;
         }
 
         .section {
             display: none;
-            margin-top: 18px;
+            margin-top: 12px;
             padding: 0;
             border-radius: 20px;
         }
@@ -534,6 +518,7 @@
             border: 1.5px solid rgba(100, 200, 255, 0.2);
             backdrop-filter: blur(5px);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            touch-action: manipulation;
         }
 
         .item:active {
@@ -681,6 +666,7 @@
             animation: fallDown 8s linear forwards;
             z-index: 2000;
             filter: drop-shadow(0 0 20px rgba(251, 191, 36, 0.9));
+            touch-action: manipulation;
         }
 
         @keyframes fallDown {
@@ -706,6 +692,7 @@
             animation: fallDown 8s linear forwards;
             z-index: 2000;
             filter: drop-shadow(0 0 20px rgba(244, 114, 182, 0.9));
+            touch-action: manipulation;
         }
 
         .notification {
@@ -746,7 +733,7 @@
             opacity: 0.7;
             text-transform: uppercase;
             letter-spacing: 1.2px;
-            margin: 14px 8px 10px 8px;
+            margin: 12px 8px 10px 8px;
             font-weight: 800;
             color: #38bdf8;
         }
@@ -754,10 +741,11 @@
         .tabs {
             display: flex;
             gap: 8px;
-            margin: 14px 8px;
+            margin: 12px 8px;
             background: rgba(100, 200, 255, 0.08);
             padding: 5px;
             border-radius: 12px;
+            touch-action: manipulation;
         }
 
         .tab-btn {
@@ -774,6 +762,7 @@
             outline: none;
             -webkit-appearance: none;
             appearance: none;
+            touch-action: manipulation;
         }
 
         .tab-btn.active {
@@ -814,7 +803,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
-            margin: 14px 8px;
+            margin: 12px 8px;
         }
 
         .stats-item {
@@ -950,6 +939,7 @@
             outline: none;
             -webkit-appearance: none;
             appearance: none;
+            touch-action: manipulation;
         }
 
         .modal-btn.primary {
@@ -1057,7 +1047,7 @@
             <div id="comboDisplay" class="combo-display" style="display: none;"></div>
         </div>
 
-        <div id="questContainer" style="margin: 8px 0; flex-shrink: 0;"></div>
+        <div id="questContainer" style="margin: 0; flex-shrink: 0;"></div>
 
         <div class="button-group">
             <button class="btn" id="shopBtn" onclick="toggleSection('shop')">🛒 Магазин</button>
@@ -1325,17 +1315,22 @@
 
     <script>
         // Disable zoom
-        document.addEventListener('gesturestart', (e) => { e.preventDefault(); });
-        document.addEventListener('touchmove', (e) => {
-            if (e.touches.length > 1) e.preventDefault();
-        }, { passive: false });
+        document.addEventListener('gesturestart', (e) => { e.preventDefault(); }, false);
         
         let lastTouchEnd = 0;
         document.addEventListener('touchend', (e) => {
             const now = Date.now();
-            if (now - lastTouchEnd <= 300) e.preventDefault();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+            }
             lastTouchEnd = now;
         }, false);
+
+        document.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
 
         let gameState = {
             milk: 0,
@@ -1608,7 +1603,6 @@
             }
         }
 
-        let lastClickTime = 0;
         DOM.catImage.addEventListener('click', function(e) {
             let gain = Math.floor(gameState.perTap * gameState.multiplier);
             let isCrit = false;
@@ -1635,7 +1629,7 @@
             gameState.stats.totalMilkEarned += gain;
             
             const now = Date.now();
-            if (now - lastClickTime < 1000) {
+            if (gameState.lastClickTime && now - gameState.lastClickTime < 1000) {
                 gameState.stats.currentCombo++;
             } else {
                 if (gameState.stats.currentCombo > gameState.stats.bestCombo) {
@@ -1643,7 +1637,7 @@
                 }
                 gameState.stats.currentCombo = 1;
             }
-            lastClickTime = now;
+            gameState.lastClickTime = now;
             
             if (gameState.stats.currentCombo > 1) {
                 showCombo(gameState.stats.currentCombo);
@@ -1661,7 +1655,7 @@
             saveGame();
             checkProgression();
             checkAchievements();
-        });
+        }, { passive: false });
 
         function createCritEffect(x, y) {
             const shine = document.createElement('div');
@@ -1911,7 +1905,7 @@
                 checkAchievements();
                 saveGame();
                 star.remove();
-            });
+            }, { passive: false });
             
             setTimeout(() => {
                 if (!caught) star.remove();
@@ -1941,7 +1935,7 @@
                 showNotification('Лакомство! +50% доход на 10 сек! 🍖', 'success');
                 updateUI();
                 snack.remove();
-            });
+            }, { passive: false });
             
             setTimeout(() => {
                 if (!caught) snack.remove();
