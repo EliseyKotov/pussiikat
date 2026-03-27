@@ -1,247 +1,49 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Milk Tycoon 🐱</title>
-
-<style>
-body{
-margin:0;
-font-family:sans-serif;
-background:#0f172a;
-color:white;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-overflow:hidden;
-}
-
-.container{
-width:360px;
-background:#1e293b;
-border-radius:25px;
-padding:15px;
-box-shadow:0 0 40px rgba(0,0,0,0.6);
-text-align:center;
-}
-
-.top{
-display:flex;
-justify-content:space-between;
-margin-bottom:10px;
-}
-
-.milk{
-font-size:24px;
-font-weight:bold;
-}
-
-.cat{
-width:250px;
-cursor:pointer;
-transition:0.1s;
-}
-.cat:active{transform:scale(0.9)}
-
-.btn{
-background:#38bdf8;
-padding:10px;
-border-radius:12px;
-margin-top:8px;
-cursor:pointer;
-}
-
-.shop, .skins{
-display:none;
-margin-top:10px;
-}
-
-.item{
-background:#334155;
-padding:10px;
-margin:5px 0;
-border-radius:10px;
-display:flex;
-justify-content:space-between;
-cursor:pointer;
-}
-
-.float{
-position:absolute;
-font-weight:bold;
-animation:float 1s forwards;
-}
-@keyframes float{
-100%{opacity:0;transform:translateY(-60px)}
-}
-
-.note{
-position:fixed;
-bottom:20px;
-background:black;
-padding:10px;
-border-radius:10px;
-opacity:0;
-}
-.show{opacity:1}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pussiikat</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
 </head>
-
 <body>
-
-<div class="container">
-
-<div class="top">
-<div class="milk">🥛 <span id="milk">0</span></div>
-<div>⚡ <span id="perTap">1</span></div>
-</div>
-
-<img src="cat.png" id="cat" class="cat">
-
-<div class="btn" onclick="toggle('shop')">🛒 Магазин</div>
-<div class="btn" onclick="toggle('skins')">🎭 Скины</div>
-
-<div id="shop" class="shop">
-<div class="item" onclick="buy('tap')">+1 клик <span id="tapCost"></span></div>
-<div class="item" onclick="buy('auto')">+1/сек <span id="autoCost"></span></div>
-<div class="item" onclick="buy('factory')">+5/сек <span id="factoryCost"></span></div>
-</div>
-
-<div id="skins" class="skins">
-<div class="item" onclick="skin('default')">🐱 Обычный</div>
-<div class="item" onclick="skin('gold')">✨ Золотой (1000)</div>
-<div class="item" onclick="skin('devil')">😈 Дьявол (5000)</div>
-</div>
-
-</div>
-
-<div id="note" class="note"></div>
-
-<audio id="meow" src="meow.mp3"></audio>
-
-<script>
-let milk=0;
-let perTap=1;
-let passive=0;
-
-let cost={
-tap:10,
-auto:50,
-factory:200
-};
-
-function format(n){
-if(n>=1e6) return (n/1e6).toFixed(1)+"M";
-if(n>=1e3) return (n/1e3).toFixed(1)+"K";
-return n;
-}
-
-function update(){
-milkEl.textContent=format(milk);
-perTapEl.textContent=perTap;
-
-tapCost.textContent=cost.tap;
-autoCost.textContent=cost.auto;
-factoryCost.textContent=cost.factory;
-}
-
-cat.onclick=(e)=>{
-let gain=perTap;
-
-if(Math.random()<0.1){
-gain*=5;
-notify("💥 КРИТ x5");
-}
-
-milk+=gain;
-
-spawnFloat(e.clientX,e.clientY,"+"+gain);
-
-meow.currentTime=0;
-meow.play();
-
-update();
-}
-
-function spawnFloat(x,y,text){
-let f=document.createElement('div');
-f.className='float';
-f.textContent=text;
-f.style.left=x+"px";
-f.style.top=y+"px";
-document.body.appendChild(f);
-setTimeout(()=>f.remove(),1000);
-}
-
-function buy(type){
-if(milk<cost[type]) return notify("❌ Мало молока");
-
-milk-=cost[type];
-
-if(type==='tap'){
-perTap++;
-cost.tap=Math.floor(cost.tap*1.5);
-}
-
-if(type==='auto'){
-passive+=1;
-cost.auto=Math.floor(cost.auto*1.6);
-}
-
-if(type==='factory'){
-passive+=5;
-cost.factory=Math.floor(cost.factory*1.8);
-}
-
-update();
-}
-
-setInterval(()=>{
-milk+=passive;
-update();
-},1000);
-
-function toggle(id){
-let el=document.getElementById(id);
-el.style.display=el.style.display==='block'?'none':'block';
-}
-
-function notify(t){
-note.textContent=t;
-note.classList.add('show');
-setTimeout(()=>note.classList.remove('show'),2000);
-}
-
-function skin(type){
-if(type==='gold' && milk<1000) return notify("❌ Нужно 1000");
-if(type==='devil' && milk<5000) return notify("❌ Нужно 5000");
-
-if(type==='gold'){
-cat.src="cat_gold.png";
-notify("✨ Золотой кот!");
-}
-if(type==='devil'){
-cat.src="cat_devil.png";
-notify("😈 Дьявол!");
-}
-if(type==='default'){
-cat.src="cat.png";
-}
-}
-
-const milkEl=document.getElementById('milk');
-const perTapEl=document.getElementById('perTap');
-const tapCost=document.getElementById('tapCost');
-const autoCost=document.getElementById('autoCost');
-const factoryCost=document.getElementById('factoryCost');
-const note=document.getElementById('note');
-const cat=document.getElementById('cat');
-const meow=document.getElementById('meow');
-
-update();
-</script>
-
+    <header>
+        <h1>Welcome to Pussiikat</h1>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#shop">Shop</a></li>
+                <li><a href="#about">About</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="home">
+            <h2>Home</h2>
+            <p>Discover our new features!</p>
+        </section>
+        <section id="shop">
+            <h2>Shop</h2>
+            <p>Check out our products.</p>
+            <div class="product">
+                <h3>Product Name</h3>
+                <p>Description</p>
+                <p>Price: $10.99</p>
+                <button>Add to Cart</button>
+            </div>
+        </section>
+        <section id="about">
+            <h2>About</h2>
+            <p>Learn more about us.</p>
+        </section>
+    </main>
+    <audio controls>
+        <source src="kitten.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <footer>
+        <p>&copy; 2026 Pussiikat</p>
+    </footer>
 </body>
 </html>
