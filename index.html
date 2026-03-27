@@ -85,6 +85,36 @@
             margin-bottom: 20px;
             gap: 12px;
             flex-shrink: 0;
+            position: relative;
+        }
+
+        .settings-btn {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.8) 0%, rgba(239, 68, 68, 0.6) 100%);
+            border: 1.5px solid rgba(239, 68, 68, 0.5);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+            z-index: 100;
+        }
+
+        .settings-btn:hover {
+            transform: scale(1.1) rotate(15deg);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.5);
+        }
+
+        .settings-btn:active {
+            transform: scale(0.95) rotate(0deg);
         }
 
         .stat {
@@ -893,6 +923,23 @@
             border: 1px solid rgba(100, 200, 255, 0.3);
         }
 
+        .modal-btn.danger {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.8) 0%, rgba(239, 68, 68, 0.6) 100%);
+            color: white;
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+        }
+
+        .modal-btn.danger:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(239, 68, 68, 0.5);
+        }
+
+        .scroll-content {
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
+        }
+
         @media (max-width: 480px) {
             .container {
                 border-radius: 30px;
@@ -924,6 +971,12 @@
                 font-size: 12px;
                 padding: 11px 12px;
             }
+
+            .settings-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 16px;
+            }
         }
     </style>
 </head>
@@ -942,6 +995,7 @@
                 <div class="stat-label">🔄 В сек</div>
                 <div class="stat-value" id="passiveDisplay">0</div>
             </div>
+            <button class="settings-btn" onclick="showResetModal()" title="Сброс прогресса">⚙️</button>
         </div>
 
         <div class="progression-section">
@@ -1178,6 +1232,18 @@
         </div>
     </div>
 
+    <!-- Reset Modal -->
+    <div id="resetModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">⚠️ Сброс прогресса</div>
+            <div class="modal-text">Ты уверен? Весь прогресс будет потерян!</div>
+            <div class="modal-buttons">
+                <button class="modal-btn danger" onclick="resetGameConfirm()">🗑️ Да, сбросить</button>
+                <button class="modal-btn secondary" onclick="closeResetModal()">❌ Отмена</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Risk Modal -->
     <div id="riskModal" class="modal">
         <div class="modal-content">
@@ -1287,6 +1353,7 @@
             toyItem: document.getElementById('toyItem'),
             comboDisplay: document.getElementById('comboDisplay'),
             multiplierBadge: document.getElementById('multiplierBadge'),
+            resetModal: document.getElementById('resetModal'),
             riskModal: document.getElementById('riskModal'),
             dailyModal: document.getElementById('dailyModal'),
             giftModal: document.getElementById('giftModal')
@@ -1311,7 +1378,6 @@
         }
 
         function getMilkForLevel(level) {
-            // Геометрическая прогрессия: 500 * 1.35^(level-1)
             return Math.floor(500 * Math.pow(1.35, level - 1));
         }
 
@@ -1341,6 +1407,48 @@
 
         function saveGame() {
             localStorage.setItem('milkTycoonState', JSON.stringify(gameState));
+        }
+
+        function resetGameConfirm() {
+            gameState = {
+                milk: 0,
+                perTap: 1,
+                passive: 0,
+                level: 1,
+                purchases: {
+                    tap: 0, auto: 0, factory: 0, farm: 0, heaven: 0,
+                    boost1: 0, boost2: 0, boost3: 0
+                },
+                skin: 'default',
+                multiplier: 1,
+                multiplierEndTime: 0,
+                stats: {
+                    totalClicks: 0,
+                    totalMilkEarned: 0,
+                    currentCombo: 0,
+                    bestCombo: 0,
+                    starsCount: 0,
+                    critCount: 0,
+                    critsInRow: 0,
+                    maxCritsInRow: 0,
+                    achievements: {},
+                    skinsUnlocked: {}
+                }
+            };
+            
+            localStorage.removeItem('milkTycoonState');
+            closeResetModal();
+            updateUI();
+            updateSkinDisplay();
+            showNotification('🔄 Прогресс сброшен!', 'success');
+        }
+
+        function showResetModal() {
+            DOM.resetModal.classList.add('show');
+        }
+
+        function closeResetModal() {
+            DOM.resetModal.classList.remove('show');
         }
 
         function updateUI() {
