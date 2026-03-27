@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Milk Tycoon 🐱</title>
+    <title>Milk Tycoon 🐱 - Вирусный Кликер</title>
     <style>
         * {
             margin: 0;
@@ -12,6 +12,11 @@
         }
 
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap');
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
 
         body {
             font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -55,6 +60,8 @@
             overflow-y: auto;
             position: relative;
             z-index: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .container::-webkit-scrollbar {
@@ -77,13 +84,14 @@
             justify-content: space-between;
             margin-bottom: 20px;
             gap: 12px;
+            flex-shrink: 0;
         }
 
         .stat {
             flex: 1;
             background: linear-gradient(135deg, rgba(100, 200, 255, 0.15) 0%, rgba(56, 189, 248, 0.05) 100%);
-            padding: 16px 12px;
-            border-radius: 20px;
+            padding: 14px 10px;
+            border-radius: 18px;
             border: 1.5px solid rgba(100, 200, 255, 0.3);
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             backdrop-filter: blur(10px);
@@ -98,16 +106,16 @@
         }
 
         .stat-label {
-            font-size: 10px;
+            font-size: 9px;
             opacity: 0.75;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             text-transform: uppercase;
-            letter-spacing: 1.2px;
+            letter-spacing: 1px;
             font-weight: 700;
         }
 
         .stat-value {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 800;
             background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
             -webkit-background-clip: text;
@@ -130,172 +138,16 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .multiplier-value { 
-            background: linear-gradient(135deg, #f472b6 0%, #ec4899 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
 
-        .cat-scene {
-            position: relative;
-            margin: 30px auto;
-            width: 280px;
-            height: 240px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .scene-background {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at center, rgba(100, 200, 255, 0.05) 0%, transparent 70%);
-            border-radius: 50%;
-            z-index: 0;
-        }
-
-        .bed-item {
-            position: absolute;
-            bottom: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 140px;
-            height: auto;
-            opacity: 0;
-            transition: opacity 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-            z-index: 1;
-            filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
-        }
-
-        .bed-item.visible {
-            opacity: 1;
-        }
-
-        .cat {
-            width: 160px;
-            cursor: pointer;
-            transition: transform 0.08s, filter 0.3s;
-            filter: drop-shadow(0 15px 40px rgba(100, 200, 255, 0.4));
-            user-select: none;
-            z-index: 5;
-            position: relative;
-        }
-
-        .cat:active {
-            transform: scale(0.88);
-            filter: drop-shadow(0 5px 15px rgba(100, 200, 255, 0.3));
-        }
-
-        .cat:hover {
-            filter: drop-shadow(0 20px 50px rgba(100, 200, 255, 0.6));
-            transform: scale(1.05);
-        }
-
-        .bowl-item {
-            position: absolute;
-            right: -40px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 90px;
-            height: auto;
-            opacity: 0;
-            transition: opacity 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-            z-index: 2;
-            filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
-        }
-
-        .bowl-item.visible {
-            opacity: 1;
-        }
-
-        .toy-item {
-            position: absolute;
-            left: 50%;
-            bottom: -5px;
-            transform: translateX(-50%);
-            width: 80px;
-            height: auto;
-            opacity: 0;
-            transition: opacity 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-            z-index: 3;
-            filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
-        }
-
-        .toy-item.visible {
-            opacity: 1;
-        }
-
-        .eggs-chain {
-            position: absolute;
-            top: -35px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 24px;
-            opacity: 0;
-            transition: opacity 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-            z-index: 4;
-            animation: eggSway 2.5s ease-in-out infinite;
-            filter: drop-shadow(0 5px 15px rgba(251, 191, 36, 0.4));
-        }
-
-        .eggs-chain.visible {
-            opacity: 1;
-        }
-
-        @keyframes eggSway {
-            0%, 100% { transform: translateX(-50%) rotateZ(-3deg); }
-            50% { transform: translateX(-50%) rotateZ(3deg); }
-        }
-
-        .multiplier-badge {
-            position: absolute;
-            top: -25px;
-            right: 10px;
-            background: linear-gradient(135deg, #f472b6 0%, #ec4899 100%);
-            padding: 10px 16px;
-            border-radius: 15px;
-            font-weight: 800;
-            font-size: 16px;
-            border: 2px solid rgba(244, 114, 182, 0.6);
-            z-index: 10;
-            animation: pulse 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
-            box-shadow: 0 10px 30px rgba(244, 114, 182, 0.4);
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        .crit-indicator {
-            position: fixed;
-            font-size: 80px;
-            font-weight: 800;
-            pointer-events: none;
-            animation: critFly 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-            z-index: 3000;
-            text-shadow: 0 0 20px rgba(255, 0, 0, 0.8),
-                         0 0 40px rgba(255, 0, 0, 0.6);
-            filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.8));
-        }
-
-        @keyframes critFly {
-            0% {
-                opacity: 1;
-                transform: translate(0, 0) scale(1) rotateZ(0deg);
-            }
-            100% {
-                opacity: 0;
-                transform: translate(50px, -150px) scale(1.5) rotateZ(20deg);
-            }
+        .progression-section {
+            flex-shrink: 0;
         }
 
         .progression-bar {
             background: rgba(100, 200, 255, 0.1);
-            height: 14px;
+            height: 12px;
             border-radius: 15px;
-            margin: 20px 0;
+            margin: 18px 0;
             overflow: hidden;
             border: 1.5px solid rgba(100, 200, 255, 0.25);
             box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -329,39 +181,180 @@
         }
 
         .progression-text {
-            font-size: 11px;
+            font-size: 10px;
             opacity: 0.7;
-            margin-top: 8px;
+            margin-top: 6px;
             font-weight: 600;
             letter-spacing: 0.5px;
         }
 
         .level-display {
-            font-size: 15px;
+            font-size: 14px;
             background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             font-weight: 800;
-            margin-top: 12px;
+            margin-top: 10px;
             text-shadow: 0 2px 10px rgba(251, 191, 36, 0.3);
+        }
+
+        .cat-scene {
+            position: relative;
+            margin: 15px auto;
+            width: 280px;
+            height: 240px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .scene-background {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(100, 200, 255, 0.05) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .bed-item {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: auto;
+            opacity: 0;
+            transition: opacity 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 1;
+            filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
+        }
+
+        .bed-item.visible {
+            opacity: 1;
+        }
+
+        .cat {
+            width: 160px;
+            height: 160px;
+            cursor: pointer;
+            filter: drop-shadow(0 15px 40px rgba(100, 200, 255, 0.4));
+            user-select: none;
+            z-index: 5;
+            position: relative;
+            transition: filter 0.3s;
+        }
+
+        .cat:active {
+            filter: drop-shadow(0 5px 15px rgba(100, 200, 255, 0.3));
+        }
+
+        .cat:hover {
+            filter: drop-shadow(0 20px 50px rgba(100, 200, 255, 0.6));
+        }
+
+        .bowl-item {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 72px;
+            height: auto;
+            opacity: 0;
+            transition: opacity 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 3;
+            filter: drop-shadow(0 8px 25px rgba(0, 0, 0, 0.3));
+        }
+
+        .bowl-item.visible {
+            opacity: 1;
+        }
+
+        .toy-item {
+            position: absolute;
+            left: 50%;
+            bottom: 20px;
+            transform: translateX(-50%);
+            width: 60px;
+            height: auto;
+            opacity: 0;
+            transition: opacity 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 2;
+            filter: drop-shadow(0 8px 25px rgba(0, 0, 0, 0.3));
+        }
+
+        .toy-item.visible {
+            opacity: 1;
+        }
+
+        .multiplier-badge {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #f472b6 0%, #ec4899 100%);
+            padding: 10px 16px;
+            border-radius: 15px;
+            font-weight: 800;
+            font-size: 14px;
+            border: 2px solid rgba(244, 114, 182, 0.6);
+            z-index: 10;
+            animation: pulse 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+            box-shadow: 0 10px 30px rgba(244, 114, 182, 0.4);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.1); }
+        }
+
+        .crit-indicator {
+            position: fixed;
+            font-size: 80px;
+            font-weight: 800;
+            pointer-events: none;
+            animation: critFly 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            z-index: 3000;
+            text-shadow: 0 0 20px rgba(255, 0, 0, 0.8),
+                         0 0 40px rgba(255, 0, 0, 0.6);
+            filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.8));
+        }
+
+        @keyframes critFly {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1) rotateZ(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(50px, -150px) scale(1.5) rotateZ(20deg);
+            }
+        }
+
+        .scroll-content {
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
         }
 
         .button-group {
             display: flex;
             gap: 12px;
-            margin: 20px 0;
+            margin: 18px 0;
             flex-wrap: wrap;
+            flex-shrink: 0;
         }
 
         .btn {
             flex: 1;
             min-width: 100px;
             background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
-            padding: 14px 16px;
-            border-radius: 18px;
+            padding: 12px 14px;
+            border-radius: 16px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
             border: 1.5px solid rgba(255, 255, 255, 0.2);
             color: white;
@@ -394,11 +387,15 @@
             50% { box-shadow: 0 15px 40px rgba(244, 114, 182, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.3); }
         }
 
+        #questContainer {
+            margin: 15px 0;
+            flex-shrink: 0;
+            min-height: 45px;
+        }
+
         .section {
             display: none;
-            margin-top: 20px;
-            max-height: 420px;
-            overflow-y: auto;
+            margin-top: 18px;
             padding: 8px;
             border-radius: 20px;
         }
@@ -423,12 +420,12 @@
 
         .item {
             background: linear-gradient(135deg, rgba(100, 200, 255, 0.12) 0%, rgba(56, 189, 248, 0.04) 100%);
-            padding: 14px;
-            margin: 10px 0;
-            border-radius: 16px;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 14px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             border: 1.5px solid rgba(100, 200, 255, 0.2);
@@ -439,14 +436,15 @@
         .item:hover {
             background: linear-gradient(135deg, rgba(100, 200, 255, 0.22) 0%, rgba(56, 189, 248, 0.12) 100%);
             border-color: rgba(100, 200, 255, 0.5);
-            transform: translateX(6px);
-            box-shadow: 0 8px 25px rgba(56, 189, 248, 0.2);
+            transform: translateX(4px);
+            box-shadow: 0 6px 20px rgba(56, 189, 248, 0.15);
         }
 
         .item-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 8px;
         }
 
         .item-info {
@@ -456,24 +454,23 @@
 
         .item-name {
             font-weight: 700;
-            font-size: 14px;
-            letter-spacing: 0.3px;
+            font-size: 13px;
+            letter-spacing: 0.2px;
         }
 
         .item-desc {
-            font-size: 12px;
+            font-size: 11px;
             opacity: 0.7;
             margin-top: 2px;
         }
 
         .item-cost {
             background: linear-gradient(135deg, rgba(56, 189, 248, 0.3) 0%, rgba(56, 189, 248, 0.1) 100%);
-            padding: 8px 14px;
-            border-radius: 12px;
-            font-size: 12px;
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 11px;
             font-weight: 700;
             white-space: nowrap;
-            margin-left: 10px;
             border: 1px solid rgba(56, 189, 248, 0.3);
             transition: all 0.3s;
         }
@@ -482,7 +479,7 @@
             background: linear-gradient(135deg, rgba(52, 211, 153, 0.4) 0%, rgba(52, 211, 153, 0.1) 100%);
             color: #34d399;
             border-color: rgba(52, 211, 153, 0.5);
-            box-shadow: 0 0 15px rgba(52, 211, 153, 0.2);
+            box-shadow: 0 0 12px rgba(52, 211, 153, 0.2);
         }
 
         .item-cost.expensive {
@@ -494,8 +491,8 @@
         .booster-progress {
             width: 100%;
             background: rgba(100, 200, 255, 0.1);
-            height: 8px;
-            border-radius: 10px;
+            height: 6px;
+            border-radius: 8px;
             overflow: hidden;
             border: 1px solid rgba(100, 200, 255, 0.2);
         }
@@ -503,14 +500,14 @@
         .booster-progress-fill {
             height: 100%;
             background: linear-gradient(90deg, #34d399 0%, #10b981 100%);
-            border-radius: 10px;
+            border-radius: 8px;
             transition: width 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 0 10px rgba(52, 211, 153, 0.5);
+            box-shadow: 0 0 8px rgba(52, 211, 153, 0.4);
         }
 
         .booster-progress-text {
-            font-size: 10px;
-            opacity: 0.7;
+            font-size: 9px;
+            opacity: 0.65;
             margin-top: 2px;
             font-weight: 600;
         }
@@ -523,8 +520,8 @@
         .skin-item.selected {
             border-color: #fbbf24;
             background: linear-gradient(135deg, rgba(251, 191, 36, 0.25) 0%, rgba(251, 191, 36, 0.08) 100%) !important;
-            box-shadow: 0 0 30px rgba(251, 191, 36, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            transform: scale(1.02);
+            box-shadow: 0 0 25px rgba(251, 191, 36, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transform: scale(1.01);
         }
 
         .float-text {
@@ -540,7 +537,7 @@
         }
 
         .float-text.crit {
-            font-size: 48px;
+            font-size: 44px;
             color: #ff0000;
             text-shadow: 0 0 20px rgba(255, 0, 0, 0.8),
                          0 0 40px rgba(255, 0, 0, 0.6);
@@ -602,10 +599,10 @@
             top: 30px;
             right: 30px;
             background: linear-gradient(135deg, rgba(244, 114, 182, 0.9) 0%, rgba(236, 72, 153, 0.8) 100%);
-            padding: 14px 24px;
-            border-radius: 18px;
+            padding: 12px 20px;
+            border-radius: 16px;
             font-weight: 800;
-            font-size: 18px;
+            font-size: 16px;
             border: 2px solid rgba(244, 114, 182, 0.6);
             z-index: 500;
             animation: comboPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -624,13 +621,13 @@
             left: 50%;
             transform: translateX(-50%);
             background: rgba(0, 0, 0, 0.95);
-            padding: 18px 28px;
-            border-radius: 18px;
+            padding: 16px 24px;
+            border-radius: 16px;
             opacity: 0;
             transition: opacity 0.3s;
             border: 1.5px solid rgba(100, 200, 255, 0.4);
             font-weight: 700;
-            font-size: 14px;
+            font-size: 13px;
             z-index: 999;
             backdrop-filter: blur(10px);
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
@@ -651,33 +648,33 @@
         }
 
         .section-title {
-            font-size: 11px;
-            opacity: 0.75;
+            font-size: 10px;
+            opacity: 0.7;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin: 18px 0 12px 0;
+            letter-spacing: 1.2px;
+            margin: 14px 0 10px 0;
             font-weight: 800;
             color: #38bdf8;
         }
 
         .tabs {
             display: flex;
-            gap: 10px;
-            margin: 16px 0;
+            gap: 8px;
+            margin: 14px 0;
             background: rgba(100, 200, 255, 0.08);
-            padding: 6px;
-            border-radius: 14px;
+            padding: 5px;
+            border-radius: 12px;
         }
 
         .tab-btn {
             flex: 1;
-            padding: 10px;
+            padding: 8px;
             background: transparent;
             border: 1.5px solid transparent;
             color: white;
-            border-radius: 11px;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
@@ -685,29 +682,29 @@
         .tab-btn.active {
             background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
             border-color: #38bdf8;
-            box-shadow: 0 5px 15px rgba(56, 189, 248, 0.3);
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
         }
 
         .tab-btn:hover {
-            background: rgba(100, 200, 255, 0.2);
-            border-color: rgba(100, 200, 255, 0.4);
+            background: rgba(100, 200, 255, 0.15);
+            border-color: rgba(100, 200, 255, 0.3);
         }
 
         .achievement {
             background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(251, 191, 36, 0.05) 100%);
             border: 1.5px solid rgba(251, 191, 36, 0.3);
-            padding: 13px;
-            border-radius: 14px;
-            margin: 8px 0;
-            font-size: 13px;
+            padding: 11px;
+            border-radius: 12px;
+            margin: 6px 0;
+            font-size: 12px;
             font-weight: 600;
             backdrop-filter: blur(5px);
             transition: all 0.3s;
         }
 
         .achievement:hover {
-            transform: translateX(4px);
-            box-shadow: 0 5px 20px rgba(251, 191, 36, 0.2);
+            transform: translateX(3px);
+            box-shadow: 0 4px 15px rgba(251, 191, 36, 0.15);
         }
 
         .achievement.locked {
@@ -719,40 +716,40 @@
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin: 16px 0;
+            gap: 10px;
+            margin: 14px 0;
         }
 
         .stats-item {
             background: linear-gradient(135deg, rgba(100, 200, 255, 0.15) 0%, rgba(56, 189, 248, 0.05) 100%);
-            padding: 14px;
-            border-radius: 14px;
+            padding: 12px;
+            border-radius: 12px;
             border: 1.5px solid rgba(100, 200, 255, 0.2);
             backdrop-filter: blur(5px);
             transition: all 0.3s;
         }
 
         .stats-item:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 20px rgba(56, 189, 248, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(56, 189, 248, 0.15);
         }
 
         .stats-label {
-            font-size: 10px;
-            opacity: 0.75;
+            font-size: 9px;
+            opacity: 0.7;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.4px;
         }
 
         .stats-value {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 800;
             background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-top: 4px;
+            margin-top: 3px;
         }
 
         .crit-shine {
@@ -776,30 +773,42 @@
             }
         }
 
-        .star-particles {
-            position: fixed;
-            width: 10px;
-            height: 10px;
-            pointer-events: none;
-            animation: particleFloat 1.5s ease-out forwards;
-            z-index: 999;
-        }
-
-        @keyframes particleFloat {
-            0% {
-                opacity: 1;
-                transform: translate(0, 0) scale(1);
+        @media (max-width: 480px) {
+            .container {
+                border-radius: 30px;
+                padding: 22px 18px;
             }
-            100% {
-                opacity: 0;
-                transform: translate(var(--tx), var(--ty)) scale(0);
+
+            .top {
+                gap: 8px;
+            }
+
+            .stat {
+                padding: 11px 8px;
+            }
+
+            .stat-label {
+                font-size: 8px;
+            }
+
+            .stat-value {
+                font-size: 18px;
+            }
+
+            .cat {
+                width: 140px;
+                height: 140px;
+            }
+
+            .btn {
+                font-size: 12px;
+                padding: 11px 12px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Stats Row -->
         <div class="top">
             <div class="stat">
                 <div class="stat-label">🥛 Молоко</div>
@@ -814,239 +823,234 @@
                 <div class="stat-value passive-value" id="passiveDisplay">0</div>
             </div>
             <div class="stat" id="multiplierStat" style="display: none;">
-                <div class="stat-label">✨ x Множ</div>
-                <div class="stat-value multiplier-value" id="multiplierDisplay">1x</div>
+                <div class="stat-label">✨ x</div>
+                <div class="stat-value multiplier-value" id="multiplierDisplay">1</div>
             </div>
         </div>
 
-        <!-- Progression -->
-        <div class="progression-bar">
-            <div class="progression-fill" id="progressionFill" style="width: 0%"></div>
+        <div class="progression-section">
+            <div class="progression-bar">
+                <div class="progression-fill" id="progressionFill" style="width: 0%"></div>
+            </div>
+            <div class="progression-text" id="progressionText">Прогресс: 0 / 500</div>
+            <div class="level-display" id="levelDisplay">Уровень: 1</div>
         </div>
-        <div class="progression-text" id="progressionText">Прогресс: 0 / 500</div>
-        <div class="level-display" id="levelDisplay">Уровень: 1</div>
 
-        <!-- Cat Scene -->
         <div class="cat-scene">
             <div class="scene-background"></div>
             <img src="bed.png" id="bedItem" class="bed-item" alt="Bed">
+            <img src="cat.png" id="catImage" class="cat" alt="Click the cat!">
             <img src="bowl.png" id="bowlItem" class="bowl-item" alt="Bowl">
             <img src="toy.png" id="toyItem" class="toy-item" alt="Toy">
-            <div id="eggsChain" class="eggs-chain"></div>
-            <img src="cat.png" id="catImage" class="cat" alt="Click the cat!">
             <div id="multiplierBadge" class="multiplier-badge" style="display: none;"></div>
         </div>
 
-        <!-- Combo Counter -->
         <div id="comboCounter" style="display: none;"></div>
 
-        <!-- Quest Button -->
-        <div id="questContainer" style="margin: 18px 0;"></div>
+        <div id="questContainer" style="margin: 12px 0;"></div>
 
-        <!-- Main Buttons -->
         <div class="button-group">
             <button class="btn" onclick="toggleSection('shop')">🛒 Магазин</button>
             <button class="btn" onclick="toggleSection('skins')">🎭 Скины</button>
             <button class="btn" onclick="toggleSection('achievements')">🏆 Достижения</button>
         </div>
 
-        <!-- Shop Section -->
-        <div id="shop" class="section">
-            <div class="tabs">
-                <button class="tab-btn active" onclick="switchTab('shop', 'tap-upgrades')">⚡ Клик</button>
-                <button class="tab-btn" onclick="switchTab('shop', 'passive-upgrades')">🤖 Пассив</button>
-                <button class="tab-btn" onclick="switchTab('shop', 'boosters')">🚀 Бустеры</button>
-            </div>
+        <div class="scroll-content">
+            <div id="shop" class="section">
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchTab('shop', 'tap-upgrades')">⚡ Клик</button>
+                    <button class="tab-btn" onclick="switchTab('shop', 'passive-upgrades')">🤖 Пассив</button>
+                    <button class="tab-btn" onclick="switchTab('shop', 'boosters')">🚀 Бустеры</button>
+                </div>
 
-            <div id="tap-upgrades">
-                <div class="item" onclick="buyUpgrade('tap')">
-                    <div class="item-header">
-                        <div class="item-info">
-                            <div class="item-name">⬆️ Мощный клик</div>
-                            <div class="item-desc">+1 молоко за клик | 10% крит</div>
+                <div id="tap-upgrades">
+                    <div class="item" onclick="buyUpgrade('tap')">
+                        <div class="item-header">
+                            <div class="item-info">
+                                <div class="item-name">⬆️ Мощный клик</div>
+                                <div class="item-desc">+1 молоко за клик | 10% крит</div>
+                            </div>
+                            <div class="item-cost" id="tapCostDisplay">10</div>
                         </div>
-                        <div class="item-cost" id="tapCostDisplay">10</div>
+                        <div class="booster-progress">
+                            <div class="booster-progress-fill" id="tapProgress" style="width: 0%"></div>
+                        </div>
+                        <div class="booster-progress-text" id="tapProgressText">+1 за клик</div>
                     </div>
-                    <div class="booster-progress">
-                        <div class="booster-progress-fill" id="tapProgress" style="width: 0%"></div>
-                    </div>
-                    <div class="booster-progress-text" id="tapProgressText">Куплено: 0</div>
                 </div>
-            </div>
 
-            <div id="passive-upgrades" style="display: none;">
-                <div class="item" onclick="buyUpgrade('auto')">
-                    <div class="item-header">
-                        <div class="item-info">
-                            <div class="item-name">🤖 Автоматизация</div>
-                            <div class="item-desc">+1 молоко в сек</div>
+                <div id="passive-upgrades" style="display: none;">
+                    <div class="item" onclick="buyUpgrade('auto')">
+                        <div class="item-header">
+                            <div class="item-info">
+                                <div class="item-name">🤖 Автоматизация</div>
+                                <div class="item-desc">Автоматизированное получение</div>
+                            </div>
+                            <div class="item-cost" id="autoCostDisplay">50</div>
                         </div>
-                        <div class="item-cost" id="autoCostDisplay">50</div>
-                    </div>
-                    <div class="booster-progress">
-                        <div class="booster-progress-fill" id="autoProgress" style="width: 0%"></div>
-                    </div>
-                    <div class="booster-progress-text" id="autoProgressText">Куплено: 0</div>
-                </div>
-                <div class="item" onclick="buyUpgrade('factory')">
-                    <div class="item-header">
-                        <div class="item-info">
-                            <div class="item-name">🏭 Фабрика молока</div>
-                            <div class="item-desc">+5 молока в сек</div>
+                        <div class="booster-progress">
+                            <div class="booster-progress-fill" id="autoProgress" style="width: 0%"></div>
                         </div>
-                        <div class="item-cost" id="factoryCostDisplay">200</div>
+                        <div class="booster-progress-text" id="autoProgressText">+1/сек</div>
                     </div>
-                    <div class="booster-progress">
-                        <div class="booster-progress-fill" id="factoryProgress" style="width: 0%"></div>
-                    </div>
-                    <div class="booster-progress-text" id="factoryProgressText">Куплено: 0</div>
-                </div>
-                <div class="item" onclick="buyUpgrade('farm')">
-                    <div class="item-header">
-                        <div class="item-info">
-                            <div class="item-name">🌾 Ферма</div>
-                            <div class="item-desc">+10 молока в сек</div>
+                    <div class="item" onclick="buyUpgrade('factory')">
+                        <div class="item-header">
+                            <div class="item-info">
+                                <div class="item-name">🏭 Фабрика молока</div>
+                                <div class="item-desc">Промышленное производство</div>
+                            </div>
+                            <div class="item-cost" id="factoryCostDisplay">200</div>
                         </div>
-                        <div class="item-cost" id="farmCostDisplay">500</div>
-                    </div>
-                    <div class="booster-progress">
-                        <div class="booster-progress-fill" id="farmProgress" style="width: 0%"></div>
-                    </div>
-                    <div class="booster-progress-text" id="farmProgressText">Куплено: 0</div>
-                </div>
-                <div class="item" onclick="buyUpgrade('heaven')">
-                    <div class="item-header">
-                        <div class="item-info">
-                            <div class="item-name">☁️ Небесная ферма</div>
-                            <div class="item-desc">+25 молока в сек</div>
+                        <div class="booster-progress">
+                            <div class="booster-progress-fill" id="factoryProgress" style="width: 0%"></div>
                         </div>
-                        <div class="item-cost" id="heavenCostDisplay">1500</div>
+                        <div class="booster-progress-text" id="factoryProgressText">+5/сек</div>
                     </div>
-                    <div class="booster-progress">
-                        <div class="booster-progress-fill" id="heavenProgress" style="width: 0%"></div>
+                    <div class="item" onclick="buyUpgrade('farm')">
+                        <div class="item-header">
+                            <div class="item-info">
+                                <div class="item-name">🌾 Ферма</div>
+                                <div class="item-desc">Сельскохозяйственное предприятие</div>
+                            </div>
+                            <div class="item-cost" id="farmCostDisplay">800</div>
+                        </div>
+                        <div class="booster-progress">
+                            <div class="booster-progress-fill" id="farmProgress" style="width: 0%"></div>
+                        </div>
+                        <div class="booster-progress-text" id="farmProgressText">+10/сек</div>
                     </div>
-                    <div class="booster-progress-text" id="heavenProgressText">Куплено: 0</div>
+                    <div class="item" onclick="buyUpgrade('heaven')">
+                        <div class="item-header">
+                            <div class="item-info">
+                                <div class="item-name">☁️ Небесная ферма</div>
+                                <div class="item-desc">Волшебное производство</div>
+                            </div>
+                            <div class="item-cost" id="heavenCostDisplay">3000</div>
+                        </div>
+                        <div class="booster-progress">
+                            <div class="booster-progress-fill" id="heavenProgress" style="width: 0%"></div>
+                        </div>
+                        <div class="booster-progress-text" id="heavenProgressText">+25/сек</div>
+                    </div>
                 </div>
-            </div>
 
-            <div id="boosters" style="display: none;">
-                <div class="item" onclick="buyUpgrade('boost1')">
-                    <div class="item-header">
-                        <div class="item-info">
-                            <div class="item-name">⚡ Супер буст</div>
-                            <div class="item-desc">+5 молока в сек</div>
+                <div id="boosters" style="display: none;">
+                    <div class="item" onclick="buyUpgrade('boost1')">
+                        <div class="item-header">
+                            <div class="item-info">
+                                <div class="item-name">⚡ Супер буст</div>
+                                <div class="item-desc">Мощное ускорение</div>
+                            </div>
+                            <div class="item-cost" id="boost1CostDisplay">3000</div>
                         </div>
-                        <div class="item-cost" id="boost1CostDisplay">1000</div>
-                    </div>
-                    <div class="booster-progress">
-                        <div class="booster-progress-fill" id="boost1Progress" style="width: 0%"></div>
-                    </div>
-                    <div class="booster-progress-text" id="boost1ProgressText">Куплено: 0</div>
-                </div>
-                <div class="item" onclick="buyUpgrade('boost2')">
-                    <div class="item-header">
-                        <div class="item-info">
-                            <div class="item-name">💥 Мега буст</div>
-                            <div class="item-desc">+15 молока в сек</div>
+                        <div class="booster-progress">
+                            <div class="booster-progress-fill" id="boost1Progress" style="width: 0%"></div>
                         </div>
-                        <div class="item-cost" id="boost2CostDisplay">3000</div>
+                        <div class="booster-progress-text" id="boost1ProgressText">+5/сек</div>
                     </div>
-                    <div class="booster-progress">
-                        <div class="booster-progress-fill" id="boost2Progress" style="width: 0%"></div>
-                    </div>
-                    <div class="booster-progress-text" id="boost2ProgressText">Куплено: 0</div>
-                </div>
-                <div class="item" onclick="buyUpgrade('boost3')">
-                    <div class="item-header">
-                        <div class="item-info">
-                            <div class="item-name">🌟 Эпик буст</div>
-                            <div class="item-desc">+50 молока в сек</div>
+                    <div class="item" onclick="buyUpgrade('boost2')">
+                        <div class="item-header">
+                            <div class="item-info">
+                                <div class="item-name">💥 Мега буст</div>
+                                <div class="item-desc">Экстремальное ускорение</div>
+                            </div>
+                            <div class="item-cost" id="boost2CostDisplay">10000</div>
                         </div>
-                        <div class="item-cost" id="boost3CostDisplay">10000</div>
+                        <div class="booster-progress">
+                            <div class="booster-progress-fill" id="boost2Progress" style="width: 0%"></div>
+                        </div>
+                        <div class="booster-progress-text" id="boost2ProgressText">+15/сек</div>
                     </div>
-                    <div class="booster-progress">
-                        <div class="booster-progress-fill" id="boost3Progress" style="width: 0%"></div>
+                    <div class="item" onclick="buyUpgrade('boost3')">
+                        <div class="item-header">
+                            <div class="item-info">
+                                <div class="item-name">🌟 Эпик буст</div>
+                                <div class="item-desc">Легендарное ускорение</div>
+                            </div>
+                            <div class="item-cost" id="boost3CostDisplay">50000</div>
+                        </div>
+                        <div class="booster-progress">
+                            <div class="booster-progress-fill" id="boost3Progress" style="width: 0%"></div>
+                        </div>
+                        <div class="booster-progress-text" id="boost3ProgressText">+50/сек</div>
                     </div>
-                    <div class="booster-progress-text" id="boost3ProgressText">Куплено: 0</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Skins Section -->
-        <div id="skins" class="section">
-            <div class="item skin-item" id="skinDefault" onclick="buySkin('default')">
-                <div class="item-header">
-                    <div class="item-info">
-                        <div class="item-name">🐱 Обычный кот</div>
-                        <div class="item-desc">Стандартный питомец</div>
-                    </div>
-                    <div class="item-cost">БЕСПЛАТНО</div>
-                </div>
-            </div>
-            <div class="item skin-item" id="skinGold" onclick="buySkin('gold')">
-                <div class="item-header">
-                    <div class="item-info">
-                        <div class="item-name">✨ Золотой кот</div>
-                        <div class="item-desc">Блестящий помощник +15% крит</div>
-                    </div>
-                    <div class="item-cost">1000</div>
-                </div>
-            </div>
-            <div class="item skin-item" id="skinDevil" onclick="buySkin('devil')">
-                <div class="item-header">
-                    <div class="item-info">
-                        <div class="item-name">😈 Дьявольский кот</div>
-                        <div class="item-desc">Опасный питомец +25% крит</div>
-                    </div>
-                    <div class="item-cost">5000</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Achievements Section -->
-        <div id="achievements" class="section">
-            <div class="stats-grid">
-                <div class="stats-item">
-                    <div class="stats-label">Всего кликов</div>
-                    <div class="stats-value" id="statClicks">0</div>
-                </div>
-                <div class="stats-item">
-                    <div class="stats-label">Всего молока</div>
-                    <div class="stats-value" id="statTotalMilk">0</div>
-                </div>
-                <div class="stats-item">
-                    <div class="stats-label">Крит ударов</div>
-                    <div class="stats-value" id="statCrits">0</div>
-                </div>
-                <div class="stats-item">
-                    <div class="stats-label">Лучший комбо</div>
-                    <div class="stats-value" id="statBestCombo">0</div>
                 </div>
             </div>
 
-            <div class="achievement" id="ach1">
-                <div>🐱 Первый клик - Нажми на кота 1 раз</div>
+            <div id="skins" class="section">
+                <div class="item skin-item" id="skinDefault" onclick="buySkin('default')">
+                    <div class="item-header">
+                        <div class="item-info">
+                            <div class="item-name">🐱 Обычный кот</div>
+                            <div class="item-desc">10% крит</div>
+                        </div>
+                        <div class="item-cost">БЕСПЛАТНО</div>
+                    </div>
+                </div>
+                <div class="item skin-item" id="skinGold" onclick="buySkin('gold')">
+                    <div class="item-header">
+                        <div class="item-info">
+                            <div class="item-name">✨ Золотой кот</div>
+                            <div class="item-desc">25% крит урона</div>
+                        </div>
+                        <div class="item-cost">5000</div>
+                    </div>
+                </div>
+                <div class="item skin-item" id="skinDevil" onclick="buySkin('devil')">
+                    <div class="item-header">
+                        <div class="item-info">
+                            <div class="item-name">😈 Дьявольский кот</div>
+                            <div class="item-desc">35% крит урона</div>
+                        </div>
+                        <div class="item-cost">15000</div>
+                    </div>
+                </div>
             </div>
-            <div class="achievement locked" id="ach2">
-                <div>🚀 Начинающий - Набери 1000 молока</div>
-            </div>
-            <div class="achievement locked" id="ach3">
-                <div>⚡ Клик-машина - Нажми на кота 100 раз</div>
-            </div>
-            <div class="achievement locked" id="ach4">
-                <div>💰 Миллионер - Набери 1,000,000 молока</div>
-            </div>
-            <div class="achievement locked" id="ach5">
-                <div>🔥 Критический урон - Получи 10 крит ударов</div>
-            </div>
-            <div class="achievement locked" id="ach6">
-                <div>💎 Коллекционер - Разблокируй все скины</div>
-            </div>
-            <div class="achievement locked" id="ach7">
-                <div>🌟 Звездочет - Поймай 10 звёзд</div>
-            </div>
-            <div class="achievement locked" id="ach8">
-                <div>⚔️ Берсерк - Получи 50 крит ударов подряд</div>
+
+            <div id="achievements" class="section">
+                <div class="stats-grid">
+                    <div class="stats-item">
+                        <div class="stats-label">Всего кликов</div>
+                        <div class="stats-value" id="statClicks">0</div>
+                    </div>
+                    <div class="stats-item">
+                        <div class="stats-label">Всего молока</div>
+                        <div class="stats-value" id="statTotalMilk">0</div>
+                    </div>
+                    <div class="stats-item">
+                        <div class="stats-label">Крит ударов</div>
+                        <div class="stats-value" id="statCrits">0</div>
+                    </div>
+                    <div class="stats-item">
+                        <div class="stats-label">Лучший комбо</div>
+                        <div class="stats-value" id="statBestCombo">0</div>
+                    </div>
+                </div>
+
+                <div class="achievement" id="ach1">
+                    <div>🐱 Первый клик - Нажми на кота 1 раз</div>
+                </div>
+                <div class="achievement locked" id="ach2">
+                    <div>🚀 Начинающий - Набери 1000 молока</div>
+                </div>
+                <div class="achievement locked" id="ach3">
+                    <div>⚡ Клик-машина - Нажми на кота 100 раз</div>
+                </div>
+                <div class="achievement locked" id="ach4">
+                    <div>💰 Миллионер - Набери 1,000,000 молока</div>
+                </div>
+                <div class="achievement locked" id="ach5">
+                    <div>🔥 Критический урон - Получи 10 крит ударов</div>
+                </div>
+                <div class="achievement locked" id="ach6">
+                    <div>💎 Коллекционер - Разблокируй все скины</div>
+                </div>
+                <div class="achievement locked" id="ach7">
+                    <div>🌟 Звездочет - Поймай 10 звёзд</div>
+                </div>
+                <div class="achievement locked" id="ach8">
+                    <div>⚔️ Берсерк - Получи 50 крит ударов подряд</div>
+                </div>
             </div>
         </div>
     </div>
@@ -1078,7 +1082,8 @@
                 critCount: 0,
                 critsInRow: 0,
                 maxCritsInRow: 0,
-                achievements: {}
+                achievements: {},
+                skinsUnlocked: {}
             }
         };
 
@@ -1086,18 +1091,17 @@
             tap: { baseCost: 10, increase: 1.15, income: 0 },
             auto: { baseCost: 50, increase: 1.15, income: 1 },
             factory: { baseCost: 200, increase: 1.15, income: 5 },
-            farm: { baseCost: 500, increase: 1.15, income: 10 },
-            heaven: { baseCost: 1500, increase: 1.15, income: 25 },
-            boost1: { baseCost: 1000, increase: 1.15, income: 5 },
-            boost2: { baseCost: 3000, increase: 1.15, income: 15 },
-            boost3: { baseCost: 10000, increase: 1.15, income: 50 }
+            farm: { baseCost: 800, increase: 1.15, income: 10 },
+            heaven: { baseCost: 3000, increase: 1.15, income: 25 },
+            boost1: { baseCost: 3000, increase: 1.15, income: 5 },
+            boost2: { baseCost: 10000, increase: 1.15, income: 15 },
+            boost3: { baseCost: 50000, increase: 1.15, income: 50 }
         };
 
         const progressionMilestones = {
             5: { type: 'bed', name: 'Лежанка' },
             10: { type: 'bowl', name: 'Лоток' },
-            15: { type: 'toy', name: 'Игрушка' },
-            20: { type: 'eggs', name: 'Золотые яички' }
+            15: { type: 'toy', name: 'Игрушка' }
         };
 
         const DOM = {
@@ -1117,15 +1121,13 @@
             bedItem: document.getElementById('bedItem'),
             bowlItem: document.getElementById('bowlItem'),
             toyItem: document.getElementById('toyItem'),
-            eggsChain: document.getElementById('eggsChain'),
             comboCounter: document.getElementById('comboCounter')
         };
 
-        // КРИТИЧЕСКИЕ УДАРЫ
         function getCritChance() {
-            let chance = 10; // 10% базовый
-            if (gameState.skin === 'gold') chance += 15;
-            if (gameState.skin === 'devil') chance += 25;
+            let chance = 10;
+            if (gameState.skin === 'gold') chance = 25;
+            if (gameState.skin === 'devil') chance = 35;
             return chance;
         }
 
@@ -1232,9 +1234,18 @@
                 
                 if (progressElement && progressTextElement) {
                     const count = gameState.purchases[type];
-                    const progress = (count % 10) / 10 * 100;
+                    const income = upgrades[type].income;
+                    const totalIncome = (type === 'tap') ? 1 : income;
+                    const displayIncome = totalIncome * (count + 1);
+                    
+                    const progress = (count % 5) / 5 * 100;
                     progressElement.style.width = progress + '%';
-                    progressTextElement.textContent = `Куплено: ${count}`;
+                    
+                    if (type === 'tap') {
+                        progressTextElement.textContent = `+${displayIncome} за клик`;
+                    } else {
+                        progressTextElement.textContent = `+${displayIncome}/сек`;
+                    }
                 }
             });
         }
@@ -1261,7 +1272,6 @@
             let gain = Math.floor(gameState.perTap * gameState.multiplier);
             let isCrit = false;
             
-            // ПРОВЕРКА КРИТА
             if (checkCrit()) {
                 isCrit = true;
                 gain *= 2;
@@ -1272,7 +1282,6 @@
                     gameState.stats.maxCritsInRow = gameState.stats.critsInRow;
                 }
                 
-                // Анимация крита
                 createCritEffect(e.clientX, e.clientY);
                 showCritIndicator(e.clientX, e.clientY);
             } else {
@@ -1283,7 +1292,6 @@
             gameState.stats.totalClicks++;
             gameState.stats.totalMilkEarned += gain;
             
-            // Комбо система
             const now = Date.now();
             if (now - lastClickTime < 1000) {
                 gameState.stats.currentCombo++;
@@ -1301,8 +1309,10 @@
             
             playSound();
             
-            DOM.catImage.style.transform = 'scale(0.95)';
-            setTimeout(() => { DOM.catImage.style.transform = ''; }, 100);
+            DOM.catImage.style.filter = 'drop-shadow(0 5px 15px rgba(100, 200, 255, 0.3))';
+            setTimeout(() => { 
+                DOM.catImage.style.filter = 'drop-shadow(0 15px 40px rgba(100, 200, 255, 0.4))'; 
+            }, 100);
             
             createFloatText('+' + formatNumber(gain), e.clientX, e.clientY, isCrit);
             updateUI();
@@ -1365,7 +1375,7 @@
         }
 
         function buySkin(skinType) {
-            const costs = { default: 0, gold: 1000, devil: 5000 };
+            const costs = { default: 0, gold: 5000, devil: 15000 };
             const cost = costs[skinType];
             
             if (gameState.milk < cost) {
@@ -1375,11 +1385,12 @@
             
             gameState.milk -= cost;
             gameState.skin = skinType;
+            gameState.stats.skinsUnlocked[skinType] = true;
             
             const skinNames = {
                 default: 'обычный кот',
-                gold: 'золотой кот (+15% крит)',
-                devil: 'дьявольский кот (+25% крит)'
+                gold: 'золотой кот',
+                devil: 'дьявольский кот'
             };
             
             showNotification(`Выбран ${skinNames[skinType]}! ✨`, 'success');
@@ -1448,9 +1459,6 @@
                         DOM.bowlItem.classList.add('visible');
                     } else if (data.type === 'toy') {
                         DOM.toyItem.classList.add('visible');
-                    } else if (data.type === 'eggs') {
-                        DOM.eggsChain.classList.add('visible');
-                        DOM.eggsChain.textContent = '🥚🥚🥚';
                     }
                 }
             });
@@ -1469,31 +1477,17 @@
         }
 
         function checkAchievements() {
-            if (gameState.stats.totalClicks >= 1) {
-                unlockAchievement('ach1');
-            }
-            if (gameState.milk >= 1000) {
-                unlockAchievement('ach2');
-            }
-            if (gameState.stats.totalClicks >= 100) {
-                unlockAchievement('ach3');
-            }
-            if (gameState.milk >= 1000000) {
-                unlockAchievement('ach4');
-            }
-            if (gameState.stats.critCount >= 10) {
-                unlockAchievement('ach5');
-            }
-            const skinsCount = (gameState.skin !== 'default' ? 1 : 0) + 1;
-            if (skinsCount >= 3) {
-                unlockAchievement('ach6');
-            }
-            if (gameState.stats.starsCount >= 10) {
-                unlockAchievement('ach7');
-            }
-            if (gameState.stats.maxCritsInRow >= 50) {
-                unlockAchievement('ach8');
-            }
+            if (gameState.stats.totalClicks >= 1) unlockAchievement('ach1');
+            if (gameState.milk >= 1000) unlockAchievement('ach2');
+            if (gameState.stats.totalClicks >= 100) unlockAchievement('ach3');
+            if (gameState.milk >= 1000000) unlockAchievement('ach4');
+            if (gameState.stats.critCount >= 10) unlockAchievement('ach5');
+            
+            const skinsUnlockedCount = Object.keys(gameState.stats.skinsUnlocked).length;
+            if (skinsUnlockedCount >= 2) unlockAchievement('ach6');
+            
+            if (gameState.stats.starsCount >= 10) unlockAchievement('ach7');
+            if (gameState.stats.maxCritsInRow >= 50) unlockAchievement('ach8');
         }
 
         function unlockAchievement(achId) {
@@ -1507,6 +1501,8 @@
         }
 
         function activateRandomMultiplier() {
+            if (gameState.multiplier > 1) return;
+            
             const multipliers = [2, 3, 5];
             const randomMult = multipliers[Math.floor(Math.random() * multipliers.length)];
             const duration = 30 + Math.random() * 30;
@@ -1557,11 +1553,18 @@
         }
 
         function scheduleNextQuest() {
-            const nextQuestTime = 30 * 60 * 1000;
+            const getRandomDelay = () => {
+                // Рандомная задержка с средним значением 30 минут
+                return Math.random() * 60 * 60 * 1000; // 0-60 минут
+            };
+            
             setTimeout(() => {
-                spawnFallingStar();
+                // 50% шанс что звезда появится
+                if (Math.random() < 0.5) {
+                    spawnFallingStar();
+                }
                 scheduleNextQuest();
-            }, nextQuestTime);
+            }, getRandomDelay());
         }
 
         function renderQuestButton() {
@@ -1574,7 +1577,7 @@
                 DOM.questContainer.innerHTML = '<button class="btn quest-btn" onclick="manualSpawnStar()">⭐ Ловить звезду!</button>';
             } else {
                 const minutesLeft = Math.ceil((timeUntilQuest - timeSinceQuest) / 60000);
-                DOM.questContainer.innerHTML = `<div class="section-title">⭐ Следующий квест через ${minutesLeft} мин</div>`;
+                DOM.questContainer.innerHTML = `<div class="section-title">⭐ Звезда появится через ~${minutesLeft} мин</div>`;
             }
         }
 
