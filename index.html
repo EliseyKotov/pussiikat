@@ -20,11 +20,12 @@
             align-items: center;
             min-height: 100vh;
             padding: 20px;
+            overflow: hidden;
         }
 
         .container {
             width: 100%;
-            max-width: 400px;
+            max-width: 450px;
             background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
             border-radius: 30px;
             padding: 30px 25px;
@@ -32,12 +33,27 @@
             text-align: center;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
+            max-height: 95vh;
+            overflow-y: auto;
+        }
+
+        .container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .container::-webkit-scrollbar-track {
+            background: rgba(100, 200, 255, 0.1);
+        }
+
+        .container::-webkit-scrollbar-thumb {
+            background: rgba(100, 200, 255, 0.4);
+            border-radius: 10px;
         }
 
         .top {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             gap: 10px;
         }
 
@@ -64,20 +80,30 @@
         }
 
         .stat-value {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: bold;
         }
 
         .milk-value { color: #38bdf8; }
         .tap-value { color: #fbbf24; }
         .passive-value { color: #34d399; }
+        .multiplier-value { color: #f472b6; }
+
+        .cat-container {
+            position: relative;
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
 
         .cat {
-            width: 200px;
+            width: 180px;
             cursor: pointer;
             transition: transform 0.1s, filter 0.2s;
             filter: drop-shadow(0 0 20px rgba(100, 200, 255, 0.3));
-            margin: 30px 0;
             user-select: none;
         }
 
@@ -89,19 +115,78 @@
             filter: drop-shadow(0 0 35px rgba(100, 200, 255, 0.7));
         }
 
+        .cat-item {
+            width: 70px;
+            height: 70px;
+            opacity: 0.3;
+            transition: all 0.3s;
+            filter: grayscale(100%);
+        }
+
+        .cat-item.unlocked {
+            opacity: 1;
+            filter: grayscale(0%);
+        }
+
+        .cat-item:hover.unlocked {
+            transform: scale(1.1);
+        }
+
+        .multiplier-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(244, 114, 182, 0.8);
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 14px;
+            border: 1px solid rgba(244, 114, 182, 0.5);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .progression-bar {
+            background: rgba(100, 200, 255, 0.1);
+            height: 8px;
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow: hidden;
+            border: 1px solid rgba(100, 200, 255, 0.2);
+        }
+
+        .progression-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #38bdf8 0%, #0ea5e9 100%);
+            transition: width 0.3s;
+            border-radius: 10px;
+        }
+
+        .progression-text {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
         .button-group {
             display: flex;
             gap: 10px;
-            margin-bottom: 20px;
+            margin: 15px 0;
+            flex-wrap: wrap;
         }
 
         .btn {
             flex: 1;
+            min-width: 100px;
             background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
-            padding: 14px 16px;
+            padding: 12px 14px;
             border-radius: 15px;
             cursor: pointer;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
             border: none;
             color: white;
@@ -118,10 +203,21 @@
             transform: translateY(-1px);
         }
 
+        .btn.quest-btn {
+            background: linear-gradient(135deg, #f472b6 0%, #ec4899 100%);
+            box-shadow: 0 4px 15px rgba(244, 114, 182, 0.4);
+            animation: questPulse 2s infinite;
+        }
+
+        @keyframes questPulse {
+            0%, 100% { box-shadow: 0 4px 15px rgba(244, 114, 182, 0.4); }
+            50% { box-shadow: 0 4px 25px rgba(244, 114, 182, 0.8); }
+        }
+
         .section {
             display: none;
-            margin-top: 20px;
-            max-height: 350px;
+            margin-top: 15px;
+            max-height: 300px;
             overflow-y: auto;
             padding: 5px;
         }
@@ -146,8 +242,8 @@
 
         .item {
             background: linear-gradient(135deg, rgba(100, 200, 255, 0.1) 0%, rgba(56, 189, 248, 0.05) 100%);
-            padding: 16px;
-            margin: 10px 0;
+            padding: 14px;
+            margin: 8px 0;
             border-radius: 12px;
             display: flex;
             justify-content: space-between;
@@ -171,7 +267,6 @@
         .item-name {
             font-weight: 600;
             font-size: 14px;
-            margin-bottom: 4px;
         }
 
         .item-desc {
@@ -181,9 +276,9 @@
 
         .item-cost {
             background: rgba(56, 189, 248, 0.3);
-            padding: 8px 14px;
+            padding: 6px 12px;
             border-radius: 8px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
             white-space: nowrap;
             margin-left: 10px;
@@ -220,6 +315,29 @@
             }
         }
 
+        .falling-star {
+            position: fixed;
+            font-size: 40px;
+            cursor: pointer;
+            animation: fallDown 8s linear forwards;
+            z-index: 2000;
+            filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.8));
+        }
+
+        @keyframes fallDown {
+            0% {
+                top: -50px;
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                top: 100vh;
+                opacity: 0;
+            }
+        }
+
         .notification {
             position: fixed;
             bottom: 20px;
@@ -249,10 +367,19 @@
             border-color: rgba(52, 211, 153, 0.5);
             background: rgba(15, 23, 42, 0.95);
         }
+
+        .section-title {
+            font-size: 12px;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 15px 0 10px 0;
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Stats Row -->
         <div class="top">
             <div class="stat">
                 <div class="stat-label">🥛 Молоко</div>
@@ -266,16 +393,43 @@
                 <div class="stat-label">🔄 В сек</div>
                 <div class="stat-value passive-value" id="passiveDisplay">0</div>
             </div>
+            <div class="stat" id="multiplierStat" style="display: none;">
+                <div class="stat-label">✨ x Множ</div>
+                <div class="stat-value multiplier-value" id="multiplierDisplay">1x</div>
+            </div>
         </div>
 
-        <img src="cat.png" id="catImage" class="cat" alt="Click the cat!">
+        <!-- Progression -->
+        <div class="progression-bar">
+            <div class="progression-fill" id="progressionFill" style="width: 0%"></div>
+        </div>
+        <div class="progression-text" id="progressionText">Прогресс: 0 / 100</div>
 
+        <!-- Cat with Items -->
+        <div class="cat-container">
+            <div style="flex: 1; display: flex; justify-content: center; align-items: center; position: relative;">
+                <img src="cat.png" id="catImage" class="cat" alt="Click the cat!">
+                <div id="multiplierBadge" class="multiplier-badge" style="display: none;"></div>
+            </div>
+            <div style="flex: 1; display: flex; justify-content: center; gap: 10px;">
+                <img src="toq bowl.png" id="bowlItem" class="cat-item" title="Лоток" alt="Bowl">
+                <img src="bed.png" id="bedItem" class="cat-item" title="Лежанка" alt="Bed">
+                <img src="toy.png" id="toyItem" class="cat-item" title="Игрушка" alt="Toy">
+            </div>
+        </div>
+
+        <!-- Quest Button -->
+        <div id="questContainer" style="margin: 15px 0;"></div>
+
+        <!-- Main Buttons -->
         <div class="button-group">
             <button class="btn" onclick="toggleSection('shop')">🛒 Магазин</button>
             <button class="btn" onclick="toggleSection('skins')">🎭 Скины</button>
         </div>
 
+        <!-- Shop Section -->
         <div id="shop" class="section">
+            <div class="section-title">⚡ Усиления Клика</div>
             <div class="item" onclick="buyUpgrade('tap')">
                 <div class="item-info">
                     <div class="item-name">⬆️ Мощный клик</div>
@@ -283,6 +437,8 @@
                 </div>
                 <div class="item-cost" id="tapCostDisplay">10</div>
             </div>
+
+            <div class="section-title">🤖 Пассивный Доход</div>
             <div class="item" onclick="buyUpgrade('auto')">
                 <div class="item-info">
                     <div class="item-name">🤖 Автоматизация</div>
@@ -297,8 +453,46 @@
                 </div>
                 <div class="item-cost" id="factoryCostDisplay">200</div>
             </div>
+            <div class="item" onclick="buyUpgrade('farm')">
+                <div class="item-info">
+                    <div class="item-name">🌾 Ферма</div>
+                    <div class="item-desc">+10 молока в сек</div>
+                </div>
+                <div class="item-cost" id="farmCostDisplay">500</div>
+            </div>
+            <div class="item" onclick="buyUpgrade('heaven')">
+                <div class="item-info">
+                    <div class="item-name">☁️ Небесная ферма</div>
+                    <div class="item-desc">+25 молока в сек</div>
+                </div>
+                <div class="item-cost" id="heavenCostDisplay">1500</div>
+            </div>
+
+            <div class="section-title">🚀 Бустеры</div>
+            <div class="item" onclick="buyUpgrade('boost1')">
+                <div class="item-info">
+                    <div class="item-name">⚡ Супер буст</div>
+                    <div class="item-desc">+5 молока в сек</div>
+                </div>
+                <div class="item-cost" id="boost1CostDisplay">1000</div>
+            </div>
+            <div class="item" onclick="buyUpgrade('boost2')">
+                <div class="item-info">
+                    <div class="item-name">💥 Мега буст</div>
+                    <div class="item-desc">+15 молока в сек</div>
+                </div>
+                <div class="item-cost" id="boost2CostDisplay">3000</div>
+            </div>
+            <div class="item" onclick="buyUpgrade('boost3')">
+                <div class="item-info">
+                    <div class="item-name">🌟 Эпик буст</div>
+                    <div class="item-desc">+50 молока в сек</div>
+                </div>
+                <div class="item-cost" id="boost3CostDisplay">10000</div>
+            </div>
         </div>
 
+        <!-- Skins Section -->
         <div id="skins" class="section">
             <div class="item" onclick="buySkin('default')">
                 <div class="item-info">
@@ -325,34 +519,69 @@
     </div>
 
     <div id="notification" class="notification"></div>
-    <audio id="clickSound" src="kitten.mp3" preload="auto"></audio>
+    <audio id="clickSound" preload="auto">
+        <source src="kitten.mp3" type="audio/mpeg">
+    </audio>
 
     <script>
         let gameState = {
             milk: 0,
             perTap: 1,
             passive: 0,
-            purchases: { tap: 0, auto: 0, factory: 0 },
-            skin: 'default'
+            purchases: {
+                tap: 0, auto: 0, factory: 0, farm: 0, heaven: 0,
+                boost1: 0, boost2: 0, boost3: 0
+            },
+            skin: 'default',
+            multiplier: 1,
+            multiplierEndTime: 0
         };
 
         const upgrades = {
-            tap: { baseCost: 10, increase: 1.15 },
-            auto: { baseCost: 50, increase: 1.15 },
-            factory: { baseCost: 200, increase: 1.15 }
+            tap: { baseCost: 10, increase: 1.15, income: 0 },
+            auto: { baseCost: 50, increase: 1.15, income: 1 },
+            factory: { baseCost: 200, increase: 1.15, income: 5 },
+            farm: { baseCost: 500, increase: 1.15, income: 10 },
+            heaven: { baseCost: 1500, increase: 1.15, income: 25 },
+            boost1: { baseCost: 1000, increase: 1.15, income: 5 },
+            boost2: { baseCost: 3000, increase: 1.15, income: 15 },
+            boost3: { baseCost: 10000, increase: 1.15, income: 50 }
         };
 
-        const milkDisplay = document.getElementById('milkDisplay');
-        const tapDisplay = document.getElementById('tapDisplay');
-        const passiveDisplay = document.getElementById('passiveDisplay');
-        const catImage = document.getElementById('catImage');
-        const notification = document.getElementById('notification');
-        const clickSound = document.getElementById('clickSound');
+        const progressionMilestones = {
+            100: { id: 'bowl', icon: 'toq bowl.png', element: 'bowlItem', name: 'Лоток' },
+            500: { id: 'bed', icon: 'bed.png', element: 'bedItem', name: 'Лежанка' },
+            1500: { id: 'toy', icon: 'toy.png', element: 'toyItem', name: 'Игрушка' }
+        };
+
+        const DOM = {
+            milkDisplay: document.getElementById('milkDisplay'),
+            tapDisplay: document.getElementById('tapDisplay'),
+            passiveDisplay: document.getElementById('passiveDisplay'),
+            multiplierDisplay: document.getElementById('multiplierDisplay'),
+            multiplierStat: document.getElementById('multiplierStat'),
+            multiplierBadge: document.getElementById('multiplierBadge'),
+            catImage: document.getElementById('catImage'),
+            notification: document.getElementById('notification'),
+            clickSound: document.getElementById('clickSound'),
+            progressionFill: document.getElementById('progressionFill'),
+            progressionText: document.getElementById('progressionText'),
+            questContainer: document.getElementById('questContainer')
+        };
+
+        function playSound() {
+            try {
+                const audio = new Audio('data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==');
+                audio.play().catch(() => {});
+            } catch(e) {}
+        }
 
         function loadGame() {
             const saved = localStorage.getItem('milkTycoonState');
             if (saved) gameState = JSON.parse(saved);
             updateUI();
+            checkProgression();
+            scheduleNextQuest();
         }
 
         function saveGame() {
@@ -360,13 +589,26 @@
         }
 
         function updateUI() {
-            milkDisplay.textContent = formatNumber(gameState.milk);
-            tapDisplay.textContent = gameState.perTap;
-            passiveDisplay.textContent = gameState.passive;
+            DOM.milkDisplay.textContent = formatNumber(gameState.milk);
+            DOM.tapDisplay.textContent = gameState.perTap;
+            DOM.passiveDisplay.textContent = gameState.passive;
+            
+            if (gameState.multiplier > 1) {
+                DOM.multiplierStat.style.display = 'flex';
+                DOM.multiplierDisplay.textContent = gameState.multiplier + 'x';
+                DOM.multiplierBadge.style.display = 'block';
+                DOM.multiplierBadge.textContent = gameState.multiplier + 'x';
+            } else {
+                DOM.multiplierStat.style.display = 'none';
+                DOM.multiplierBadge.style.display = 'none';
+            }
+            
             updateCostDisplays();
+            updateProgressionBar();
         }
 
         function formatNumber(n) {
+            if (n >= 1e9) return (n / 1e9).toFixed(2) + 'B';
             if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
             if (n >= 1e3) return (n / 1e3).toFixed(1) + 'K';
             return n.toString();
@@ -379,9 +621,12 @@
         }
 
         function updateCostDisplays() {
-            ['tap', 'auto', 'factory'].forEach(type => {
+            Object.keys(upgrades).forEach(type => {
+                const costId = type + 'CostDisplay';
+                const element = document.getElementById(costId);
+                if (!element) return;
+                
                 const cost = getCurrentCost(type);
-                const element = document.getElementById(type + 'CostDisplay');
                 element.textContent = formatNumber(cost);
                 
                 if (gameState.milk >= cost) {
@@ -401,21 +646,27 @@
             document.getElementById(otherSection).classList.remove('active');
         }
 
-        catImage.addEventListener('click', function(e) {
-            gameState.milk += gameState.perTap;
-            clickSound.currentTime = 0;
-            clickSound.play().catch(() => {});
+        DOM.catImage.addEventListener('click', function(e) {
+            let gain = gameState.perTap * gameState.multiplier;
+            gameState.milk += gain;
             
-            catImage.style.transform = 'scale(0.95)';
-            setTimeout(() => { catImage.style.transform = ''; }, 100);
+            playSound();
+            try {
+                DOM.clickSound.currentTime = 0;
+                DOM.clickSound.play().catch(() => {});
+            } catch(e) {}
             
-            createFloatText('+' + gameState.perTap, e.clientX, e.clientY);
+            DOM.catImage.style.transform = 'scale(0.95)';
+            setTimeout(() => { DOM.catImage.style.transform = ''; }, 100);
+            
+            createFloatText('+' + formatNumber(gain), e.clientX, e.clientY);
             updateUI();
             saveGame();
         });
 
         function buyUpgrade(upgradeType) {
             const cost = getCurrentCost(upgradeType);
+            
             if (gameState.milk < cost) {
                 showNotification('Недостаточно молока! ❌', 'error');
                 return;
@@ -427,16 +678,15 @@
             if (upgradeType === 'tap') {
                 gameState.perTap++;
                 showNotification('Клик усилен! ⚡', 'success');
-            } else if (upgradeType === 'auto') {
-                gameState.passive++;
-                showNotification('Автоматизация активирована! 🤖', 'success');
             } else {
-                gameState.passive += 5;
-                showNotification('Фабрика запущена! 🏭', 'success');
+                const income = upgrades[upgradeType].income;
+                gameState.passive += income;
+                showNotification(`+${income} молока в сек! 🚀`, 'success');
             }
             
             updateUI();
             saveGame();
+            checkProgression();
         }
 
         function buySkin(skinType) {
@@ -456,9 +706,9 @@
         }
 
         function showNotification(message, type = '') {
-            notification.textContent = message;
-            notification.className = 'notification show ' + type;
-            setTimeout(() => notification.classList.remove('show'), 2000);
+            DOM.notification.textContent = message;
+            DOM.notification.className = 'notification show ' + type;
+            setTimeout(() => DOM.notification.classList.remove('show'), 2500);
         }
 
         function createFloatText(text, x, y) {
@@ -472,15 +722,123 @@
             setTimeout(() => floatEl.remove(), 1500);
         }
 
+        function updateProgressionBar() {
+            const nextMilestone = Object.keys(progressionMilestones).sort((a, b) => a - b).find(m => gameState.milk < m);
+            const target = nextMilestone ? parseInt(nextMilestone) : 1500;
+            const previous = Object.keys(progressionMilestones).sort((a, b) => b - a).find(m => gameState.milk >= m) || 0;
+            
+            const progress = (gameState.milk - previous) / (target - previous) * 100;
+            DOM.progressionFill.style.width = Math.min(progress, 100) + '%';
+            DOM.progressionText.textContent = `Прогресс: ${formatNumber(gameState.milk)} / ${formatNumber(target)}`;
+        }
+
+        function checkProgression() {
+            Object.entries(progressionMilestones).forEach(([milestone, data]) => {
+                if (gameState.milk >= milestone) {
+                    const element = document.getElementById(data.element);
+                    if (element && !element.classList.contains('unlocked')) {
+                        element.classList.add('unlocked');
+                        showNotification(`Разблокирован новый предмет: ${data.name}! 🎁`, 'success');
+                        saveGame();
+                    }
+                }
+            });
+        }
+
+        function activateRandomMultiplier() {
+            const multipliers = [2, 3, 5];
+            const randomMult = multipliers[Math.floor(Math.random() * multipliers.length)];
+            const duration = 30 + Math.random() * 30; // 30-60 секунд
+            
+            gameState.multiplier = randomMult;
+            gameState.multiplierEndTime = Date.now() + duration * 1000;
+            
+            showNotification(`🌟 Активирован множитель x${randomMult}! 🌟`, 'success');
+            updateUI();
+            
+            setTimeout(() => {
+                gameState.multiplier = 1;
+                gameState.multiplierEndTime = 0;
+                showNotification('Множитель истёк ⏰', 'error');
+                updateUI();
+                saveGame();
+            }, duration * 1000);
+        }
+
+        function spawnFallingStar() {
+            const star = document.createElement('div');
+            star.className = 'falling-star';
+            star.textContent = '⭐';
+            star.style.left = Math.random() * (window.innerWidth - 50) + 'px';
+            document.body.appendChild(star);
+            
+            let caught = false;
+            star.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (caught) return;
+                caught = true;
+                
+                gameState.milk += 500;
+                showNotification('Ты поймал звезду! +500 молока! 🌟', 'success');
+                createFloatText('+500', star.style.left, star.style.top);
+                updateUI();
+                saveGame();
+                star.remove();
+            });
+            
+            setTimeout(() => {
+                if (!caught) star.remove();
+            }, 8000);
+        }
+
+        function scheduleNextQuest() {
+            const nextQuestTime = 30 * 60 * 1000; // 30 минут
+            setTimeout(() => {
+                spawnFallingStar();
+                scheduleNextQuest();
+            }, nextQuestTime);
+        }
+
+        function renderQuestButton() {
+            const lastQuestTime = localStorage.getItem('lastQuestTime');
+            const now = Date.now();
+            const timeSinceQuest = lastQuestTime ? now - parseInt(lastQuestTime) : Infinity;
+            const timeUntilQuest = 30 * 60 * 1000;
+            
+            if (timeSinceQuest >= timeUntilQuest) {
+                DOM.questContainer.innerHTML = '<button class="btn quest-btn" onclick="manualSpawnStar()">⭐ Ловить звезду!</button>';
+            } else {
+                const minutesLeft = Math.ceil((timeUntilQuest - timeSinceQuest) / 60000);
+                DOM.questContainer.innerHTML = `<div class="section-title">⭐ Следующий квест через ${minutesLeft} мин</div>`;
+            }
+        }
+
+        function manualSpawnStar() {
+            spawnFallingStar();
+            localStorage.setItem('lastQuestTime', Date.now().toString());
+            renderQuestButton();
+        }
+
+        // Passive income loop
         setInterval(() => {
             if (gameState.passive > 0) {
-                gameState.milk += gameState.passive;
+                let gain = gameState.passive * gameState.multiplier;
+                gameState.milk += gain;
                 updateUI();
                 saveGame();
             }
+            
+            // Random multiplier chance (5% chance per tick)
+            if (Math.random() < 0.05 && gameState.multiplier === 1) {
+                activateRandomMultiplier();
+            }
         }, 1000);
 
+        // Update quest button every minute
+        setInterval(renderQuestButton, 60000);
+
         loadGame();
+        renderQuestButton();
     </script>
 </body>
 </html>
