@@ -123,22 +123,6 @@
             background-clip: text;
         }
 
-        .milk-value { 
-            background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .tap-value { 
-            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .passive-value { 
-            background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
         .progression-section {
             flex-shrink: 0;
         }
@@ -197,6 +181,14 @@
             font-weight: 800;
             margin-top: 10px;
             text-shadow: 0 2px 10px rgba(251, 191, 36, 0.3);
+        }
+
+        .rank-display {
+            font-size: 11px;
+            color: #a78bfa;
+            font-weight: 700;
+            margin-top: 6px;
+            opacity: 0.9;
         }
 
         .cat-scene {
@@ -310,6 +302,36 @@
             50% { transform: translateX(-50%) scale(1.1); }
         }
 
+        .combo-display {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 32px;
+            font-weight: 800;
+            color: #ff6b9d;
+            z-index: 15;
+            text-shadow: 0 0 20px rgba(255, 107, 157, 0.8),
+                         0 0 40px rgba(255, 0, 127, 0.6);
+            pointer-events: none;
+            animation: comboBounce 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            opacity: 0;
+        }
+
+        @keyframes comboBounce {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(1.5);
+            }
+        }
+
         .crit-indicator {
             position: fixed;
             font-size: 80px;
@@ -330,6 +352,27 @@
             100% {
                 opacity: 0;
                 transform: translate(50px, -150px) scale(1.5) rotateZ(20deg);
+            }
+        }
+
+        .particles {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particleFloat 1s ease-out forwards;
+            z-index: 1001;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--tx), var(--ty)) scale(0);
             }
         }
 
@@ -382,13 +425,20 @@
             animation: questPulse 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
         }
 
+        .btn.daily-btn {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            box-shadow: 0 8px 25px rgba(251, 191, 36, 0.4),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            animation: questPulse 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+        }
+
         @keyframes questPulse {
             0%, 100% { box-shadow: 0 8px 25px rgba(244, 114, 182, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2); }
             50% { box-shadow: 0 15px 40px rgba(244, 114, 182, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.3); }
         }
 
         #questContainer {
-            margin: 15px 0;
+            margin: 12px 0;
             flex-shrink: 0;
             min-height: 45px;
         }
@@ -594,25 +644,13 @@
             }
         }
 
-        .combo-counter {
+        .snack-item {
             position: fixed;
-            top: 30px;
-            right: 30px;
-            background: linear-gradient(135deg, rgba(244, 114, 182, 0.9) 0%, rgba(236, 72, 153, 0.8) 100%);
-            padding: 12px 20px;
-            border-radius: 16px;
-            font-weight: 800;
-            font-size: 16px;
-            border: 2px solid rgba(244, 114, 182, 0.6);
-            z-index: 500;
-            animation: comboPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 10px 30px rgba(244, 114, 182, 0.5),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-        }
-
-        @keyframes comboPop {
-            0% { transform: scale(0.3) rotateZ(-20deg); opacity: 0; }
-            100% { transform: scale(1) rotateZ(0deg); opacity: 1; }
+            font-size: 40px;
+            cursor: pointer;
+            animation: fallDown 8s linear forwards;
+            z-index: 2000;
+            filter: drop-shadow(0 0 20px rgba(244, 114, 182, 0.9));
         }
 
         .notification {
@@ -773,6 +811,101 @@
             }
         }
 
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: linear-gradient(180deg, #0f172a 0%, #1a1f3a 100%);
+            padding: 30px 25px;
+            border-radius: 25px;
+            text-align: center;
+            border: 1.5px solid rgba(100, 200, 255, 0.3);
+            max-width: 350px;
+            animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .modal-text {
+            font-size: 14px;
+            color: white;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            flex-direction: column;
+        }
+
+        .modal-btn {
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .modal-btn.primary {
+            background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+            color: white;
+            box-shadow: 0 8px 25px rgba(52, 211, 153, 0.3);
+        }
+
+        .modal-btn.primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(52, 211, 153, 0.5);
+        }
+
+        .modal-btn.secondary {
+            background: linear-gradient(135deg, rgba(100, 200, 255, 0.2) 0%, rgba(56, 189, 248, 0.1) 100%);
+            color: white;
+            border: 1px solid rgba(100, 200, 255, 0.3);
+        }
+
         @media (max-width: 480px) {
             .container {
                 border-radius: 30px;
@@ -812,19 +945,19 @@
         <div class="top">
             <div class="stat">
                 <div class="stat-label">🥛 Молоко</div>
-                <div class="stat-value milk-value" id="milkDisplay">0</div>
+                <div class="stat-value" id="milkDisplay">0</div>
             </div>
             <div class="stat">
                 <div class="stat-label">⚡ За клик</div>
-                <div class="stat-value tap-value" id="tapDisplay">1</div>
+                <div class="stat-value" id="tapDisplay">1</div>
             </div>
             <div class="stat">
                 <div class="stat-label">🔄 В сек</div>
-                <div class="stat-value passive-value" id="passiveDisplay">0</div>
+                <div class="stat-value" id="passiveDisplay">0</div>
             </div>
             <div class="stat" id="multiplierStat" style="display: none;">
                 <div class="stat-label">✨ x</div>
-                <div class="stat-value multiplier-value" id="multiplierDisplay">1</div>
+                <div class="stat-value" id="multiplierDisplay">1</div>
             </div>
         </div>
 
@@ -834,6 +967,7 @@
             </div>
             <div class="progression-text" id="progressionText">Прогресс: 0 / 500</div>
             <div class="level-display" id="levelDisplay">Уровень: 1</div>
+            <div class="rank-display" id="rankDisplay">Ранг: Бронза 🥉</div>
         </div>
 
         <div class="cat-scene">
@@ -843,16 +977,15 @@
             <img src="bowl.png" id="bowlItem" class="bowl-item" alt="Bowl">
             <img src="toy.png" id="toyItem" class="toy-item" alt="Toy">
             <div id="multiplierBadge" class="multiplier-badge" style="display: none;"></div>
+            <div id="comboDisplay" class="combo-display" style="display: none;"></div>
         </div>
 
-        <div id="comboCounter" style="display: none;"></div>
-
-        <div id="questContainer" style="margin: 12px 0;"></div>
+        <div id="questContainer" style="margin: 12px 0; flex-shrink: 0;"></div>
 
         <div class="button-group">
-            <button class="btn" onclick="toggleSection('shop')">🛒 Магазин</button>
-            <button class="btn" onclick="toggleSection('skins')">🎭 Скины</button>
-            <button class="btn" onclick="toggleSection('achievements')">🏆 Достижения</button>
+            <button class="btn" id="shopBtn" onclick="toggleSection('shop')">🛒 Магазин</button>
+            <button class="btn" id="skinsBtn" onclick="toggleSection('skins')">🎭 Скины</button>
+            <button class="btn" id="achievementsBtn" onclick="toggleSection('achievements')">🏆 Достижения</button>
         </div>
 
         <div class="scroll-content">
@@ -883,8 +1016,8 @@
                     <div class="item" onclick="buyUpgrade('auto')">
                         <div class="item-header">
                             <div class="item-info">
-                                <div class="item-name">🤖 Автоматизация</div>
-                                <div class="item-desc">Автоматизированное получение</div>
+                                <div class="item-name">🤖 Генератор</div>
+                                <div class="item-desc">Энергетическое устройство</div>
                             </div>
                             <div class="item-cost" id="autoCostDisplay">50</div>
                         </div>
@@ -896,7 +1029,7 @@
                     <div class="item" onclick="buyUpgrade('factory')">
                         <div class="item-header">
                             <div class="item-info">
-                                <div class="item-name">🏭 Фабрика молока</div>
+                                <div class="item-name">🏭 Фабрика</div>
                                 <div class="item-desc">Промышленное производство</div>
                             </div>
                             <div class="item-cost" id="factoryCostDisplay">200</div>
@@ -938,8 +1071,8 @@
                     <div class="item" onclick="buyUpgrade('boost1')">
                         <div class="item-header">
                             <div class="item-info">
-                                <div class="item-name">⚡ Супер буст</div>
-                                <div class="item-desc">Мощное ускорение</div>
+                                <div class="item-name">⚡ Генератор</div>
+                                <div class="item-desc">Ядерный реактор на молочной энергии</div>
                             </div>
                             <div class="item-cost" id="boost1CostDisplay">3000</div>
                         </div>
@@ -951,7 +1084,7 @@
                     <div class="item" onclick="buyUpgrade('boost2')">
                         <div class="item-header">
                             <div class="item-info">
-                                <div class="item-name">💥 Мега буст</div>
+                                <div class="item-name">💥 Реактор</div>
                                 <div class="item-desc">Экстремальное ускорение</div>
                             </div>
                             <div class="item-cost" id="boost2CostDisplay">10000</div>
@@ -964,8 +1097,8 @@
                     <div class="item" onclick="buyUpgrade('boost3')">
                         <div class="item-header">
                             <div class="item-info">
-                                <div class="item-name">🌟 Эпик буст</div>
-                                <div class="item-desc">Легендарное ускорение</div>
+                                <div class="item-name">🌟 Антиматерия</div>
+                                <div class="item-desc">Легендарное устройство космоса</div>
                             </div>
                             <div class="item-cost" id="boost3CostDisplay">50000</div>
                         </div>
@@ -982,7 +1115,7 @@
                     <div class="item-header">
                         <div class="item-info">
                             <div class="item-name">🐱 Обычный кот</div>
-                            <div class="item-desc">10% крит</div>
+                            <div class="item-desc">10% шанс крита</div>
                         </div>
                         <div class="item-cost">БЕСПЛАТНО</div>
                     </div>
@@ -991,7 +1124,7 @@
                     <div class="item-header">
                         <div class="item-info">
                             <div class="item-name">✨ Золотой кот</div>
-                            <div class="item-desc">25% крит урона</div>
+                            <div class="item-desc">25% шанс крита</div>
                         </div>
                         <div class="item-cost">5000</div>
                     </div>
@@ -1000,7 +1133,7 @@
                     <div class="item-header">
                         <div class="item-info">
                             <div class="item-name">😈 Дьявольский кот</div>
-                            <div class="item-desc">35% крит урона</div>
+                            <div class="item-desc">35% шанс крита</div>
                         </div>
                         <div class="item-cost">15000</div>
                     </div>
@@ -1027,6 +1160,7 @@
                     </div>
                 </div>
 
+                <div class="section-title">🏆 Достижения</div>
                 <div class="achievement" id="ach1">
                     <div>🐱 Первый клик - Нажми на кота 1 раз</div>
                 </div>
@@ -1037,7 +1171,7 @@
                     <div>⚡ Клик-машина - Нажми на кота 100 раз</div>
                 </div>
                 <div class="achievement locked" id="ach4">
-                    <div>💰 Миллионер - Набери 1,000,000 молока</div>
+                    <div>💰 Миллионер - На��ери 1,000,000 молока</div>
                 </div>
                 <div class="achievement locked" id="ach5">
                     <div>🔥 Критический урон - Получи 10 крит ударов</div>
@@ -1051,6 +1185,40 @@
                 <div class="achievement locked" id="ach8">
                     <div>⚔️ Берсерк - Получи 50 крит ударов подряд</div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Risk Modal -->
+    <div id="riskModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">⚠️ Рискуешь?</div>
+            <div class="modal-text">50% шанс получить +100K молока или потерять -30K!</div>
+            <div class="modal-buttons">
+                <button class="modal-btn primary" onclick="takeRisk(true)">🎲 Да, рискую!</button>
+                <button class="modal-btn secondary" onclick="takeRisk(false)">❌ Отказываюсь</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Daily Mission Modal -->
+    <div id="dailyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">📋 Дневная миссия</div>
+            <div class="modal-text" id="dailyMissionText"></div>
+            <div class="modal-buttons">
+                <button class="modal-btn primary" onclick="closeDailyModal()">Принято!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gift Modal -->
+    <div id="giftModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">🎁 Подарок!</div>
+            <div class="modal-text" id="giftText"></div>
+            <div class="modal-buttons">
+                <button class="modal-btn primary" onclick="closeGiftModal()">Спасибо!</button>
             </div>
         </div>
     </div>
@@ -1084,7 +1252,11 @@
                 maxCritsInRow: 0,
                 achievements: {},
                 skinsUnlocked: {}
-            }
+            },
+            lastRiskTime: 0,
+            lastDailyTime: 0,
+            lastGiftTime: 0,
+            playTime: 0
         };
 
         const upgrades = {
@@ -1104,6 +1276,12 @@
             15: { type: 'toy', name: 'Игрушка' }
         };
 
+        const dailyMissions = [
+            { text: '📊 Собери 50K молока', target: 50000 },
+            { text: '⚡ Получи 20 крит ударов', target: 20 },
+            { text: '🌟 Поймай 3 звезды', target: 3 }
+        ];
+
         const DOM = {
             milkDisplay: document.getElementById('milkDisplay'),
             tapDisplay: document.getElementById('tapDisplay'),
@@ -1117,12 +1295,23 @@
             progressionFill: document.getElementById('progressionFill'),
             progressionText: document.getElementById('progressionText'),
             levelDisplay: document.getElementById('levelDisplay'),
+            rankDisplay: document.getElementById('rankDisplay'),
             questContainer: document.getElementById('questContainer'),
             bedItem: document.getElementById('bedItem'),
             bowlItem: document.getElementById('bowlItem'),
             toyItem: document.getElementById('toyItem'),
-            comboCounter: document.getElementById('comboCounter')
+            comboDisplay: document.getElementById('comboDisplay'),
+            riskModal: document.getElementById('riskModal'),
+            dailyModal: document.getElementById('dailyModal'),
+            giftModal: document.getElementById('giftModal')
         };
+
+        function getRankInfo(milk) {
+            if (milk < 100000) return { name: 'Бронза', emoji: '🥉' };
+            if (milk < 1000000) return { name: 'Серебро', emoji: '🥈' };
+            if (milk < 10000000) return { name: 'Золото', emoji: '🥇' };
+            return { name: 'Алмаз', emoji: '💎' };
+        }
 
         function getCritChance() {
             let chance = 10;
@@ -1160,7 +1349,7 @@
             updateUI();
             updateSkinDisplay();
             checkProgression();
-            scheduleNextQuest();
+            scheduleEvents();
         }
 
         function saveGame() {
@@ -1172,6 +1361,9 @@
             DOM.tapDisplay.textContent = gameState.perTap;
             DOM.passiveDisplay.textContent = gameState.passive;
             DOM.levelDisplay.textContent = `Уровень: ${gameState.level}`;
+            
+            const rankInfo = getRankInfo(gameState.milk);
+            DOM.rankDisplay.textContent = `Ранг: ${rankInfo.name} ${rankInfo.emoji}`;
             
             if (gameState.multiplier > 1) {
                 DOM.multiplierStat.style.display = 'flex';
@@ -1284,6 +1476,7 @@
                 
                 createCritEffect(e.clientX, e.clientY);
                 showCritIndicator(e.clientX, e.clientY);
+                createParticles(e.clientX, e.clientY);
             } else {
                 gameState.stats.critsInRow = 0;
             }
@@ -1340,11 +1533,33 @@
             setTimeout(() => indicator.remove(), 1000);
         }
 
+        function createParticles(x, y) {
+            for (let i = 0; i < 8; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particles';
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                particle.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                
+                const angle = (i / 8) * Math.PI * 2;
+                const distance = 80;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+                
+                particle.style.setProperty('--tx', tx + 'px');
+                particle.style.setProperty('--ty', ty + 'px');
+                
+                document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 1000);
+            }
+        }
+
         function showCombo(combo) {
-            DOM.comboCounter.textContent = combo + ' комбо! 🔥';
-            DOM.comboCounter.style.display = 'block';
+            DOM.comboDisplay.textContent = combo + ' 🔥';
+            DOM.comboDisplay.style.display = 'block';
+            DOM.comboDisplay.style.opacity = '1';
             setTimeout(() => {
-                DOM.comboCounter.style.display = 'none';
+                DOM.comboDisplay.style.display = 'none';
             }, 500);
         }
 
@@ -1552,39 +1767,124 @@
             }, 8000);
         }
 
-        function scheduleNextQuest() {
-            const getRandomDelay = () => {
-                // Рандомная задержка с средним значением 30 минут
-                return Math.random() * 60 * 60 * 1000; // 0-60 минут
-            };
+        function spawnSnack() {
+            const snack = document.createElement('div');
+            snack.className = 'snack-item';
+            snack.textContent = '🍖';
+            snack.style.left = Math.random() * (window.innerWidth - 50) + 'px';
+            document.body.appendChild(snack);
+            
+            let caught = false;
+            snack.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (caught) return;
+                caught = true;
+                
+                gameState.multiplier = 3;
+                setTimeout(() => {
+                    gameState.multiplier = 1;
+                    updateUI();
+                    saveGame();
+                }, 10000);
+                
+                showNotification('Лакомство! +50% доход на 10 сек! 🍖', 'success');
+                updateUI();
+                snack.remove();
+            });
             
             setTimeout(() => {
-                // 50% шанс что звезда появится
-                if (Math.random() < 0.5) {
-                    spawnFallingStar();
-                }
-                scheduleNextQuest();
-            }, getRandomDelay());
+                if (!caught) snack.remove();
+            }, 8000);
         }
 
-        function renderQuestButton() {
-            const lastQuestTime = localStorage.getItem('lastQuestTime');
-            const now = Date.now();
-            const timeSinceQuest = lastQuestTime ? now - parseInt(lastQuestTime) : Infinity;
-            const timeUntilQuest = 30 * 60 * 1000;
-            
-            if (timeSinceQuest >= timeUntilQuest) {
-                DOM.questContainer.innerHTML = '<button class="btn quest-btn" onclick="manualSpawnStar()">⭐ Ловить звезду!</button>';
-            } else {
-                const minutesLeft = Math.ceil((timeUntilQuest - timeSinceQuest) / 60000);
-                DOM.questContainer.innerHTML = `<div class="section-title">⭐ Звезда появится через ~${minutesLeft} мин</div>`;
+        function scheduleEvents() {
+            scheduleQuest();
+            scheduleSnack();
+            scheduleRisk();
+            scheduleDaily();
+            scheduleGift();
+        }
+
+        function scheduleQuest() {
+            const delay = Math.random() * 60 * 60 * 1000;
+            setTimeout(() => {
+                if (Math.random() < 0.5) spawnFallingStar();
+                scheduleQuest();
+            }, delay);
+        }
+
+        function scheduleSnack() {
+            const delay = 5 * 60 * 1000 + Math.random() * 5 * 60 * 1000;
+            setTimeout(() => {
+                if (Math.random() < 0.3) spawnSnack();
+                scheduleSnack();
+            }, delay);
+        }
+
+        function scheduleRisk() {
+            const delay = 15 * 60 * 1000;
+            setTimeout(() => {
+                DOM.riskModal.classList.add('show');
+                scheduleRisk();
+            }, delay);
+        }
+
+        function scheduleDaily() {
+            const delay = 24 * 60 * 60 * 1000;
+            setTimeout(() => {
+                showDailyMission();
+                scheduleDaily();
+            }, delay);
+        }
+
+        function scheduleGift() {
+            const delay = 60 * 60 * 1000;
+            setTimeout(() => {
+                showGift();
+                scheduleGift();
+            }, delay);
+        }
+
+        function takeRisk(accept) {
+            DOM.riskModal.classList.remove('show');
+            if (accept) {
+                if (Math.random() < 0.5) {
+                    gameState.milk += 100000;
+                    showNotification('🎉 Повезло! +100K молока!', 'success');
+                } else {
+                    gameState.milk = Math.max(0, gameState.milk - 30000);
+                    showNotification('😢 Не повезло! -30K молока!', 'error');
+                }
+                updateUI();
+                saveGame();
             }
         }
 
-        function manualSpawnStar() {
-            spawnFallingStar();
-            localStorage.setItem('lastQuestTime', Date.now().toString());
-            renderQuestButton();
+        function showDailyMission() {
+            const mission = dailyMissions[Math.floor(Math.random() * dailyMissions.length)];
+            document.getElementById('dailyMissionText').textContent = mission.text + '\nНаграда: 5000 молока!';
+            DOM.dailyModal.classList.add('show');
+        }
+
+        function closeDailyModal() {
+            DOM.dailyModal.classList.remove('show');
+            gameState.milk += 5000;
+            showNotification('✅ Награда получена!', 'success');
+            updateUI();
+            saveGame();
+        }
+
+        function showGift() {
+            const amount = Math.floor(1000 + Math.random() * 9000);
+            document.getElementById('giftText').textContent = `Вот тебе подарок!\n+${formatNumber(amount)} молока`;
+            DOM.giftModal.classList.add('show');
+            gameState.milk += amount;
+        }
+
+        function closeGiftModal() {
+            DOM.giftModal.classList.remove('show');
+            updateUI();
+            saveGame();
         }
 
         setInterval(() => {
@@ -1600,12 +1900,11 @@
             if (Math.random() < 0.05 && gameState.multiplier === 1) {
                 activateRandomMultiplier();
             }
+            
+            gameState.stats.playTime++;
         }, 1000);
 
-        setInterval(renderQuestButton, 60000);
-
         loadGame();
-        renderQuestButton();
     </script>
 </body>
 </html>
