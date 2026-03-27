@@ -7,28 +7,19 @@
 </head>
 <body>
     <h1>Welcome to Milk Tycoon!</h1>
-    <p>Restore the original game experience!</p>
-    <h2>Shop Information</h2>
-    <ul>
-        <li>
-            <h3>Milk Upgrades</h3>
-            <p>Milk per Click: 1</p>
-            <p>Milk per Second: 0</p>
-        </li>
-        <li>
-            <h3>Kitten Upgrades</h3>
-            <p>Milk per Click: 5</p>
-            <p>Milk per Second: 2</p>
-        </li>
-        <li>
-            <h3>Advanced Upgrades</h3>
-            <p>Milk per Click: 10</p>
-            <p>Milk per Second: 5</p>
-        </li>
-    </ul>
-    <audio controls>
-        <source src="kitten.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
-    </audio>
+    <div id="shop">
+        <h2>Shop</h2>
+        <p>Milk per click: <span id="milkPerClick">1</span></p>
+        <p>Milk per second: <span id="milkPerSecond">0</span></p>
+        <button onclick="buyUpgrade()">Buy Upgrade</button>
+    </div>
+    <audio id="kittenSound" src="kitten.mp3" preload="auto"></audio>
+    <script>
+        function buyUpgrade() {
+            // Logic for buying upgrades
+            alert('Upgrade purchased!');
+            document.getElementById('kittenSound').play(); // Play sound on upgrade
+        }
+    </script>
 </body>
 </html>
