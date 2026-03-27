@@ -1,12 +1,27 @@
-<!-- Updated to add per-second and per-click information -->
-<div class="shop-item">
-    <h2>Item Name</h2>
-    <div class="buy-info">
-        <p>Cost: 10 coins</p>
-        <p>Per-Click: +1 Coin</p>
-        <p>Per-Second: +0.5 Coin</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop</title>
+</head>
+<body>
+    <h1>Welcome to the Shop!</h1>
+    <div id="shop-items">
+        <div class="item">
+            <h2>Upgrade 1</h2>
+            <p>Milk per second: 10</p>
+            <p>Milk per click: 5</p>
+        </div>
+        <div class="item">
+            <h2>Upgrade 2</h2>
+            <p>Milk per second: 15</p>
+            <p>Milk per click: 8</p>
+        </div>
     </div>
-    <audio src="kitten.mp3" autoplay loop></audio>
-</div>
-
-<!-- Additional shop items would go here -->
+    <audio controls>
+        <source src="kitten.mp3" type="audio/mpeg">
+        Your browser does not support the audio tag.
+    </audio>
+</body>
+</html>
