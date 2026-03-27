@@ -89,22 +89,40 @@
         .passive-value { color: #34d399; }
         .multiplier-value { color: #f472b6; }
 
-        .cat-container {
+        .cat-scene {
             position: relative;
-            margin: 20px 0;
+            margin: 20px auto;
+            width: 250px;
+            height: 200px;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
+        }
+
+        .bed-item {
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: auto;
+            opacity: 0;
+            transition: opacity 0.5s;
+            z-index: 1;
+        }
+
+        .bed-item.visible {
+            opacity: 1;
         }
 
         .cat {
-            width: 180px;
+            width: 150px;
             cursor: pointer;
             transition: transform 0.1s, filter 0.2s;
             filter: drop-shadow(0 0 20px rgba(100, 200, 255, 0.3));
             user-select: none;
+            z-index: 5;
+            position: relative;
         }
 
         .cat:active {
@@ -115,27 +133,63 @@
             filter: drop-shadow(0 0 35px rgba(100, 200, 255, 0.7));
         }
 
-        .cat-item {
-            width: 70px;
-            height: 70px;
-            opacity: 0.3;
-            transition: all 0.3s;
-            filter: grayscale(100%);
+        .bowl-item {
+            position: absolute;
+            right: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 80px;
+            height: auto;
+            opacity: 0;
+            transition: opacity 0.5s;
+            z-index: 2;
         }
 
-        .cat-item.unlocked {
+        .bowl-item.visible {
             opacity: 1;
-            filter: grayscale(0%);
         }
 
-        .cat-item:hover.unlocked {
-            transform: scale(1.1);
+        .toy-item {
+            position: absolute;
+            left: 50%;
+            bottom: 10px;
+            transform: translateX(-50%);
+            width: 70px;
+            height: auto;
+            opacity: 0;
+            transition: opacity 0.5s;
+            z-index: 3;
+        }
+
+        .toy-item.visible {
+            opacity: 1;
+        }
+
+        .eggs-chain {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 20px;
+            opacity: 0;
+            transition: opacity 0.5s;
+            z-index: 4;
+            animation: eggSway 2s ease-in-out infinite;
+        }
+
+        .eggs-chain.visible {
+            opacity: 1;
+        }
+
+        @keyframes eggSway {
+            0%, 100% { transform: translateX(-50%) rotateZ(-2deg); }
+            50% { transform: translateX(-50%) rotateZ(2deg); }
         }
 
         .multiplier-badge {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: -20px;
+            right: 20px;
             background: rgba(244, 114, 182, 0.8);
             padding: 8px 12px;
             border-radius: 12px;
@@ -143,6 +197,7 @@
             font-size: 14px;
             border: 1px solid rgba(244, 114, 182, 0.5);
             animation: pulse 1s infinite;
+            z-index: 10;
         }
 
         @keyframes pulse {
@@ -170,6 +225,13 @@
             font-size: 11px;
             opacity: 0.7;
             margin-top: 5px;
+        }
+
+        .level-display {
+            font-size: 13px;
+            color: #fbbf24;
+            font-weight: 700;
+            margin-top: 8px;
         }
 
         .button-group {
@@ -294,6 +356,16 @@
             color: #fca5a5;
         }
 
+        .skin-item {
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .skin-item.selected {
+            border-color: #fbbf24;
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.2) 0%, rgba(251, 191, 36, 0.1) 100%) !important;
+        }
+
         .float-text {
             position: fixed;
             font-weight: bold;
@@ -403,19 +475,17 @@
         <div class="progression-bar">
             <div class="progression-fill" id="progressionFill" style="width: 0%"></div>
         </div>
-        <div class="progression-text" id="progressionText">Прогресс: 0 / 100</div>
+        <div class="progression-text" id="progressionText">Прогресс: 0 / 500</div>
+        <div class="level-display" id="levelDisplay">Уровень: 1</div>
 
-        <!-- Cat with Items -->
-        <div class="cat-container">
-            <div style="flex: 1; display: flex; justify-content: center; align-items: center; position: relative;">
-                <img src="cat.png" id="catImage" class="cat" alt="Click the cat!">
-                <div id="multiplierBadge" class="multiplier-badge" style="display: none;"></div>
-            </div>
-            <div style="flex: 1; display: flex; justify-content: center; gap: 10px;">
-                <img src="toq bowl.png" id="bowlItem" class="cat-item" title="Лоток" alt="Bowl">
-                <img src="bed.png" id="bedItem" class="cat-item" title="Лежанка" alt="Bed">
-                <img src="toy.png" id="toyItem" class="cat-item" title="Игрушка" alt="Toy">
-            </div>
+        <!-- Cat Scene -->
+        <div class="cat-scene">
+            <img src="bed.png" id="bedItem" class="bed-item" alt="Bed">
+            <img src="bowl.png" id="bowlItem" class="bowl-item" alt="Bowl">
+            <img src="toy.png" id="toyItem" class="toy-item" alt="Toy">
+            <div id="eggsChain" class="eggs-chain"></div>
+            <img src="cat.png" id="catImage" class="cat" alt="Click the cat!">
+            <div id="multiplierBadge" class="multiplier-badge" style="display: none;"></div>
         </div>
 
         <!-- Quest Button -->
@@ -494,21 +564,21 @@
 
         <!-- Skins Section -->
         <div id="skins" class="section">
-            <div class="item" onclick="buySkin('default')">
+            <div class="item skin-item" id="skinDefault" onclick="buySkin('default')">
                 <div class="item-info">
                     <div class="item-name">🐱 Обычный кот</div>
                     <div class="item-desc">Стандартный питомец</div>
                 </div>
                 <div class="item-cost">БЕСПЛАТНО</div>
             </div>
-            <div class="item" onclick="buySkin('gold')">
+            <div class="item skin-item" id="skinGold" onclick="buySkin('gold')">
                 <div class="item-info">
                     <div class="item-name">✨ Золотой кот</div>
                     <div class="item-desc">Блестящий помощник</div>
                 </div>
                 <div class="item-cost">1000</div>
             </div>
-            <div class="item" onclick="buySkin('devil')">
+            <div class="item skin-item" id="skinDevil" onclick="buySkin('devil')">
                 <div class="item-info">
                     <div class="item-name">😈 Дьявольский кот</div>
                     <div class="item-desc">Опасный питомец</div>
@@ -520,7 +590,7 @@
 
     <div id="notification" class="notification"></div>
     <audio id="clickSound" preload="auto">
-        <source src="kitten.mp3" type="audio/mpeg">
+        <source src="meow.mp3" type="audio/mpeg">
     </audio>
 
     <script>
@@ -528,6 +598,7 @@
             milk: 0,
             perTap: 1,
             passive: 0,
+            level: 1,
             purchases: {
                 tap: 0, auto: 0, factory: 0, farm: 0, heaven: 0,
                 boost1: 0, boost2: 0, boost3: 0
@@ -549,9 +620,10 @@
         };
 
         const progressionMilestones = {
-            100: { id: 'bowl', icon: 'toq bowl.png', element: 'bowlItem', name: 'Лоток' },
-            500: { id: 'bed', icon: 'bed.png', element: 'bedItem', name: 'Лежанка' },
-            1500: { id: 'toy', icon: 'toy.png', element: 'toyItem', name: 'Игрушка' }
+            5: { type: 'bed', name: 'Лежанка' },
+            10: { type: 'bowl', name: 'Лоток' },
+            15: { type: 'toy', name: 'Игрушка' },
+            20: { type: 'eggs', name: 'Золотые яички' }
         };
 
         const DOM = {
@@ -566,13 +638,18 @@
             clickSound: document.getElementById('clickSound'),
             progressionFill: document.getElementById('progressionFill'),
             progressionText: document.getElementById('progressionText'),
-            questContainer: document.getElementById('questContainer')
+            levelDisplay: document.getElementById('levelDisplay'),
+            questContainer: document.getElementById('questContainer'),
+            bedItem: document.getElementById('bedItem'),
+            bowlItem: document.getElementById('bowlItem'),
+            toyItem: document.getElementById('toyItem'),
+            eggsChain: document.getElementById('eggsChain')
         };
 
         function playSound() {
             try {
-                const audio = new Audio('data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==');
-                audio.play().catch(() => {});
+                DOM.clickSound.currentTime = 0;
+                DOM.clickSound.play().catch(() => {});
             } catch(e) {}
         }
 
@@ -580,6 +657,7 @@
             const saved = localStorage.getItem('milkTycoonState');
             if (saved) gameState = JSON.parse(saved);
             updateUI();
+            updateSkinDisplay();
             checkProgression();
             scheduleNextQuest();
         }
@@ -592,6 +670,7 @@
             DOM.milkDisplay.textContent = formatNumber(gameState.milk);
             DOM.tapDisplay.textContent = gameState.perTap;
             DOM.passiveDisplay.textContent = gameState.passive;
+            DOM.levelDisplay.textContent = `Уровень: ${gameState.level}`;
             
             if (gameState.multiplier > 1) {
                 DOM.multiplierStat.style.display = 'flex';
@@ -652,10 +731,6 @@
             gameState.milk += gain;
             
             playSound();
-            try {
-                DOM.clickSound.currentTime = 0;
-                DOM.clickSound.play().catch(() => {});
-            } catch(e) {}
             
             DOM.catImage.style.transform = 'scale(0.95)';
             setTimeout(() => { DOM.catImage.style.transform = ''; }, 100);
@@ -663,13 +738,14 @@
             createFloatText('+' + formatNumber(gain), e.clientX, e.clientY);
             updateUI();
             saveGame();
+            checkProgression();
         });
 
         function buyUpgrade(upgradeType) {
             const cost = getCurrentCost(upgradeType);
             
             if (gameState.milk < cost) {
-                showNotification('��едостаточно молока! ❌', 'error');
+                showNotification('Недостаточно молока! ❌', 'error');
                 return;
             }
             
@@ -701,9 +777,32 @@
             
             gameState.milk -= cost;
             gameState.skin = skinType;
-            showNotification('Получен новый скин! ✨', 'success');
+            
+            const skinNames = {
+                default: 'обычный кот',
+                gold: 'золотой кот',
+                devil: 'дьявольский кот'
+            };
+            
+            showNotification(`Выбран ${skinNames[skinType]}! ✨`, 'success');
+            updateSkinDisplay();
             updateUI();
             saveGame();
+        }
+
+        function updateSkinDisplay() {
+            const skinMap = {
+                default: 'cat.png',
+                gold: 'gold_cat.png',
+                devil: 'devil_cat.png'
+            };
+            
+            DOM.catImage.src = skinMap[gameState.skin];
+            
+            document.getElementById('skinDefault').classList.remove('selected');
+            document.getElementById('skinGold').classList.remove('selected');
+            document.getElementById('skinDevil').classList.remove('selected');
+            document.getElementById('skin' + gameState.skin.charAt(0).toUpperCase() + gameState.skin.slice(1)).classList.add('selected');
         }
 
         function showNotification(message, type = '') {
@@ -724,26 +823,47 @@
         }
 
         function updateProgressionBar() {
-            const nextMilestone = Object.keys(progressionMilestones).sort((a, b) => a - b).find(m => gameState.milk < m);
-            const target = nextMilestone ? parseInt(nextMilestone) : 1500;
-            const previous = Object.keys(progressionMilestones).sort((a, b) => b - a).find(m => gameState.milk >= m) || 0;
+            const levelThreshold = 500;
+            const progressInLevel = gameState.milk % levelThreshold;
+            const progress = (progressInLevel / levelThreshold) * 100;
             
-            const progress = (gameState.milk - previous) / (target - previous) * 100;
-            DOM.progressionFill.style.width = Math.min(progress, 100) + '%';
-            DOM.progressionText.textContent = `Прогресс: ${formatNumber(gameState.milk)} / ${formatNumber(target)}`;
+            DOM.progressionFill.style.width = progress + '%';
+            DOM.progressionText.textContent = `Прогресс: ${formatNumber(gameState.milk)} (Уровень ${gameState.level})`;
         }
 
         function checkProgression() {
-            Object.entries(progressionMilestones).forEach(([milestone, data]) => {
-                if (gameState.milk >= milestone) {
-                    const element = document.getElementById(data.element);
-                    if (element && !element.classList.contains('unlocked')) {
-                        element.classList.add('unlocked');
-                        showNotification(`Разблокирован новый предмет: ${data.name}! 🎁`, 'success');
-                        saveGame();
+            const milestones = Object.keys(progressionMilestones).map(Number).sort((a, b) => a - b);
+            
+            milestones.forEach(milestone => {
+                if (gameState.level >= milestone && gameState.level < milestone + 1) {
+                    const data = progressionMilestones[milestone];
+                    
+                    if (data.type === 'bed') {
+                        DOM.bedItem.classList.add('visible');
+                    } else if (data.type === 'bowl') {
+                        DOM.bowlItem.classList.add('visible');
+                    } else if (data.type === 'toy') {
+                        DOM.toyItem.classList.add('visible');
+                    } else if (data.type === 'eggs') {
+                        DOM.eggsChain.classList.add('visible');
+                        DOM.eggsChain.textContent = '🥚🥚🥚';
                     }
                 }
             });
+            
+            const newLevel = Math.floor(gameState.milk / 500) + 1;
+            if (newLevel > gameState.level) {
+                gameState.level = newLevel;
+                showNotification(`🎉 Достигнут уровень ${gameState.level}! 🎉`, 'success');
+                
+                const milestone = progressionMilestones[gameState.level];
+                if (milestone) {
+                    showNotification(`Разблокирован: ${milestone.name}! 🎁`, 'success');
+                    checkProgression();
+                }
+                
+                saveGame();
+            }
         }
 
         function activateRandomMultiplier() {
@@ -783,6 +903,7 @@
                 showNotification('Ты поймал звезду! +500 молока! 🌟', 'success');
                 createFloatText('+500', star.style.left, star.style.top);
                 updateUI();
+                checkProgression();
                 saveGame();
                 star.remove();
             });
@@ -825,6 +946,7 @@
                 let gain = Math.floor(gameState.passive * gameState.multiplier);
                 gameState.milk += gain;
                 updateUI();
+                checkProgression();
                 saveGame();
             }
             
