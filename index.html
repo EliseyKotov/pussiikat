@@ -376,16 +376,10 @@
             }
         }
 
-        .scroll-content {
-            flex: 1;
-            overflow-y: auto;
-            min-height: 0;
-        }
-
         .button-group {
             display: flex;
             gap: 12px;
-            margin: 18px 0;
+            margin: 10px 0 12px 0;
             flex-wrap: wrap;
             flex-shrink: 0;
         }
@@ -425,20 +419,13 @@
             animation: questPulse 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
         }
 
-        .btn.daily-btn {
-            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-            box-shadow: 0 8px 25px rgba(251, 191, 36, 0.4),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-            animation: questPulse 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
-        }
-
         @keyframes questPulse {
             0%, 100% { box-shadow: 0 8px 25px rgba(244, 114, 182, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2); }
             50% { box-shadow: 0 15px 40px rgba(244, 114, 182, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.3); }
         }
 
         #questContainer {
-            margin: 12px 0;
+            margin: 8px 0;
             flex-shrink: 0;
             min-height: 45px;
         }
@@ -955,10 +942,6 @@
                 <div class="stat-label">🔄 В сек</div>
                 <div class="stat-value" id="passiveDisplay">0</div>
             </div>
-            <div class="stat" id="multiplierStat" style="display: none;">
-                <div class="stat-label">✨ x</div>
-                <div class="stat-value" id="multiplierDisplay">1</div>
-            </div>
         </div>
 
         <div class="progression-section">
@@ -980,12 +963,12 @@
             <div id="comboDisplay" class="combo-display" style="display: none;"></div>
         </div>
 
-        <div id="questContainer" style="margin: 12px 0; flex-shrink: 0;"></div>
+        <div id="questContainer" style="margin: 8px 0; flex-shrink: 0;"></div>
 
         <div class="button-group">
-            <button class="btn" id="shopBtn" onclick="toggleSection('shop')">🛒 Магазин</button>
-            <button class="btn" id="skinsBtn" onclick="toggleSection('skins')">🎭 Скины</button>
-            <button class="btn" id="achievementsBtn" onclick="toggleSection('achievements')">🏆 Достижения</button>
+            <button class="btn" id="shopBtn" onclick="showShop()">🛒 Магазин</button>
+            <button class="btn" id="skinsBtn" onclick="showSkins()">🎭 Скины</button>
+            <button class="btn" id="achievementsBtn" onclick="showAchievements()">🏆 Достижения</button>
         </div>
 
         <div class="scroll-content">
@@ -1165,25 +1148,31 @@
                     <div>🐱 Первый клик - Нажми на кота 1 раз</div>
                 </div>
                 <div class="achievement locked" id="ach2">
-                    <div>🚀 Начинающий - Набери 1000 молока</div>
+                    <div>🚀 Начинающий - Набери 10K молока</div>
                 </div>
                 <div class="achievement locked" id="ach3">
-                    <div>⚡ Клик-машина - Нажми на кота 100 раз</div>
+                    <div>⚡ Клик-машина - Нажми на кота 250 раз</div>
                 </div>
                 <div class="achievement locked" id="ach4">
-                    <div>💰 Миллионер - На��ери 1,000,000 молока</div>
+                    <div>💰 Богач - Набери 1 млн молока</div>
                 </div>
                 <div class="achievement locked" id="ach5">
-                    <div>🔥 Критический урон - Получи 10 крит ударов</div>
+                    <div>🔥 Боец - Получи 50 крит ударов</div>
                 </div>
                 <div class="achievement locked" id="ach6">
                     <div>💎 Коллекционер - Разблокируй все скины</div>
                 </div>
                 <div class="achievement locked" id="ach7">
-                    <div>🌟 Звездочет - Поймай 10 звёзд</div>
+                    <div>🌟 Звездочет - Поймай 20 звёзд</div>
                 </div>
                 <div class="achievement locked" id="ach8">
-                    <div>⚔️ Берсерк - Получи 50 крит ударов подряд</div>
+                    <div>⚔️ Легенда - Набери 100 млн молока</div>
+                </div>
+                <div class="achievement locked" id="ach9">
+                    <div>🎯 Стрелок - Получи 200 крит ударов подряд</div>
+                </div>
+                <div class="achievement locked" id="ach10">
+                    <div>👑 Король - Достигни уровня 50</div>
                 </div>
             </div>
         </div>
@@ -1255,8 +1244,7 @@
             },
             lastRiskTime: 0,
             lastDailyTime: 0,
-            lastGiftTime: 0,
-            playTime: 0
+            lastGiftTime: 0
         };
 
         const upgrades = {
@@ -1286,9 +1274,6 @@
             milkDisplay: document.getElementById('milkDisplay'),
             tapDisplay: document.getElementById('tapDisplay'),
             passiveDisplay: document.getElementById('passiveDisplay'),
-            multiplierDisplay: document.getElementById('multiplierDisplay'),
-            multiplierStat: document.getElementById('multiplierStat'),
-            multiplierBadge: document.getElementById('multiplierBadge'),
             catImage: document.getElementById('catImage'),
             notification: document.getElementById('notification'),
             clickSound: document.getElementById('clickSound'),
@@ -1301,6 +1286,7 @@
             bowlItem: document.getElementById('bowlItem'),
             toyItem: document.getElementById('toyItem'),
             comboDisplay: document.getElementById('comboDisplay'),
+            multiplierBadge: document.getElementById('multiplierBadge'),
             riskModal: document.getElementById('riskModal'),
             dailyModal: document.getElementById('dailyModal'),
             giftModal: document.getElementById('giftModal')
@@ -1325,7 +1311,8 @@
         }
 
         function getMilkForLevel(level) {
-            return 500 * level;
+            // Геометрическая прогрессия: 500 * 1.35^(level-1)
+            return Math.floor(500 * Math.pow(1.35, level - 1));
         }
 
         function getCurrentLevelProgress() {
@@ -1366,12 +1353,9 @@
             DOM.rankDisplay.textContent = `Ранг: ${rankInfo.name} ${rankInfo.emoji}`;
             
             if (gameState.multiplier > 1) {
-                DOM.multiplierStat.style.display = 'flex';
-                DOM.multiplierDisplay.textContent = gameState.multiplier + 'x';
                 DOM.multiplierBadge.style.display = 'block';
                 DOM.multiplierBadge.textContent = gameState.multiplier + 'x';
             } else {
-                DOM.multiplierStat.style.display = 'none';
                 DOM.multiplierBadge.style.display = 'none';
             }
             
@@ -1452,11 +1436,46 @@
             event.target.classList.add('active');
         }
 
-        function toggleSection(sectionId) {
-            const section = document.getElementById(sectionId);
-            const allSections = document.querySelectorAll('.section');
-            allSections.forEach(s => s.classList.remove('active'));
-            section.classList.add('active');
+        function showShop() {
+            const shop = document.getElementById('shop');
+            const skins = document.getElementById('skins');
+            const achievements = document.getElementById('achievements');
+            
+            if (shop.classList.contains('active')) {
+                shop.classList.remove('active');
+            } else {
+                skins.classList.remove('active');
+                achievements.classList.remove('active');
+                shop.classList.add('active');
+            }
+        }
+
+        function showSkins() {
+            const shop = document.getElementById('shop');
+            const skins = document.getElementById('skins');
+            const achievements = document.getElementById('achievements');
+            
+            if (skins.classList.contains('active')) {
+                skins.classList.remove('active');
+            } else {
+                shop.classList.remove('active');
+                achievements.classList.remove('active');
+                skins.classList.add('active');
+            }
+        }
+
+        function showAchievements() {
+            const shop = document.getElementById('shop');
+            const skins = document.getElementById('skins');
+            const achievements = document.getElementById('achievements');
+            
+            if (achievements.classList.contains('active')) {
+                achievements.classList.remove('active');
+            } else {
+                shop.classList.remove('active');
+                skins.classList.remove('active');
+                achievements.classList.add('active');
+            }
         }
 
         let lastClickTime = 0;
@@ -1693,16 +1712,18 @@
 
         function checkAchievements() {
             if (gameState.stats.totalClicks >= 1) unlockAchievement('ach1');
-            if (gameState.milk >= 1000) unlockAchievement('ach2');
-            if (gameState.stats.totalClicks >= 100) unlockAchievement('ach3');
-            if (gameState.milk >= 1000000) unlockAchievement('ach4');
-            if (gameState.stats.critCount >= 10) unlockAchievement('ach5');
+            if (gameState.stats.totalMilkEarned >= 10000) unlockAchievement('ach2');
+            if (gameState.stats.totalClicks >= 250) unlockAchievement('ach3');
+            if (gameState.stats.totalMilkEarned >= 1000000) unlockAchievement('ach4');
+            if (gameState.stats.critCount >= 50) unlockAchievement('ach5');
             
             const skinsUnlockedCount = Object.keys(gameState.stats.skinsUnlocked).length;
             if (skinsUnlockedCount >= 2) unlockAchievement('ach6');
             
-            if (gameState.stats.starsCount >= 10) unlockAchievement('ach7');
-            if (gameState.stats.maxCritsInRow >= 50) unlockAchievement('ach8');
+            if (gameState.stats.starsCount >= 20) unlockAchievement('ach7');
+            if (gameState.stats.totalMilkEarned >= 100000000) unlockAchievement('ach8');
+            if (gameState.stats.maxCritsInRow >= 200) unlockAchievement('ach9');
+            if (gameState.level >= 50) unlockAchievement('ach10');
         }
 
         function unlockAchievement(achId) {
@@ -1900,8 +1921,6 @@
             if (Math.random() < 0.05 && gameState.multiplier === 1) {
                 activateRandomMultiplier();
             }
-            
-            gameState.stats.playTime++;
         }, 1000);
 
         loadGame();
