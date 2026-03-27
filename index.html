@@ -2,33 +2,45 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Milk Tycoon 🐱 - Вирусный Кликер</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
         }
 
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap');
-
-        html, body {
+        html {
             width: 100%;
             height: 100%;
+            position: fixed;
         }
 
         body {
+            width: 100%;
+            height: 100%;
             font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            padding: 20px;
             overflow: hidden;
-            position: relative;
+            position: fixed;
+            top: 0;
+            left: 0;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            touch-action: manipulation;
+        }
+
+        input, button, textarea {
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         body::before {
@@ -44,9 +56,13 @@
             z-index: 0;
         }
 
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap');
+
         .container {
             width: 100%;
             max-width: 480px;
+            height: 100vh;
+            max-height: 100vh;
             background: linear-gradient(180deg, #0f172a 0%, #1a1f3a 50%, #0f172a 100%);
             border-radius: 40px;
             padding: 35px 28px;
@@ -56,12 +72,13 @@
             text-align: center;
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.15);
-            max-height: 95vh;
             overflow-y: auto;
+            overflow-x: hidden;
             position: relative;
             z-index: 1;
             display: flex;
             flex-direction: column;
+            will-change: auto;
         }
 
         .container::-webkit-scrollbar {
@@ -106,6 +123,8 @@
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
             z-index: 100;
+            padding: 0;
+            outline: none;
         }
 
         .settings-btn:hover {
@@ -175,6 +194,7 @@
             border-radius: 15px;
             box-shadow: 0 0 20px rgba(56, 189, 248, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2);
             position: relative;
+            will-change: width;
         }
 
         .progression-fill::after {
@@ -200,6 +220,7 @@
             margin-top: 6px;
             font-weight: 600;
             letter-spacing: 0.5px;
+            min-height: 14px;
         }
 
         .level-display {
@@ -210,7 +231,7 @@
             background-clip: text;
             font-weight: 800;
             margin-top: 10px;
-            text-shadow: 0 2px 10px rgba(251, 191, 36, 0.3);
+            min-height: 18px;
         }
 
         .rank-display {
@@ -219,6 +240,7 @@
             font-weight: 700;
             margin-top: 6px;
             opacity: 0.9;
+            min-height: 14px;
         }
 
         .cat-scene {
@@ -267,6 +289,8 @@
             z-index: 5;
             position: relative;
             transition: filter 0.3s;
+            -webkit-user-drag: none;
+            -webkit-user-select: none;
         }
 
         .cat:active {
@@ -325,6 +349,7 @@
             z-index: 10;
             animation: pulse 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
             box-shadow: 0 10px 30px rgba(244, 114, 182, 0.4);
+            will-change: transform;
         }
 
         @keyframes pulse {
@@ -429,6 +454,9 @@
             box-shadow: 0 8px 25px rgba(56, 189, 248, 0.3),
                         inset 0 1px 0 rgba(255, 255, 255, 0.2);
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
         }
 
         .btn:hover {
@@ -463,7 +491,7 @@
         .section {
             display: none;
             margin-top: 18px;
-            padding: 8px;
+            padding: 0;
             border-radius: 20px;
         }
 
@@ -471,16 +499,24 @@
             display: block;
         }
 
-        .section::-webkit-scrollbar {
+        .scroll-content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            min-height: 0;
+            padding-right: 4px;
+        }
+
+        .scroll-content::-webkit-scrollbar {
             width: 8px;
         }
 
-        .section::-webkit-scrollbar-track {
+        .scroll-content::-webkit-scrollbar-track {
             background: rgba(100, 200, 255, 0.05);
             border-radius: 10px;
         }
 
-        .section::-webkit-scrollbar-thumb {
+        .scroll-content::-webkit-scrollbar-thumb {
             background: linear-gradient(180deg, #38bdf8 0%, #0ea5e9 100%);
             border-radius: 10px;
         }
@@ -488,7 +524,7 @@
         .item {
             background: linear-gradient(135deg, rgba(100, 200, 255, 0.12) 0%, rgba(56, 189, 248, 0.04) 100%);
             padding: 12px;
-            margin: 8px 0;
+            margin: 8px;
             border-radius: 14px;
             display: flex;
             flex-direction: column;
@@ -500,10 +536,10 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
-        .item:hover {
+        .item:active {
             background: linear-gradient(135deg, rgba(100, 200, 255, 0.22) 0%, rgba(56, 189, 248, 0.12) 100%);
             border-color: rgba(100, 200, 255, 0.5);
-            transform: translateX(4px);
+            transform: translateX(2px);
             box-shadow: 0 6px 20px rgba(56, 189, 248, 0.15);
         }
 
@@ -570,6 +606,7 @@
             border-radius: 8px;
             transition: width 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             box-shadow: 0 0 8px rgba(52, 211, 153, 0.4);
+            will-change: width;
         }
 
         .booster-progress-text {
@@ -577,6 +614,7 @@
             opacity: 0.65;
             margin-top: 2px;
             font-weight: 600;
+            min-height: 12px;
         }
 
         .skin-item {
@@ -686,6 +724,7 @@
             z-index: 999;
             backdrop-filter: blur(10px);
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            pointer-events: none;
         }
 
         .notification.show {
@@ -707,7 +746,7 @@
             opacity: 0.7;
             text-transform: uppercase;
             letter-spacing: 1.2px;
-            margin: 14px 0 10px 0;
+            margin: 14px 8px 10px 8px;
             font-weight: 800;
             color: #38bdf8;
         }
@@ -715,7 +754,7 @@
         .tabs {
             display: flex;
             gap: 8px;
-            margin: 14px 0;
+            margin: 14px 8px;
             background: rgba(100, 200, 255, 0.08);
             padding: 5px;
             border-radius: 12px;
@@ -732,6 +771,9 @@
             font-size: 11px;
             font-weight: 700;
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
         }
 
         .tab-btn.active {
@@ -740,7 +782,7 @@
             box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
         }
 
-        .tab-btn:hover {
+        .tab-btn:active {
             background: rgba(100, 200, 255, 0.15);
             border-color: rgba(100, 200, 255, 0.3);
         }
@@ -750,14 +792,14 @@
             border: 1.5px solid rgba(251, 191, 36, 0.3);
             padding: 11px;
             border-radius: 12px;
-            margin: 6px 0;
+            margin: 6px 8px;
             font-size: 12px;
             font-weight: 600;
             backdrop-filter: blur(5px);
             transition: all 0.3s;
         }
 
-        .achievement:hover {
+        .achievement:active {
             transform: translateX(3px);
             box-shadow: 0 4px 15px rgba(251, 191, 36, 0.15);
         }
@@ -772,7 +814,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
-            margin: 14px 0;
+            margin: 14px 8px;
         }
 
         .stats-item {
@@ -784,7 +826,7 @@
             transition: all 0.3s;
         }
 
-        .stats-item:hover {
+        .stats-item:active {
             transform: translateY(-3px);
             box-shadow: 0 6px 15px rgba(56, 189, 248, 0.15);
         }
@@ -805,6 +847,7 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin-top: 3px;
+            min-height: 20px;
         }
 
         .crit-shine {
@@ -904,6 +947,9 @@
             font-size: 13px;
             cursor: pointer;
             transition: all 0.3s;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
         }
 
         .modal-btn.primary {
@@ -912,7 +958,7 @@
             box-shadow: 0 8px 25px rgba(52, 211, 153, 0.3);
         }
 
-        .modal-btn.primary:hover {
+        .modal-btn.primary:active {
             transform: translateY(-3px);
             box-shadow: 0 12px 35px rgba(52, 211, 153, 0.5);
         }
@@ -929,15 +975,9 @@
             box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
         }
 
-        .modal-btn.danger:hover {
+        .modal-btn.danger:active {
             transform: translateY(-3px);
             box-shadow: 0 12px 35px rgba(239, 68, 68, 0.5);
-        }
-
-        .scroll-content {
-            flex: 1;
-            overflow-y: auto;
-            min-height: 0;
         }
 
         @media (max-width: 480px) {
@@ -1020,17 +1060,17 @@
         <div id="questContainer" style="margin: 8px 0; flex-shrink: 0;"></div>
 
         <div class="button-group">
-            <button class="btn" id="shopBtn" onclick="showShop()">🛒 Магазин</button>
-            <button class="btn" id="skinsBtn" onclick="showSkins()">🎭 Скины</button>
-            <button class="btn" id="achievementsBtn" onclick="showAchievements()">🏆 Достижения</button>
+            <button class="btn" id="shopBtn" onclick="toggleSection('shop')">🛒 Магазин</button>
+            <button class="btn" id="skinsBtn" onclick="toggleSection('skins')">🎭 Скины</button>
+            <button class="btn" id="achievementsBtn" onclick="toggleSection('achievements')">🏆 Достижения</button>
         </div>
 
         <div class="scroll-content">
-            <div id="shop" class="section">
+            <div id="shop" class="section active">
                 <div class="tabs">
-                    <button class="tab-btn active" onclick="switchTab('shop', 'tap-upgrades')">⚡ Клик</button>
-                    <button class="tab-btn" onclick="switchTab('shop', 'passive-upgrades')">🤖 Пассив</button>
-                    <button class="tab-btn" onclick="switchTab('shop', 'boosters')">🚀 Бустеры</button>
+                    <button class="tab-btn active" onclick="switchTab('tap-upgrades')">⚡ Клик</button>
+                    <button class="tab-btn" onclick="switchTab('passive-upgrades')">🤖 Пассив</button>
+                    <button class="tab-btn" onclick="switchTab('boosters')">🚀 Бустеры</button>
                 </div>
 
                 <div id="tap-upgrades">
@@ -1284,6 +1324,19 @@
     </audio>
 
     <script>
+        // Disable zoom
+        document.addEventListener('gesturestart', (e) => { e.preventDefault(); });
+        document.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 1) e.preventDefault();
+        }, { passive: false });
+        
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', (e) => {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) e.preventDefault();
+            lastTouchEnd = now;
+        }, false);
+
         let gameState = {
             milk: 0,
             perTap: 1,
@@ -1307,10 +1360,7 @@
                 maxCritsInRow: 0,
                 achievements: {},
                 skinsUnlocked: {}
-            },
-            lastRiskTime: 0,
-            lastDailyTime: 0,
-            lastGiftTime: 0
+            }
         };
 
         const upgrades = {
@@ -1534,55 +1584,27 @@
             });
         }
 
-        function switchTab(section, tab) {
-            const tabs = document.querySelectorAll(`#${section} [id$="-upgrades"]`);
-            tabs.forEach(t => t.style.display = 'none');
-            document.getElementById(tab).style.display = 'block';
+        function switchTab(tabId) {
+            const allTabs = document.querySelectorAll('[id$="-upgrades"]');
+            allTabs.forEach(tab => tab.style.display = 'none');
             
-            const buttons = document.querySelectorAll(`#${section} .tab-btn`);
+            const selectedTab = document.getElementById(tabId);
+            if (selectedTab) selectedTab.style.display = 'block';
+            
+            const buttons = document.querySelectorAll('.tab-btn');
             buttons.forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
         }
 
-        function showShop() {
-            const shop = document.getElementById('shop');
-            const skins = document.getElementById('skins');
-            const achievements = document.getElementById('achievements');
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            const allSections = document.querySelectorAll('.section');
             
-            if (shop.classList.contains('active')) {
-                shop.classList.remove('active');
-            } else {
-                skins.classList.remove('active');
-                achievements.classList.remove('active');
-                shop.classList.add('active');
-            }
-        }
-
-        function showSkins() {
-            const shop = document.getElementById('shop');
-            const skins = document.getElementById('skins');
-            const achievements = document.getElementById('achievements');
+            const isActive = section.classList.contains('active');
+            allSections.forEach(s => s.classList.remove('active'));
             
-            if (skins.classList.contains('active')) {
-                skins.classList.remove('active');
-            } else {
-                shop.classList.remove('active');
-                achievements.classList.remove('active');
-                skins.classList.add('active');
-            }
-        }
-
-        function showAchievements() {
-            const shop = document.getElementById('shop');
-            const skins = document.getElementById('skins');
-            const achievements = document.getElementById('achievements');
-            
-            if (achievements.classList.contains('active')) {
-                achievements.classList.remove('active');
-            } else {
-                shop.classList.remove('active');
-                skins.classList.remove('active');
-                achievements.classList.add('active');
+            if (!isActive) {
+                section.classList.add('active');
             }
         }
 
