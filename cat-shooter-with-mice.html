@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Кот Против Мышей - Игра</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #87ceeb;
+            color: #fff;
+            overflow: hidden;
+            width: 100%;
+            height: 100vh;
+        }
+
+        #gameContainer {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            background: linear-gradient(180deg, #87ceeb 0%, #e0f6ff 100%);
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        canvas {
+            display: block;
+            background: linear-gradient(180deg, #87ceeb 0%, #e0f6ff 100%);
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
+
+        .hud {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 2px solid #ff6b9d;
+            z-index: 100;
+            font-size: 12px;
+        }
+
+        .hud-item {
+            margin: 5px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hud-label {
+            color: #ffd700;
+            font-weight: bold;
+            min-width: 100px;
+        }
+
+        .health-bar {
+            width: 120px;
+            height: 12px;
+            background: #333;
+            border: 1px solid #ffd700;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .health-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b9d, #ffd700);
+            transition: width 0.2s;
+        }
+
+        .score-board {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 2px solid #ffd700;
+            z-index: 100;
+            text-align: right;
+            font-size: 12px;
+        }
+
+        .score-item {
+            margin: 5px 0;
+        }
+
+        .score-label {
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        .score-value {
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .mobile-controls {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            width: 120px;
+            height: 120px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            z-index: 100;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr 1fr;
+            gap: 2px;
+            padding: 5px;
+        }
+
+        .joystick-btn {
+            background: rgba(255, 215, 0, 0.3);
+            border: 1px solid #ffd700;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            user-select: none;
+            -webkit-user-select: none;
+            transition: background 0.1s;
+        }
+
+        .joystick-btn:active {
+            background: rgba(255, 215, 0, 0.7);
+        }
+
+        .shop-panel {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.85);
+            padding: 10px;
+            border-radius: 8px;
+            border: 2px solid #ffd700;
+            z-index: 100;
+            font-size: 11px;
+            max-width: 160px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .shop-title {
+            color: #ffd700;
+            font-weight: bold;
+            margin-bottom: 8px;
+            text-align: center;
+            border-bottom: 1px solid #ffd700;
+            padding-bottom: 5px;
+            font-size: 10px;
+        }
+
+        .shop-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid #ffd700;
+            color: #fff;
+            padding: 6px 8px;
+            margin: 3px 0;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 10px;
+            transition: all 0.2s;
+        }
+
+        .shop-item:active:not(:disabled) {
+            background: rgba(255, 215, 0, 0.3);
+        }
+
+        .shop-item:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .item-cost {
+            color: #ffd700;
+            font-weight: bold;
+            margin-left: 5px;
+            font-size: 9px;
+        }
+
+        .level-info {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            border: 3px solid #ffd700;
+            padding: 20px 30px;
+            border-radius: 15px;
+            text-align: center;
+            z-index: 150;
+            display: none;
+            animation: popIn 0.5s ease-out;
+        }
+
+        .level-info h2 {
+            color: #ffd700;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .level-info p {
+            color: #fff;
+            font-size: 1em;
+            margin: 5px 0;
+        }
+
+        @keyframes popIn {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        .game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            border: 3px solid #ff6b9d;
+            z-index: 200;
+            text-align: center;
+            display: none;
+            min-width: 280px;
+        }
+
+        .game-over h1 {
+            color: #ff6b9d;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+        }
+
+        .game-over p {
+            color: #ffd700;
+            font-size: 1em;
+            margin: 8px 0;
+        }
+
+        .game-over-buttons {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .game-over-buttons button {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .game-over-buttons button:active {
+            transform: scale(0.95);
+        }
+
+        .skins-panel {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            border: 3px solid #ffd700;
+            padding: 20px;
+            border-radius: 15px;
+            z-index: 200;
+            display: none;
+            max-width: 90vw;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .skins-panel h1 {
+            color: #ffd700;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        .skins-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .skin-item {
+            background: rgba(255, 215, 0, 0.1);
+            border: 2px solid #ffd700;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .skin-item:active {
+            background: rgba(255, 215, 0, 0.3);
+        }
+
+        .skin-item.owned {
+            border-color: #00ff00;
+        }
+
+        .skin-item.active {
+            border-color: #ff6b9d;
+            box-shadow: 0 0 10px #ff6b9d;
+        }
+
+        .skin-emoji {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .skin-name {
+            color: #ffd700;
+            font-weight: bold;
+            margin-bottom: 3px;
+            font-size: 11px;
+        }
+
+        .skin-bonus {
+            color: #fff;
+            font-size: 9px;
+            margin-bottom: 5px;
+        }
+
+        .skin-cost {
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 10px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ff6b9d;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: bold;
+            z-index: 201;
+        }
+
+        @media (max-width: 600px) {
+            .hud, .score-board, .shop-panel {
+                font-size: 11px;
+            }
+            
+            .hud-label {
+                min-width: 80px;
+            }
+
+            .health-bar {
+                width: 100px;
+                height: 10px;
+            }
+
+            .skins-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas"></canvas>
+
+        <div class="hud">
+            <div class="hud-item">
+                <span class="hud-label">❤️</span>
+                <div class="health-bar">
+                    <div class="health-fill" id="healthFill" style="width: 100%;"></div>
+                </div>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">🥛</span>
+                <span class="hud-value" id="milk">0</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">🔫</span>
+                <span class="hud-value" id="damage">10</span>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">📊</span>
+                <span class="hud-value" id="level">1</span>
+            </div>
+        </div>
+
+        <div class="score-board">
+            <div class="score-item">
+                <span class="score-label">ОЧКИ</span>
+                <div class="score-value" id="score">0</div>
+            </div>
+            <div class="score-item">
+                <span class="score-label">УБИЙСТВ</span>
+                <div class="score-value" id="kills">0</div>
+            </div>
+        </div>
+
+        <div class="mobile-controls">
+            <div></div>
+            <div class="joystick-btn" id="upBtn">⬆️</div>
+            <div></div>
+            
+            <div class="joystick-btn" id="leftBtn">⬅️</div>
+            <div class="joystick-btn" id="centerBtn" style="cursor: default; background: rgba(100,100,100,0.3); border: none;">●</div>
+            <div class="joystick-btn" id="rightBtn">➡️</div>
+            
+            <div></div>
+            <div class="joystick-btn" id="downBtn">⬇️</div>
+            <div></div>
+        </div>
+
+        <div class="shop-panel">
+            <div class="shop-title">🛍️ МАГАЗИН</div>
+            <button class="shop-item" id="damageBtn" onclick="upgradeDamage()">
+                <span>💥</span>
+                <span class="item-cost" id="damageCost">50</span>
+            </button>
+            <button class="shop-item" id="fireRateBtn" onclick="upgradeFireRate()">
+                <span>🔥</span>
+                <span class="item-cost" id="fireRateCost">75</span>
+            </button>
+            <button class="shop-item" id="bulletBtn" onclick="upgradeBulletSize()">
+                <span>◯</span>
+                <span class="item-cost" id="bulletCost">60</span>
+            </button>
+            <button class="shop-item" id="healthBtn" onclick="upgradeHealth()">
+                <span>❤️</span>
+                <span class="item-cost" id="healthCost">100</span>
+            </button>
+            <button class="shop-item" id="skinsBtn" onclick="showSkinsPanel()">
+                <span>🎨 Скины</span>
+            </button>
+        </div>
+
+        <div id="levelInfo" class="level-info">
+            <h2 id="levelTitle">Уровень 1</h2>
+            <p id="levelDesc">Обычные мыши</p>
+        </div>
+
+        <div id="gameOver" class="game-over">
+            <h1>💀 КОНЕЦ 💀</h1>
+            <p id="gameOverScore">Очки: 0</p>
+            <p id="gameOverKills">Мышей: 0</p>
+            <p id="gameOverLevel">Уровень: 1</p>
+            <div class="game-over-buttons">
+                <button onclick="location.reload()">🔄 Заново</button>
+            </div>
+        </div>
+
+        <div id="skinsPanel" class="skins-panel">
+            <button class="close-btn" onclick="hideSkinsPanel()">✕</button>
+            <h1>🎨 СКИНЫ</h1>
+            <div class="skins-grid" id="skinsGrid"></div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // ============ ИЗОБРАЖЕНИЯ МЫШЕЙ (встроены в код) ============
+        // Нормальная мышь (серая)
+        function drawNormalMouse(ctx, x, y, size) {
+            const scale = size / 25;
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.scale(scale, scale);
+
+            // Тело
+            ctx.fillStyle = '#5a5a7a';
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 10, 12, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Полоски
+            ctx.strokeStyle = '#3a3a5a';
+            ctx.lineWidth = 0.5;
+            ctx.beginPath();
+            ctx.moveTo(-8, -2);
+            ctx.lineTo(8, -2);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(-8, 2);
+            ctx.lineTo(8, 2);
+            ctx.stroke();
+
+            // Ушки
+            ctx.fillStyle = '#d4a5a5';
+            ctx.beginPath();
+            ctx.arc(-5, -10, 3, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(5, -10, 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Внутри ушей
+            ctx.fillStyle = '#ffb6c1';
+            ctx.beginPath();
+            ctx.arc(-5, -10, 1.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(5, -10, 1.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Глазки чёрные
+            ctx.fillStyle = '#000';
+            ctx.beginPath();
+            ctx.arc(-3, -2, 1.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(3, -2, 1.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Глазки белые
+            ctx.fillStyle = '#fff';
+            ctx.beginPath();
+            ctx.arc(-2.5, -2.5, 0.8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(3.5, -2.5, 0.8, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Нос
+            ctx.fillStyle = '#ffb6c1';
+            ctx.beginPath();
+            ctx.arc(0, 3, 1.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Усы
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 0.5;
+            for (let i = -1; i <= 1; i++) {
+                ctx.beginPath();
+                ctx.moveTo(-1, i);
+                ctx.lineTo(-8, i + 2);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(1, i);
+                ctx.lineTo(8, i + 2);
+                ctx.stroke();
+            }
+
+            // Хвост
+            ctx.strokeStyle = '#5a5a7a';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(10, 2);
+            ctx.quadraticCurveTo(15, 5, 18, 0);
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        // Летающая мышь (голубая)
+        function drawFlyingMouse(ctx, x, y, size) {
+            const scale = size / 28;
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.scale(scale, scale);
+
+            // Тело
+            ctx.fillStyle = '#6a8aaf';
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 11, 13, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Рубашка (светлая)
+            ctx.fillStyle = '#c4b5a0';
+            ctx.beginPath();
+            ctx.ellipse(0, 5, 8, 4, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Ушки большие
+            ctx.fillStyle = '#d4a5a5';
+            ctx.beginPath();
+            ctx.arc(-6, -11, 4, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(6, -11, 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Глазки
+            ctx.fillStyle = '#000';
+            ctx.beginPath();
+            ctx.arc(-4, -2, 2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(4, -2, 2, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Зрачки
+            ctx.fillStyle = '#fff';
+            ctx.beginPath();
+            ctx.arc(-3, -3, 1, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(5, -3, 1, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Нос
+            ctx.fillStyle = '#ffb6c1';
+            ctx.beginPath();
+            ctx.arc(0, 3, 1.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Рот (улыбка)
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(0, 4, 3, 0, Math.PI);
+            ctx.stroke();
+
+            // Крылья (руки)
+            ctx.fillStyle = '#d4a5a5';
+            ctx.beginPath();
+            ctx.ellipse(-10, 0, 4, 6, -Math.PI / 6, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(10, 0, 4, 6, Math.PI / 6, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Хвост
+            ctx.strokeStyle = '#5a5a7a';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(10, 8);
+            ctx.quadraticCurveTo(18, 10, 20, 2);
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        // Босс - большая крыса
+        function drawBossMouse(ctx, x, y, size) {
+            const scale = size / 60;
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.scale(scale, scale);
+
+            // Большое тело
+            ctx.fillStyle = '#3a3a5a';
+            ctx.beginPath();
+            ctx.ellipse(0, 5, 20, 22, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Полоски агрессии
+            ctx.strokeStyle = '#1a1a3a';
+            ctx.lineWidth = 2;
+            for (let i = -15; i < 20; i += 8) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i + 5, 15);
+                ctx.stroke();
+            }
+
+            // Большие ушки
+            ctx.fillStyle = '#5a5a7a';
+            ctx.beginPath();
+            ctx.arc(-12, -15, 6, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(12, -15, 6, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Внутри ушей
+            ctx.fillStyle = '#ffb6c1';
+            ctx.beginPath();
+            ctx.arc(-12, -15, 3, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(12, -15, 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Голова
+            ctx.fillStyle = '#3a3a5a';
+            ctx.beginPath();
+            ctx.arc(0, -5, 12, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Глазки красные (злые)
+            ctx.fillStyle = '#ff0000';
+            ctx.beginPath();
+            ctx.arc(-5, -8, 3, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(5, -8, 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Зрачки чёрные
+            ctx.fillStyle = '#000';
+            ctx.beginPath();
+            ctx.arc(-5, -7, 1.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(5, -7, 1.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Брови (злые)
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(-9, -12);
+            ctx.lineTo(-1, -14);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(1, -14);
+            ctx.lineTo(9, -12);
+            ctx.stroke();
+
+            // Большой нос
+            ctx.fillStyle = '#ffb6c1';
+            ctx.beginPath();
+            ctx.arc(0, 2, 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Рот (открытый, злой)
+            ctx.fillStyle = '#8b0000';
+            ctx.beginPath();
+            ctx.moveTo(-5, 5);
+            ctx.lineTo(5, 5);
+            ctx.lineTo(0, 12);
+            ctx.fill();
+
+            // Зубы
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 1;
+            for (let i = -4; i <= 4; i += 2) {
+                ctx.beginPath();
+                ctx.moveTo(i, 5);
+                ctx.lineTo(i, 8);
+                ctx.stroke();
+            }
+
+            // Большие лапки
+            ctx.fillStyle = '#d4a5a5';
+            ctx.beginPath();
+            ctx.ellipse(-10, 25, 5, 8, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(10, 25, 5, 8, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Когти
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 1.5;
+            for (let i = 0; i < 4; i++) {
+                ctx.beginPath();
+                ctx.moveTo(-10 + i * 2, 33);
+                ctx.lineTo(-10 + i * 2, 38);
+                ctx.stroke();
+            }
+            for (let i = 0; i < 4; i++) {
+                ctx.beginPath();
+                ctx.moveTo(10 + i * 2 - 3, 33);
+                ctx.lineTo(10 + i * 2 - 3, 38);
+                ctx.stroke();
+            }
+
+            // Хвост злой
+            ctx.strokeStyle = '#3a3a5a';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(18, 15);
+            ctx.quadraticCurveTo(35, 10, 40, -5);
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        // ============ ЗВУКИ ============
+        function playSound(type) {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                if (type === 'shoot') {
+                    const osc = audioContext.createOscillator();
+                    const gain = audioContext.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioContext.destination);
+                    osc.frequency.value = 600;
+                    gain.gain.setValueAtTime(0.2, audioContext.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.08);
+                    osc.start(audioContext.currentTime);
+                    osc.stop(audioContext.currentTime + 0.08);
+                } else if (type === 'hit') {
+                    const osc = audioContext.createOscillator();
+                    const gain = audioContext.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioContext.destination);
+                    osc.frequency.value = 800;
+                    gain.gain.setValueAtTime(0.2, audioContext.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+                    osc.start(audioContext.currentTime);
+                    osc.stop(audioContext.currentTime + 0.15);
+                } else if (type === 'enemy-death') {
+                    const osc = audioContext.createOscillator();
+                    const gain = audioContext.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioContext.destination);
+                    osc.frequency.setValueAtTime(600, audioContext.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.3);
+                    gain.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                    osc.start(audioContext.currentTime);
+                    osc.stop(audioContext.currentTime + 0.3);
+                }
+            } catch (e) {}
+        }
+
+        // ============ СОСТОЯНИЕ ИГРЫ ============
+        const gameState = {
+            currentLevel: 1,
+            score: 0,
+            kills: 0,
+            milk: 0,
+            isGameOver: false,
+            
+            upgrades: {
+                damage: { level: 1, cost: 50 },
+                fireRate: { level: 1, cost: 75 },
+                bulletSize: { level: 1, cost: 60 },
+                health: { level: 1, cost: 100 }
+            },
+
+            activeSkin: 'tabby',
+            ownedSkins: ['tabby']
+        };
+
+        // ============ СКИНЫ ============
+        const SKINS = {
+            tabby: { name: 'Табб��', emoji: '🐱', bonus: 'Обычный', bonusType: 'none', cost: 0 },
+            warrior: { name: 'Боевой', emoji: '😾', bonus: '+25% урона', bonusType: 'damage', value: 1.25, cost: 200 },
+            sniper: { name: 'Снайпер', emoji: '🐯', bonus: '+50% пуля', bonusType: 'bulletSize', value: 1.5, cost: 250 },
+            doctor: { name: 'Доктор', emoji: '🐱‍⚕️', bonus: '+30% HP', bonusType: 'health', value: 1.3, cost: 300 },
+            gunner: { name: 'Гунер', emoji: '🐱‍🐉', bonus: '+50% скорость', bonusType: 'fireRate', value: 1.5, cost: 350 },
+            ninja: { name: 'Ниндзя', emoji: '🐱‍👓', bonus: '+20% всё', bonusType: 'all', value: 1.2, cost: 500 }
+        };
+
+        // ============ МОБИЛЬНОЕ УПРАВЛЕНИЕ ============
+        const keys = { a: false, d: false, w: false, s: false };
+
+        document.getElementById('upBtn').addEventListener('touchstart', () => { keys.w = true; });
+        document.getElementById('upBtn').addEventListener('touchend', () => { keys.w = false; });
+        document.getElementById('downBtn').addEventListener('touchstart', () => { keys.s = true; });
+        document.getElementById('downBtn').addEventListener('touchend', () => { keys.s = false; });
+        document.getElementById('leftBtn').addEventListener('touchstart', () => { keys.a = true; });
+        document.getElementById('leftBtn').addEventListener('touchend', () => { keys.a = false; });
+        document.getElementById('rightBtn').addEventListener('touchstart', () => { keys.d = true; });
+        document.getElementById('rightBtn').addEventListener('touchend', () => { keys.d = false; });
+
+        window.addEventListener('keydown', (e) => {
+            const key = e.key.toLowerCase();
+            if (key === 'a') keys.a = true;
+            if (key === 'd') keys.d = true;
+            if (key === 'w') keys.w = true;
+            if (key === 's') keys.s = true;
+            if (key === 'arrowleft') keys.a = true;
+            if (key === 'arrowright') keys.d = true;
+            if (key === 'arrowup') keys.w = true;
+            if (key === 'arrowdown') keys.s = true;
+        });
+
+        window.addEventListener('keyup', (e) => {
+            const key = e.key.toLowerCase();
+            if (key === 'a') keys.a = false;
+            if (key === 'd') keys.d = false;
+            if (key === 'w') keys.w = false;
+            if (key === 's') keys.s = false;
+            if (key === 'arrowleft') keys.a = false;
+            if (key === 'arrowright') keys.d = false;
+            if (key === 'arrowup') keys.w = false;
+            if (key === 'arrowdown') keys.s = false;
+        });
+
+        // ============ ИГРОК (КОТИК) ============
+        const player = {
+            x: canvas.width / 2,
+            y: canvas.height - 120,
+            width: 60,
+            height: 100,
+            velocityX: 0,
+            velocityY: 0,
+            health: 100,
+            maxHealth: 100,
+            fireRate: 0,
+            rotation: 0,
+            
+            getDamage() {
+                let dmg = 10 + (gameState.upgrades.damage.level - 1) * 5;
+                const skin = SKINS[gameState.activeSkin];
+                if (skin.bonusType === 'damage') dmg *= skin.value;
+                if (skin.bonusType === 'all') dmg *= skin.value;
+                return dmg;
+            },
+
+            getFireRate() {
+                let rate = Math.max(3, 10 - (gameState.upgrades.fireRate.level - 1) * 1.5);
+                const skin = SKINS[gameState.activeSkin];
+                if (skin.bonusType === 'fireRate') rate /= skin.value;
+                if (skin.bonusType === 'all') rate /= skin.value;
+                return rate;
+            },
+
+            getBulletSize() {
+                let size = 4 + (gameState.upgrades.bulletSize.level - 1) * 1.5;
+                const skin = SKINS[gameState.activeSkin];
+                if (skin.bonusType === 'bulletSize') size *= skin.value;
+                if (skin.bonusType === 'all') size *= skin.value;
+                return size;
+            },
+
+            getMaxHealth() {
+                let hp = 100 + (gameState.upgrades.health.level - 1) * 20;
+                const skin = SKINS[gameState.activeSkin];
+                if (skin.bonusType === 'health') hp *= skin.value;
+                if (skin.bonusType === 'all') hp *= skin.value;
+                return hp;
+            },
+
+            update() {
+                const maxSpeed = 6;
+                if (keys.a) this.velocityX = -maxSpeed;
+                else if (keys.d) this.velocityX = maxSpeed;
+                else this.velocityX *= 0.85;
+
+                if (keys.w) this.velocityY = -maxSpeed;
+                else if (keys.s) this.velocityY = maxSpeed;
+                else this.velocityY *= 0.85;
+
+                this.x += this.velocityX;
+                this.y += this.velocityY;
+
+                if (this.x < 30) this.x = 30;
+                if (this.x + 30 > canvas.width) this.x = canvas.width - 30;
+                if (this.y < 50) this.y = 50;
+                if (this.y + 50 > canvas.height) this.y = canvas.height - 50;
+
+                if (this.fireRate > 0) this.fireRate--;
+            },
+
+            takeDamage(amount) {
+                this.health -= amount;
+                if (this.health < 0) this.health = 0;
+                playSound('hit');
+            },
+
+            shoot(targetX, targetY) {
+                if (this.fireRate <= 0) {
+                    const angle = Math.atan2(targetY - (this.y + this.height / 2), 
+                                           targetX - (this.x + this.width / 2));
+                    this.rotation = angle;
+                    
+                    bullets.push({
+                        x: this.x + Math.cos(angle) * 40,
+                        y: this.y + Math.sin(angle) * 40,
+                        vx: Math.cos(angle) * 9,
+                        vy: Math.sin(angle) * 9,
+                        life: 120,
+                        damage: this.getDamage(),
+                        size: this.getBulletSize()
+                    });
+
+                    this.fireRate = this.getFireRate();
+                    playSound('shoot');
+                }
+            },
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
+                
+                // Рисуем кота
+                ctx.fillStyle = '#d4a574';
+                ctx.beginPath();
+                ctx.ellipse(0, 20, 20, 28, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = '#d4a574';
+                ctx.beginPath();
+                ctx.arc(0, -10, 18, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = '#d4a574';
+                ctx.beginPath();
+                ctx.moveTo(-12, -25);
+                ctx.lineTo(-18, -40);
+                ctx.lineTo(-8, -20);
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.moveTo(12, -25);
+                ctx.lineTo(18, -40);
+                ctx.lineTo(8, -20);
+                ctx.fill();
+
+                ctx.fillStyle = '#ffb6c1';
+                ctx.beginPath();
+                ctx.moveTo(-12, -25);
+                ctx.lineTo(-15, -35);
+                ctx.lineTo(-10, -22);
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.moveTo(12, -25);
+                ctx.lineTo(15, -35);
+                ctx.lineTo(10, -22);
+                ctx.fill();
+
+                ctx.fillStyle = '#fff';
+                ctx.beginPath();
+                ctx.arc(-6, -12, 5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(6, -12, 5, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = '#000';
+                ctx.beginPath();
+                ctx.arc(-6, -12, 3, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(6, -12, 3, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = '#ffb6c1';
+                ctx.beginPath();
+                ctx.arc(0, -2, 3, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(-8, 0);
+                ctx.lineTo(-16, -2);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(8, 0);
+                ctx.lineTo(16, -2);
+                ctx.stroke();
+
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(25, 0);
+                ctx.lineTo(45, 0);
+                ctx.stroke();
+
+                ctx.fillStyle = '#ff0000';
+                ctx.beginPath();
+                ctx.arc(45, 0, 3, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.restore();
+            }
+        };
+
+        // ============ ВРАГИ (МЫШИ И КРЫСЫ) ============
+        let enemies = [];
+
+        function createEnemy(type) {
+            const baseX = Math.random() * (canvas.width - 40);
+            const baseY = Math.random() * (canvas.height / 2);
+
+            if (type === 'normal') {
+                return {
+                    type: 'normal',
+                    x: baseX,
+                    y: baseY,
+                    width: 25,
+                    height: 25,
+                    velocityX: (Math.random() - 0.5) * 2,
+                    velocityY: (Math.random() - 0.5) * 2,
+                    health: 15 + gameState.currentLevel * 2,
+                    maxHealth: 15 + gameState.currentLevel * 2,
+                    alive: true,
+
+                    update() {
+                        this.x += this.velocityX;
+                        this.y += this.velocityY;
+
+                        if (this.x < 0 || this.x > canvas.width - this.width) this.velocityX *= -1;
+                        if (this.y < 0 || this.y > canvas.height - this.height) this.velocityY *= -1;
+                    },
+
+                    takeDamage(amount) {
+                        this.health -= amount;
+                        if (this.health <= 0) {
+                            this.alive = false;
+                            gameState.score += 50;
+                            gameState.milk += 10 + gameState.currentLevel * 2;
+                            gameState.kills++;
+                            playSound('enemy-death');
+                        }
+                    },
+
+                    draw() {
+                        drawNormalMouse(ctx, this.x, this.y, this.width);
+
+                        // HP bar
+                        ctx.fillStyle = '#333';
+                        ctx.fillRect(this.x - 12, this.y - 18, this.width, 4);
+                        ctx.fillStyle = '#00ff00';
+                        ctx.fillRect(this.x - 12, this.y - 18, this.width * (this.health / this.maxHealth), 4);
+                    }
+                };
+            } else if (type === 'flying') {
+                return {
+                    type: 'flying',
+                    x: baseX,
+                    y: baseY,
+                    width: 28,
+                    height: 28,
+                    velocityX: (Math.random() - 0.5) * 3,
+                    velocityY: Math.sin(Date.now() / 500) * 2,
+                    health: 20 + gameState.currentLevel * 3,
+                    maxHealth: 20 + gameState.currentLevel * 3,
+                    alive: true,
+
+                    update() {
+                        this.x += this.velocityX;
+                        this.y += this.velocityY;
+
+                        if (this.x < 0 || this.x > canvas.width - this.width) this.velocityX *= -1;
+                        if (this.y < 0 || this.y > canvas.height / 2) this.velocityY *= -1;
+                    },
+
+                    takeDamage(amount) {
+                        this.health -= amount;
+                        if (this.health <= 0) {
+                            this.alive = false;
+                            gameState.score += 100;
+                            gameState.milk += 15 + gameState.currentLevel * 3;
+                            gameState.kills++;
+                            playSound('enemy-death');
+                        }
+                    },
+
+                    draw() {
+                        drawFlyingMouse(ctx, this.x, this.y, this.width);
+
+                        // HP bar
+                        ctx.fillStyle = '#333';
+                        ctx.fillRect(this.x - 14, this.y - 22, this.width, 4);
+                        ctx.fillStyle = '#00ff00';
+                        ctx.fillRect(this.x - 14, this.y - 22, this.width * (this.health / this.maxHealth), 4);
+                    }
+                };
+            } else if (type === 'boss') {
+                return {
+                    type: 'boss',
+                    x: canvas.width / 2 - 30,
+                    y: 100,
+                    width: 60,
+                    height: 60,
+                    velocityX: 2,
+                    velocityY: 0,
+                    health: 150 + gameState.currentLevel * 30,
+                    maxHealth: 150 + gameState.currentLevel * 30,
+                    alive: true,
+
+                    update() {
+                        this.x += this.velocityX;
+                        if (this.x < 0 || this.x > canvas.width - this.width) {
+                            this.velocityX *= -1;
+                        }
+                    },
+
+                    takeDamage(amount) {
+                        this.health -= amount;
+                        if (this.health <= 0) {
+                            this.alive = false;
+                            gameState.score += 500;
+                            gameState.milk += 100 + gameState.currentLevel * 50;
+                            gameState.kills++;
+                            playSound('enemy-death');
+                        }
+                    },
+
+                    draw() {
+                        drawBossMouse(ctx, this.x, this.y, this.width);
+
+                        // HP bar
+                        ctx.fillStyle = '#333';
+                        ctx.fillRect(this.x - 30, this.y - 42, this.width, 6);
+                        ctx.fillStyle = '#ff0000';
+                        ctx.fillRect(this.x - 30, this.y - 42, this.width * (this.health / this.maxHealth), 6);
+
+                        ctx.fillStyle = '#ff0000';
+                        ctx.font = 'bold 14px Arial';
+                        ctx.textAlign = 'center';
+                        ctx.fillText('БОСС', this.x, this.y + this.height + 18);
+                    }
+                };
+            }
+        }
+
+        // ============ СНАРЯДЫ ============
+        let bullets = [];
+        let enemyBullets = [];
+
+        function createLevel(levelNum) {
+            enemies = [];
+            bullets = [];
+            enemyBullets = [];
+
+            player.health = player.getMaxHealth();
+            player.velocityX = 0;
+            player.velocityY = 0;
+
+            if (levelNum % 3 === 0) {
+                enemies.push(createEnemy('boss'));
+                showLevelInfo(`БОСС ${levelNum}`, '👹 Королева Крыс!');
+            } else {
+                const enemyCount = 3 + Math.floor(levelNum / 2);
+                const flyingCount = Math.floor(levelNum / 3);
+
+                for (let i = 0; i < enemyCount - flyingCount; i++) {
+                    enemies.push(createEnemy('normal'));
+                }
+                for (let i = 0; i < flyingCount; i++) {
+                    enemies.push(createEnemy('flying'));
+                }
+
+                showLevelInfo(`Уровень ${levelNum}`, `Враги: ${enemyCount - flyingCount} + ${flyingCount}`);
+            }
+        }
+
+        function showLevelInfo(title, desc) {
+            document.getElementById('levelTitle').textContent = title;
+            document.getElementById('levelDesc').textContent = desc;
+            document.getElementById('levelInfo').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('levelInfo').style.display = 'none';
+            }, 2500);
+        }
+
+        // ============ УЛУЧШЕНИЯ ============
+        function upgradeDamage() {
+            const cost = gameState.upgrades.damage.cost * gameState.upgrades.damage.level;
+            if (gameState.milk >= cost) {
+                gameState.milk -= cost;
+                gameState.upgrades.damage.level++;
+                updateUI();
+            }
+        }
+
+        function upgradeFireRate() {
+            const cost = gameState.upgrades.fireRate.cost * gameState.upgrades.fireRate.level;
+            if (gameState.milk >= cost) {
+                gameState.milk -= cost;
+                gameState.upgrades.fireRate.level++;
+                updateUI();
+            }
+        }
+
+        function upgradeBulletSize() {
+            const cost = gameState.upgrades.bulletSize.cost * gameState.upgrades.bulletSize.level;
+            if (gameState.milk >= cost) {
+                gameState.milk -= cost;
+                gameState.upgrades.bulletSize.level++;
+                updateUI();
+            }
+        }
+
+        function upgradeHealth() {
+            const cost = gameState.upgrades.health.cost * gameState.upgrades.health.level;
+            if (gameState.milk >= cost) {
+                gameState.milk -= cost;
+                gameState.upgrades.health.level++;
+                player.maxHealth = player.getMaxHealth();
+                player.health = player.maxHealth;
+                updateUI();
+            }
+        }
+
+        // ============ СКИНЫ ============
+        function showSkinsPanel() {
+            const grid = document.getElementById('skinsGrid');
+            grid.innerHTML = '';
+
+            for (const [key, skin] of Object.entries(SKINS)) {
+                const owned = gameState.ownedSkins.includes(key);
+                const active = gameState.activeSkin === key;
+
+                const item = document.createElement('div');
+                item.className = 'skin-item';
+                if (owned) item.classList.add('owned');
+                if (active) item.classList.add('active');
+
+                item.innerHTML = `
+                    <div class="skin-emoji">${skin.emoji}</div>
+                    <div class="skin-name">${skin.name}</div>
+                    <div class="skin-bonus">${skin.bonus}</div>
+                    <div class="skin-cost">${owned ? (active ? '✓' : 'Есть') : skin.cost + '🥛'}</div>
+                `;
+
+                item.onclick = () => {
+                    if (!owned && gameState.milk >= skin.cost) {
+                        gameState.milk -= skin.cost;
+                        gameState.ownedSkins.push(key);
+                        gameState.activeSkin = key;
+                        player.maxHealth = player.getMaxHealth();
+                        player.health = player.maxHealth;
+                        showSkinsPanel();
+                        updateUI();
+                    } else if (owned) {
+                        gameState.activeSkin = key;
+                        player.maxHealth = player.getMaxHealth();
+                        player.health = player.maxHealth;
+                        showSkinsPanel();
+                        updateUI();
+                    }
+                };
+
+                grid.appendChild(item);
+            }
+
+            document.getElementById('skinsPanel').style.display = 'block';
+        }
+
+        function hideSkinsPanel() {
+            document.getElementById('skinsPanel').style.display = 'none';
+        }
+
+        function updateUI() {
+            document.getElementById('milk').textContent = gameState.milk;
+            document.getElementById('damage').textContent = Math.round(player.getDamage());
+            
+            const damageCost = gameState.upgrades.damage.cost * gameState.upgrades.damage.level;
+            const fireRateCost = gameState.upgrades.fireRate.cost * gameState.upgrades.fireRate.level;
+            const bulletCost = gameState.upgrades.bulletSize.cost * gameState.upgrades.bulletSize.level;
+            const healthCost = gameState.upgrades.health.cost * gameState.upgrades.health.level;
+
+            document.getElementById('damageCost').textContent = damageCost;
+            document.getElementById('fireRateCost').textContent = fireRateCost;
+            document.getElementById('bulletCost').textContent = bulletCost;
+            document.getElementById('healthCost').textContent = healthCost;
+
+            document.getElementById('damageBtn').disabled = gameState.milk < damageCost;
+            document.getElementById('fireRateBtn').disabled = gameState.milk < fireRateCost;
+            document.getElementById('bulletBtn').disabled = gameState.milk < bulletCost;
+            document.getElementById('healthBtn').disabled = gameState.milk < healthCost;
+        }
+
+        // ============ СТРЕЛЬБА ============
+        canvas.addEventListener('touchstart', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            player.shoot(x, y);
+        });
+
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            player.shoot(x, y);
+        });
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // ============ ГЛАВНЫЙ ЦИКЛ ============
+        function gameLoop() {
+            ctx.fillStyle = '#87ceeb';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            for (let i = 0; i < 5; i++) {
+                const x = (Date.now() / 50 + i * 200) % canvas.width;
+                ctx.beginPath();
+                ctx.arc(x, 50 + i * 40, 30, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(x + 20, 50 + i * 40, 35, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            if (!gameState.isGameOver) {
+                player.update();
+                
+                for (let enemy of enemies) {
+                    if (enemy.alive) enemy.update();
+                }
+
+                for (let i = bullets.length - 1; i >= 0; i--) {
+                    const bullet = bullets[i];
+                    bullet.x += bullet.vx;
+                    bullet.y += bullet.vy;
+                    bullet.life--;
+
+                    if (bullet.life <= 0 || bullet.x < 0 || bullet.x > canvas.width || bullet.y < 0 || bullet.y > canvas.height) {
+                        bullets.splice(i, 1);
+                        continue;
+                    }
+
+                    for (let enemy of enemies) {
+                        if (enemy.alive && 
+                            bullet.x > enemy.x - 15 && bullet.x < enemy.x + 15 &&
+                            bullet.y > enemy.y - 15 && bullet.y < enemy.y + 15) {
+                            
+                            enemy.takeDamage(bullet.damage);
+                            playSound('hit');
+                            bullets.splice(i, 1);
+                            break;
+                        }
+                    }
+                }
+
+                for (let enemy of enemies) {
+                    if (enemy.alive && Math.random() < 0.01) {
+                        if (Math.hypot(enemy.x - player.x, enemy.y - player.y) < 300) {
+                            const angle = Math.atan2(player.y - enemy.y, player.x - enemy.x);
+                            enemyBullets.push({
+                                x: enemy.x,
+                                y: enemy.y,
+                                vx: Math.cos(angle) * 4,
+                                vy: Math.sin(angle) * 4,
+                                life: 100
+                            });
+                        }
+                    }
+                }
+
+                for (let i = enemyBullets.length - 1; i >= 0; i--) {
+                    const bullet = enemyBullets[i];
+                    bullet.x += bullet.vx;
+                    bullet.y += bullet.vy;
+                    bullet.life--;
+
+                    if (bullet.life <= 0 || bullet.x < 0 || bullet.x > canvas.width || bullet.y < 0 || bullet.y > canvas.height) {
+                        enemyBullets.splice(i, 1);
+                        continue;
+                    }
+
+                    if (bullet.x > player.x - 30 && bullet.x < player.x + 30 &&
+                        bullet.y > player.y - 50 && bullet.y < player.y + 50) {
+                        
+                        player.takeDamage(5);
+                        enemyBullets.splice(i, 1);
+                    }
+                }
+
+                const allEnemiesDead = enemies.every(e => !e.alive);
+                if (allEnemiesDead && enemies.length > 0) {
+                    gameState.currentLevel++;
+                    createLevel(gameState.currentLevel);
+                }
+
+                if (player.health <= 0) {
+                    gameState.isGameOver = true;
+                    document.getElementById('gameOverScore').textContent = `Очки: ${gameState.score}`;
+                    document.getElementById('gameOverKills').textContent = `Мышей: ${gameState.kills}`;
+                    document.getElementById('gameOverLevel').textContent = `Уровень: ${gameState.currentLevel}`;
+                    document.getElementById('gameOver').style.display = 'block';
+                }
+
+                player.draw();
+
+                for (let enemy of enemies) {
+                    if (enemy.alive) enemy.draw();
+                }
+
+                for (let bullet of bullets) {
+                    ctx.fillStyle = '#ffff00';
+                    ctx.beginPath();
+                    ctx.arc(bullet.x, bullet.y, bullet.size, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.strokeStyle = 'rgba(255, 255, 0, 0.5)';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.arc(bullet.x, bullet.y, bullet.size + 2, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+
+                for (let bullet of enemyBullets) {
+                    ctx.fillStyle = '#ff6b9d';
+                    ctx.beginPath();
+                    ctx.arc(bullet.x, bullet.y, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            document.getElementById('healthFill').style.width = (player.health / player.maxHealth * 100) + '%';
+            document.getElementById('level').textContent = gameState.currentLevel;
+            document.getElementById('score').textContent = gameState.score;
+            document.getElementById('kills').textContent = gameState.kills;
+
+            updateUI();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        createLevel(1);
+        updateUI();
+        gameLoop();
+    </script>
+</body>
+</html>
