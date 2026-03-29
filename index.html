@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Кот Против Мышей - Игра</title>
+    <title>🐱 Кот Против Мышей 🐭</title>
     <style>
         * {
             margin: 0;
@@ -19,12 +19,11 @@
 
         body {
             font-family: 'Arial', sans-serif;
-            background: #87ceeb;
+            background: linear-gradient(135deg, #1a1a3e, #0f0f1e);
             color: #fff;
             overflow: hidden;
             width: 100%;
             height: 100vh;
-            overscroll-behavior: none;
         }
 
         html, body {
@@ -35,7 +34,6 @@
             width: 100%;
             height: 100vh;
             position: relative;
-            background: linear-gradient(180deg, #87ceeb 0%, #e0f6ff 100%);
             overflow: hidden;
             touch-action: none;
         }
@@ -47,7 +45,361 @@
             touch-action: none;
         }
 
-        /* ============ ТЕМНЫЙ ОВЕРЛЕЙ ДЛЯ ПАУЗЫ ============ */
+        /* ============ ГЛАВНОЕ МЕНЮ ============ */
+        .main-menu {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a3e 0%, #0f0f1e 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 500;
+        }
+
+        .menu-hidden {
+            display: none !important;
+        }
+
+        .menu-title {
+            font-size: 3.5em;
+            font-weight: bold;
+            color: #FFD700;
+            text-shadow: 0 0 30px #FF6B9D, 0 0 60px #FFD700;
+            margin-bottom: 40px;
+            animation: titlePulse 2s ease-in-out infinite;
+        }
+
+        @keyframes titlePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .menu-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            min-width: 300px;
+        }
+
+        .menu-btn {
+            background: linear-gradient(135deg, #FFD700, #FFED4E);
+            color: #000;
+            border: 3px solid #FF6B00;
+            padding: 18px 40px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        .menu-btn:active {
+            transform: scale(0.95);
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .menu-stats {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px 30px;
+            border-radius: 12px;
+            border: 2px solid #FFD700;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .menu-stat-row {
+            margin: 8px 0;
+            color: #FFD700;
+        }
+
+        .menu-stat-value {
+            color: #00FF00;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        /* ============ МОДАЛЬНЫЕ ОКНА ============ */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            z-index: 501;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, rgba(10, 10, 30, 0.98), rgba(30, 10, 50, 0.98));
+            border: 3px solid #FFD700;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.4);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-title {
+            font-size: 2em;
+            font-weight: bold;
+            color: #FFD700;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #FFD700;
+            padding-bottom: 15px;
+        }
+
+        .close-modal-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #FF6B9D;
+            color: white;
+            border: 2px solid #FF0000;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .close-modal-btn:active {
+            transform: scale(0.9);
+        }
+
+        /* ============ ВЫБОР ВОЛНЫ ============ */
+        .wave-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .wave-option {
+            background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.05));
+            border: 2px solid #FFD700;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            touch-action: manipulation;
+        }
+
+        .wave-option:active {
+            transform: scale(0.95);
+            background: linear-gradient(135deg, rgba(255,215,0,0.3), rgba(255,215,0,0.1));
+        }
+
+        .wave-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #FFD700;
+            margin-bottom: 10px;
+        }
+
+        .wave-bonus {
+            color: #00FF00;
+            font-size: 12px;
+            margin: 8px 0;
+            font-weight: bold;
+        }
+
+        .wave-start-btn {
+            background: linear-gradient(135deg, #00FF00, #00DD00);
+            color: #000;
+            border: 2px solid #00AA00;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .wave-start-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* ============ СТАТИСТИКА ============ */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(0,255,255,0.1), rgba(0,255,255,0.05));
+            border: 2px solid #00FFFF;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-label {
+            color: #00FFFF;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            color: #FFD700;
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        /* ============ ДОСТИЖЕНИЯ ============ */
+        .achievements-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .achievement-item {
+            background: linear-gradient(135deg, rgba(255,107,157,0.1), rgba(255,107,157,0.05));
+            border: 2px solid #FF6B9D;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            opacity: 0.5;
+            transition: all 0.3s;
+        }
+
+        .achievement-item.unlocked {
+            opacity: 1;
+            border-color: #00FF00;
+            background: linear-gradient(135deg, rgba(0,255,0,0.1), rgba(0,255,0,0.05));
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+        }
+
+        .achievement-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .achievement-name {
+            color: #FFD700;
+            font-weight: bold;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .achievement-desc {
+            color: #AAA;
+            font-size: 10px;
+            line-height: 1.3;
+        }
+
+        /* ============ КВЕСТЫ ============ */
+        .quest-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .quest-item {
+            background: linear-gradient(135deg, rgba(255,0,255,0.1), rgba(255,0,255,0.05));
+            border: 2px solid #FF00FF;
+            padding: 15px;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .quest-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .quest-name {
+            color: #FF00FF;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .quest-reward {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00FF00;
+            color: #00FF00;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .quest-desc {
+            color: #AAA;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .quest-progress {
+            width: 100%;
+            height: 10px;
+            background: #333;
+            border-radius: 5px;
+            overflow: hidden;
+            border: 1px solid #FF00FF;
+        }
+
+        .quest-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #FF00FF, #FF6B9D);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .quest-status {
+            color: #FFD700;
+            font-size: 11px;
+            margin-top: 8px;
+            text-align: right;
+        }
+
+        /* ============ ИГРА ============ */
+        .game-area {
+            width: 100%;
+            height: 100%;
+            display: none;
+        }
+
+        .game-area.active {
+            display: block;
+        }
+
         .pause-overlay {
             position: absolute;
             top: 0;
@@ -59,48 +411,11 @@
             z-index: 102;
         }
 
-        /* ============ КНОПКИ УПРАВЛЕНИЯ (МОБИЛЬНЫЕ) ============ */
-        .mobile-controls {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 15px;
-            z-index: 105;
-            justify-content: center;
+        .pause-overlay.active {
+            display: block;
         }
 
-        @media (min-width: 769px) {
-            .mobile-controls {
-                display: none;
-            }
-        }
-
-        .control-button {
-            background: linear-gradient(135deg, #FFD700, #FFED4E);
-            border: 3px solid #FF6B00;
-            color: #000;
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.1s;
-            touch-action: manipulation;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        .control-button:active {
-            transform: scale(0.9);
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        /* ============ HUD STYLES (ТОЛЬКО ВО ВРЕМЯ ИГРЫ) ============ */
+        /* ============ HUD ============ */
         .hud {
             position: absolute;
             top: 10px;
@@ -112,22 +427,6 @@
             z-index: 100;
             font-size: 12px;
             min-width: 160px;
-            pointer-events: none;
-        }
-
-        .fps-counter {
-            position: absolute;
-            top: 10px;
-            left: auto;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: 2px solid #00ff00;
-            font-size: 12px;
-            color: #00ff00;
-            font-weight: bold;
-            z-index: 100;
             pointer-events: none;
         }
 
@@ -167,6 +466,41 @@
             transition: width 0.2s;
         }
 
+        .fps-counter {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 2px solid #00ff00;
+            font-size: 12px;
+            color: #00ff00;
+            font-weight: bold;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .wave-info-panel {
+            position: absolute;
+            top: 45px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: 2px solid #00FFFF;
+            z-index: 99;
+            font-size: 11px;
+            pointer-events: none;
+        }
+
+        .bonus-indicator {
+            color: #FFD700;
+            font-weight: bold;
+            margin-left: 15px;
+        }
+
         .score-board {
             position: absolute;
             bottom: 90px;
@@ -197,13 +531,273 @@
             font-weight: bold;
         }
 
-        /* ============ ИНФОРМАЦИЯ (ПОКАЗЫВАЕТСЯ ТОЛЬКО ВО ВРЕМЯ ПАУЗЫ) ============ */
-        .pause-info-panel {
+        /* ============ КНОПКИ УПРАВЛЕНИЯ (МОБИЛЬНЫЕ) ============ */
+        .mobile-controls {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 30px;
+            z-index: 105;
+            justify-content: center;
+        }
+
+        @media (min-width: 769px) {
+            .mobile-controls {
+                display: none;
+            }
+        }
+
+        .control-button {
+            background: linear-gradient(135deg, #FFD700, #FFED4E);
+            border: 3px solid #FF6B00;
+            color: #000;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.1s;
+            touch-action: manipulation;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .control-button:active {
+            transform: scale(0.9);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        /* ============ МАГАЗИН ============ */
+        .shop-toggle {
+            position: absolute;
+            bottom: 100px;
+            right: 15px;
+            background: linear-gradient(135deg, #FFD700, #FFED4E);
+            border: 3px solid #FF6B00;
+            color: #000;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 28px;
+            cursor: pointer;
+            z-index: 104;
+            transition: all 0.2s;
+            touch-action: manipulation;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 1s infinite;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .shop-toggle:active {
+            transform: scale(0.9) !important;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .shop-panel {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, rgba(10, 10, 30, 0.98), rgba(30, 10, 50, 0.98));
+            padding: 18px;
+            border-radius: 12px;
+            border: 3px solid #ffd700;
+            z-index: 103;
+            font-size: 12px;
+            max-width: 280px;
+            max-height: 500px;
+            overflow-y: auto;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        .shop-panel.open {
+            display: block;
+        }
+
+        .pause-label {
+            position: absolute;
+            top: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #00FFFF;
+            font-size: 12px;
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px 10px;
+            border-radius: 5px;
+            z-index: 104;
+            pointer-events: none;
+        }
+
+        .shop-title {
+            color: #ffd700;
+            font-weight: bold;
+            margin-bottom: 12px;
+            text-align: center;
+            border-bottom: 2px solid #ffd700;
+            padding-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .shop-section {
+            margin-bottom: 15px;
+        }
+
+        .shop-section-title {
+            color: #00ffff;
+            font-weight: bold;
+            font-size: 11px;
+            margin: 8px 0 6px 0;
+            border-left: 3px solid #00ffff;
+            padding-left: 6px;
+        }
+
+        .shop-item {
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,215,0,0.05));
+            border: 2px solid #ffd700;
+            color: #fff;
+            padding: 10px;
+            margin: 6px 0;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.2s;
+            touch-action: manipulation;
+            min-height: 60px;
+        }
+
+        .shop-item.booster {
+            border-color: #ff00ff;
+            background: linear-gradient(135deg, rgba(255,0,255,0.15), rgba(255,0,255,0.05));
+        }
+
+        .shop-item:active:not(:disabled) {
+            background: linear-gradient(135deg, rgba(255,215,0,0.4), rgba(255,215,0,0.2));
+            transform: scale(0.98);
+        }
+
+        .shop-item:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .item-name {
+            color: #ffd700;
+            font-weight: bold;
+            margin-bottom: 3px;
+            font-size: 12px;
+        }
+
+        .shop-item.booster .item-name {
+            color: #ff00ff;
+        }
+
+        .item-desc {
+            color: #aaa;
+            font-size: 10px;
+            margin-bottom: 5px;
+            line-height: 1.3;
+            flex-grow: 1;
+        }
+
+        .item-meta {
+            color: #00ff00;
+            font-size: 10px;
+            margin-bottom: 3px;
+        }
+
+        .item-cost {
+            color: #ffff00;
+            font-weight: bold;
+            text-align: right;
+            font-size: 11px;
+        }
+
+        /* ============ ВОЛНОВАЯ ПАУЗА ============ */
+        .wave-pause-screen {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             background: rgba(0, 0, 0, 0.95);
+            padding: 40px;
+            border-radius: 15px;
+            border: 4px solid #FFD700;
+            z-index: 150;
+            text-align: center;
+            display: none;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+        }
+
+        .wave-pause-screen h2 {
+            color: #FFD700;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .wave-pause-screen p {
+            color: #fff;
+            font-size: 1.1em;
+            margin: 10px 0;
+        }
+
+        .start-wave-btn {
+            background: linear-gradient(135deg, #FFD700, #FFED4E);
+            color: #000;
+            border: 3px solid #FF6B00;
+            padding: 15px 40px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            margin-top: 20px;
+            transition: all 0.2s;
+            animation: buttonPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes buttonPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .start-wave-btn:active {
+            transform: scale(0.95) !important;
+        }
+
+        /* ============ ИНФОРМАЦИОННАЯ ПАНЕЛЬ ПАУЗЫ ============ */
+        .pause-info-panel {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, rgba(10, 10, 30, 0.98), rgba(30, 10, 50, 0.98));
             padding: 20px;
             border-radius: 12px;
             border: 3px solid #00FFFF;
@@ -248,63 +842,180 @@
             font-weight: bold;
         }
 
-        .bonus-float {
+        /* ============ СКИНЫ ============ */
+        .skins-panel {
             position: absolute;
-            bottom: 180px;
-            left: 20px;
-            color: #00FF00;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, rgba(10, 10, 30, 0.98), rgba(30, 10, 50, 0.98));
+            border: 4px solid #ffd700;
+            padding: 25px;
+            border-radius: 15px;
+            z-index: 200;
+            display: none;
+            max-width: 90vw;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.4);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .skins-panel.active {
+            display: block;
+        }
+
+        .skins-panel h1 {
+            color: #ffd700;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .skins-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .skin-item {
+            background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.05));
+            border: 2px solid #ffd700;
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            touch-action: manipulation;
+        }
+
+        .skin-item.premium {
+            border-color: #FFD700;
+            background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,215,0,0.1));
+        }
+
+        .skin-item:active {
+            transform: scale(0.95);
+        }
+
+        .skin-item.owned {
+            border-color: #00ff00;
+            background: linear-gradient(135deg, rgba(0,255,0,0.15), rgba(0,255,0,0.05));
+        }
+
+        .skin-item.active {
+            border-color: #ff6b9d;
+            background: linear-gradient(135deg, rgba(255,107,157,0.2), rgba(255,107,157,0.1));
+            box-shadow: 0 0 15px #ff6b9d;
+        }
+
+        .skin-emoji {
+            font-size: 2.5em;
+            margin-bottom: 8px;
+        }
+
+        .skin-name {
+            color: #ffd700;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+
+        .skin-bonus {
+            color: #aaa;
+            font-size: 10px;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .skin-cost {
+            color: #ffff00;
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        .skin-premium-badge {
+            color: #FFD700;
+            font-size: 9px;
+            font-weight: bold;
+            margin: 3px 0;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #ff6b9d;
+            color: white;
+            border: 2px solid #ff0000;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            font-weight: bold;
+            z-index: 201;
+            transition: all 0.2s;
+            touch-action: manipulation;
+        }
+
+        .close-btn:active {
+            transform: scale(0.9);
+        }
+
+        /* ============ КОНЕЦ ИГРЫ ============ */
+        .game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            border: 4px solid #ff6b9d;
+            z-index: 200;
+            text-align: center;
+            display: none;
+            min-width: 300px;
+            box-shadow: 0 0 30px rgba(255, 107, 157, 0.5);
+        }
+
+        .game-over h1 {
+            color: #ff6b9d;
+            font-size: 2.2em;
+            margin-bottom: 20px;
+        }
+
+        .game-over p {
+            color: #ffd700;
+            font-size: 1.1em;
+            margin: 10px 0;
+        }
+
+        .game-over-buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .game-over-buttons button {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #000;
+            border: 2px solid #ff6b00;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
             font-weight: bold;
             font-size: 14px;
-            text-shadow: 0 0 10px #00FF00;
-            pointer-events: none;
-            animation: bonusFloat 2s ease-out;
-            z-index: 50;
+            transition: all 0.2s;
         }
 
-        @keyframes bonusFloat {
-            0% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-60px);
-            }
+        .game-over-buttons button:active {
+            transform: scale(0.95);
         }
 
-        /* ============ TOP PANEL ACHIEVEMENTS ============ */
-        .achievements-panel {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.8);
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: 2px solid #FFD700;
-            z-index: 99;
-            max-width: 90vw;
-            overflow-x: auto;
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .achievement-badge {
-            background: linear-gradient(135deg, #FF6B6B, #FFD700);
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 11px;
-            white-space: nowrap;
-            border: 1px solid #fff;
-            animation: popIn 0.3s ease-out;
-        }
-
-        @keyframes popIn {
-            0% { transform: scale(0.5); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
+        /* ============ КОМБО И ВОЛНА ============ */
         .combo-display {
             position: absolute;
             top: 50%;
@@ -357,487 +1068,7 @@
             }
         }
 
-        .wave-info-panel {
-            position: absolute;
-            top: 45px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.8);
-            padding: 8px 15px;
-            border-radius: 8px;
-            border: 2px solid #00FFFF;
-            z-index: 99;
-            font-size: 11px;
-            pointer-events: none;
-        }
-
-        .wave-difficulty {
-            color: #00FF00;
-            font-weight: bold;
-            margin: 0 8px;
-        }
-
-        .threat-indicator {
-            color: #FF6B6B;
-            font-weight: bold;
-            margin-left: 10px;
-        }
-
-        .threat-indicator.gold {
-            color: #FFD700;
-        }
-
-        /* ============ SHOP ============ */
-        .shop-toggle {
-            position: absolute;
-            bottom: 100px;
-            right: 15px;
-            background: linear-gradient(135deg, #FFD700, #FFED4E);
-            border: 3px solid #FF6B00;
-            color: #000;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            font-size: 28px;
-            cursor: pointer;
-            z-index: 104;
-            transition: all 0.2s;
-            touch-action: manipulation;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: pulse 1s infinite;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        .shop-toggle:active {
-            transform: scale(0.9) !important;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        @media (max-width: 768px) {
-            .shop-toggle {
-                bottom: 90px;
-                width: 55px;
-                height: 55px;
-                font-size: 24px;
-            }
-        }
-
-        .shop-panel {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: linear-gradient(135deg, rgba(10, 10, 30, 0.98), rgba(30, 10, 50, 0.98));
-            padding: 18px;
-            border-radius: 12px;
-            border: 3px solid #ffd700;
-            z-index: 103;
-            font-size: 12px;
-            max-width: 280px;
-            max-height: 500px;
-            overflow-y: auto;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
-            display: none;
-            animation: slideIn 0.3s ease-out;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translate(-50%, -60%);
-            }
-            to {
-                opacity: 1;
-                transform: translate(-50%, -50%);
-            }
-        }
-
-        .shop-panel.open {
-            display: block;
-        }
-
-        .shop-title {
-            color: #ffd700;
-            font-weight: bold;
-            margin-bottom: 12px;
-            text-align: center;
-            border-bottom: 2px solid #ffd700;
-            padding-bottom: 10px;
-            font-size: 14px;
-        }
-
-        .shop-section {
-            margin-bottom: 15px;
-        }
-
-        .shop-section-title {
-            color: #00ffff;
-            font-weight: bold;
-            font-size: 11px;
-            margin: 8px 0 6px 0;
-            border-left: 3px solid #00ffff;
-            padding-left: 6px;
-        }
-
-        .shop-item {
-            display: flex;
-            flex-direction: column;
-            background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,215,0,0.05));
-            border: 2px solid #ffd700;
-            color: #fff;
-            padding: 10px;
-            margin: 6px 0;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 11px;
-            transition: all 0.2s;
-            touch-action: manipulation;
-            min-height: 60px;
-        }
-
-        .shop-item.booster {
-            border-color: #ff00ff;
-            background: linear-gradient(135deg, rgba(255,0,255,0.15), rgba(255,0,255,0.05));
-        }
-
-        .shop-item:active:not(:disabled) {
-            background: linear-gradient(135deg, rgba(255,215,0,0.4), rgba(255,215,0,0.2));
-            transform: scale(0.98);
-        }
-
-        .shop-item.booster:active:not(:disabled) {
-            background: linear-gradient(135deg, rgba(255,0,255,0.4), rgba(255,0,255,0.2));
-        }
-
-        .shop-item:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        .item-name {
-            color: #ffd700;
-            font-weight: bold;
-            margin-bottom: 3px;
-            font-size: 12px;
-        }
-
-        .shop-item.booster .item-name {
-            color: #ff00ff;
-        }
-
-        .item-desc {
-            color: #aaa;
-            font-size: 10px;
-            margin-bottom: 5px;
-            line-height: 1.3;
-            flex-grow: 1;
-        }
-
-        .item-meta {
-            color: #00ff00;
-            font-size: 10px;
-            margin-bottom: 3px;
-        }
-
-        .item-cost {
-            color: #ffff00;
-            font-weight: bold;
-            text-align: right;
-            font-size: 11px;
-        }
-
-        /* ============ WAVE PAUSE SCREEN ============ */
-        .wave-pause-screen {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.95);
-            padding: 40px;
-            border-radius: 15px;
-            border: 4px solid #FFD700;
-            z-index: 150;
-            text-align: center;
-            display: none;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
-        }
-
-        .wave-pause-screen h2 {
-            color: #FFD700;
-            font-size: 2em;
-            margin-bottom: 20px;
-        }
-
-        .wave-pause-screen p {
-            color: #fff;
-            font-size: 1.1em;
-            margin: 10px 0;
-        }
-
-        .start-wave-btn {
-            background: linear-gradient(135deg, #FFD700, #FFED4E);
-            color: #000;
-            border: 3px solid #FF6B00;
-            padding: 15px 40px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 16px;
-            margin-top: 20px;
-            transition: all 0.2s;
-            animation: buttonPulse 1s ease-in-out infinite;
-        }
-
-        @keyframes buttonPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        .start-wave-btn:active {
-            transform: scale(0.95) !important;
-        }
-
-        /* ============ MINI GAME SCREEN ============ */
-        .minigame-screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #1a1a3e, #0f0f1e);
-            z-index: 200;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .minigame-screen.active {
-            display: flex;
-        }
-
-        .minigame-title {
-            color: #FFD700;
-            font-size: 2.5em;
-            margin-bottom: 20px;
-            text-shadow: 0 0 20px #FFD700;
-        }
-
-        .minigame-hint {
-            color: #00FFFF;
-            font-size: 1.2em;
-            margin-bottom: 30px;
-            text-shadow: 0 0 10px #00FFFF;
-        }
-
-        .minigame-canvas {
-            border: 3px solid #FFD700;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-        }
-
-        .minigame-result {
-            color: #00FF00;
-            font-size: 1.5em;
-            margin-top: 20px;
-            font-weight: bold;
-            text-shadow: 0 0 10px #00FF00;
-        }
-
-        /* ============ LEVEL INFO ============ */
-        .level-info {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.95);
-            border: 4px solid #ffd700;
-            padding: 30px 40px;
-            border-radius: 15px;
-            text-align: center;
-            z-index: 150;
-            display: none;
-            animation: popIn 0.5s ease-out;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
-        }
-
-        .level-info h2 {
-            color: #ffd700;
-            font-size: 2.2em;
-            margin-bottom: 15px;
-        }
-
-        .level-info p {
-            color: #fff;
-            font-size: 1.1em;
-            margin: 8px 0;
-        }
-
-        /* ============ GAME OVER ============ */
-        .game-over {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.95);
-            padding: 30px;
-            border-radius: 15px;
-            border: 4px solid #ff6b9d;
-            z-index: 200;
-            text-align: center;
-            display: none;
-            min-width: 300px;
-            box-shadow: 0 0 30px rgba(255, 107, 157, 0.5);
-        }
-
-        .game-over h1 {
-            color: #ff6b9d;
-            font-size: 2.2em;
-            margin-bottom: 20px;
-        }
-
-        .game-over p {
-            color: #ffd700;
-            font-size: 1.1em;
-            margin: 10px 0;
-        }
-
-        .game-over-buttons {
-            margin-top: 20px;
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-
-        .game-over-buttons button {
-            background: linear-gradient(135deg, #ffd700, #ffed4e);
-            color: #000;
-            border: 2px solid #ff6b00;
-            padding: 12px 25px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-
-        .game-over-buttons button:active {
-            transform: scale(0.95);
-        }
-
-        /* ============ SKINS PANEL ============ */
-        .skins-panel {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: linear-gradient(135deg, rgba(10, 10, 30, 0.98), rgba(30, 10, 50, 0.98));
-            border: 4px solid #ffd700;
-            padding: 25px;
-            border-radius: 15px;
-            z-index: 200;
-            display: none;
-            max-width: 90vw;
-            max-height: 85vh;
-            overflow-y: auto;
-            box-shadow: 0 0 40px rgba(255, 215, 0, 0.4);
-            animation: slideIn 0.3s ease-out;
-        }
-
-        .skins-panel h1 {
-            color: #ffd700;
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 1.8em;
-        }
-
-        .skins-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-        }
-
-        .skin-item {
-            background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.05));
-            border: 2px solid #ffd700;
-            padding: 12px;
-            border-radius: 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            touch-action: manipulation;
-        }
-
-        .skin-item:active {
-            transform: scale(0.95);
-        }
-
-        .skin-item.owned {
-            border-color: #00ff00;
-            background: linear-gradient(135deg, rgba(0,255,0,0.15), rgba(0,255,0,0.05));
-        }
-
-        .skin-item.active {
-            border-color: #ff6b9d;
-            background: linear-gradient(135deg, rgba(255,107,157,0.2), rgba(255,107,157,0.1));
-            box-shadow: 0 0 15px #ff6b9d;
-        }
-
-        .skin-emoji {
-            font-size: 2.5em;
-            margin-bottom: 8px;
-        }
-
-        .skin-name {
-            color: #ffd700;
-            font-weight: bold;
-            margin-bottom: 5px;
-            font-size: 12px;
-        }
-
-        .skin-bonus {
-            color: #aaa;
-            font-size: 10px;
-            margin-bottom: 8px;
-            line-height: 1.2;
-        }
-
-        .skin-cost {
-            color: #ffff00;
-            font-weight: bold;
-            font-size: 11px;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: #ff6b9d;
-            color: white;
-            border: 2px solid #ff0000;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 24px;
-            font-weight: bold;
-            z-index: 201;
-            transition: all 0.2s;
-            touch-action: manipulation;
-        }
-
-        .close-btn:active {
-            transform: scale(0.9);
-        }
-
-        /* ============ RESPONSIVE ============ */
+        /* ============ АДАПТИВ ============ */
         @media (max-width: 768px) {
             .fps-counter {
                 display: none;
@@ -854,16 +1085,6 @@
                 top: 60px;
                 font-size: 10px;
                 padding: 6px 12px;
-            }
-
-            .achievements-panel {
-                top: 120px;
-                font-size: 9px;
-            }
-
-            .achievement-badge {
-                font-size: 9px;
-                padding: 2px 5px;
             }
 
             .score-board {
@@ -891,8 +1112,22 @@
                 font-size: 11px;
             }
 
-            .pause-info-title {
-                font-size: 12px;
+            .modal-content {
+                max-width: 90vw;
+                max-height: 70vh;
+            }
+
+            .menu-title {
+                font-size: 2.5em;
+            }
+
+            .menu-buttons {
+                min-width: 250px;
+            }
+
+            .menu-btn {
+                padding: 15px 30px;
+                font-size: 16px;
             }
         }
 
@@ -902,12 +1137,15 @@
             }
 
             .skins-grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: 1fr;
             }
 
-            .mobile-controls {
-                gap: 10px;
-                bottom: 5px;
+            .wave-selection {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
             }
 
             .control-button {
@@ -916,232 +1154,296 @@
                 font-size: 24px;
             }
 
-            .wave-pause-screen {
-                padding: 25px 20px;
-                max-width: 90vw;
+            .menu-title {
+                font-size: 2em;
+                margin-bottom: 30px;
             }
 
-            .wave-pause-screen h2 {
-                font-size: 1.5em;
+            .menu-buttons {
+                min-width: 200px;
             }
 
-            .start-wave-btn {
-                padding: 12px 30px;
+            .menu-btn {
+                padding: 12px 20px;
                 font-size: 14px;
             }
+        }
 
-            .hud {
-                font-size: 9px;
-                min-width: 120px;
-            }
+        /* ============ СКРОЛЛБАР ============ */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
 
-            .pause-info-panel {
-                max-width: 90vw;
-                padding: 12px;
-                font-size: 10px;
-            }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #FFD700;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #FFED4E;
         }
     </style>
 </head>
 <body>
     <div id="gameContainer">
-        <canvas id="gameCanvas"></canvas>
-        <div class="pause-overlay" id="pauseOverlay"></div>
-
-        <!-- MINI GAME SCREEN -->
-        <div class="minigame-screen" id="minigameScreen">
-            <div class="minigame-title" id="minigameTitle">🐭 ЛОВЛЯ МЫШЕЙ 🐭</div>
-            <div class="minigame-hint" id="minigameHint">Клики по мышкам! 15 сек</div>
-            <canvas id="minigameCanvas" class="minigame-canvas"></canvas>
-            <div class="minigame-result" id="minigameResult"></div>
-        </div>
-
-        <!-- ДОСТИЖЕНИЯ -->
-        <div class="achievements-panel" id="achievementsPanel"></div>
-
-        <!-- ИНФОРМАЦИЯ О ВОЛНЕ -->
-        <div class="wave-info-panel" id="waveInfoPanel">
-            📊 Волна: <span id="waveCounter">1</span> | 
-            <span class="wave-difficulty" id="difficultyLevel">Обучение</span>
-            <span class="threat-indicator" id="threatIndicator" style="display: none;"></span>
-        </div>
-
-        <!-- ИНФОРМАЦИЯ ПАУЗЫ (СКРЫТА ВО ВРЕМЯ ИГРЫ) -->
-        <div class="pause-info-panel" id="pauseInfoPanel">
-            <div class="pause-info-title">📊 СТАТИСТИКА ВОЛНЫ</div>
-            <div class="pause-info-row">
-                <span class="pause-info-label">💬 Всего молока:</span>
-                <span class="pause-info-value" id="totalMilk">0</span>
+        <!-- ГЛАВНОЕ МЕНЮ -->
+        <div class="main-menu" id="mainMenu">
+            <div class="menu-title">🐱 КОТ vs МЫШИ 🐭</div>
+            <div class="menu-buttons">
+                <button class="menu-btn" onclick="showWaveSelection()">▶️ НАЧАТЬ ИГРУ</button>
+                <button class="menu-btn" onclick="showStatsModal()">📊 СТАТИСТИКА</button>
+                <button class="menu-btn" onclick="showAchievementsModal()">🏆 ДОСТИЖЕНИЯ</button>
+                <button class="menu-btn" onclick="showQuestsModal()">📝 КВЕСТЫ</button>
             </div>
-            <div class="pause-info-row">
-                <span class="pause-info-label">⭐ Всего очков:</span>
-                <span class="pause-info-value" id="totalScore">0</span>
-            </div>
-            <div class="pause-info-row">
-                <span class="pause-info-label">🏆 Макс волна:</span>
-                <span class="pause-info-value" id="maxWaveInfo">1</span>
-            </div>
-            <div class="pause-info-row">
-                <span class="pause-info-label">🎯 Убийств:</span>
-                <span class="pause-info-value" id="killsInfo">0</span>
-            </div>
-            <div class="pause-info-row">
-                <span class="pause-info-label">🔥 Макс комбо:</span>
-                <span class="pause-info-value" id="maxComboInfo">0</span>
-            </div>
-            <div class="pause-info-row">
-                <span class="pause-info-label">📌 Челлендж:</span>
-                <span class="pause-info-value" id="challengeInfo">-</span>
+            <div class="menu-stats">
+                <div class="menu-stat-row">Макс волна: <span class="menu-stat-value" id="menuMaxWave">1</span></div>
+                <div class="menu-stat-row">Всего молока: <span class="menu-stat-value" id="menuTotalMilk">0</span></div>
+                <div class="menu-stat-row">Достижений: <span class="menu-stat-value" id="menuAchievements">0/10</span></div>
+                <div class="menu-stat-row">Квестов: <span class="menu-stat-value" id="menuQuests">0/4</span></div>
             </div>
         </div>
 
-        <!-- HUD (МИНИМАЛЬНЫЙ) -->
-        <div class="hud">
-            <div class="hud-item">
-                <span class="hud-label">❤️ HP:</span>
-                <div class="health-bar">
-                    <div class="health-fill" id="healthFill" style="width: 100%;"></div>
+        <!-- МОДАЛЬНЫЕ ОКНА -->
+        <div class="modal" id="waveSelectionModal">
+            <div class="modal-content">
+                <div class="modal-title">🌊 ВЫБЕРИ ВОЛНУ</div>
+                <button class="close-modal-btn" onclick="closeModal('waveSelectionModal')">✕</button>
+                
+                <div style="margin-bottom: 20px; color: #AAA;">
+                    <p>Макс волна: <span style="color: #FFD700; font-weight: bold;" id="maxWaveDisplay">1</span></p>
+                    <p style="font-size: 11px; margin-top: 10px;">Бонус следующей волны:</p>
+                    <p style="color: #00FF00; font-weight: bold; font-size: 13px;" id="nextBonusDisplay">Загрузка...</p>
+                </div>
+
+                <div class="wave-selection" id="waveSelectionList"></div>
+            </div>
+        </div>
+
+        <div class="modal" id="statsModal">
+            <div class="modal-content">
+                <div class="modal-title">📊 СТАТИСТИКА</div>
+                <button class="close-modal-btn" onclick="closeModal('statsModal')">✕</button>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">МАКС ВОЛНА</div>
+                        <div class="stat-value" id="statMaxWave">1</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">ВСЕГО МОЛОКА</div>
+                        <div class="stat-value" id="statTotalMilk">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">ВСЕГО ВРАГОВ</div>
+                        <div class="stat-value" id="statTotalKills">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">МАКС КОМБО</div>
+                        <div class="stat-value" id="statMaxCombo">0</div>
+                    </div>
                 </div>
             </div>
-            <div class="hud-item">
-                <span class="hud-label">🥛:</span>
-                <span class="hud-value" id="milk">0</span>
-            </div>
         </div>
 
-        <div class="fps-counter" id="fpsCounter">FPS: 60</div>
-
-        <div class="score-board">
-            <div class="score-item">
-                <span class="score-label">ОЧКИ</span>
-                <div class="score-value" id="score">0</div>
-            </div>
-            <div class="score-item">
-                <span class="score-label">УБИЙСТВА</span>
-                <div class="score-value" id="kills">0</div>
-            </div>
-        </div>
-
-        <!-- КОМБО ДИСПЛЕЙ -->
-        <div class="combo-display" id="comboDisplay"></div>
-
-        <!-- ВОЛНА ДИСПЛЕЙ -->
-        <div class="wave-title-display" id="waveTitleDisplay"></div>
-
-        <!-- КНОПКИ УПРАВЛЕНИЯ (МОБИЛЬНЫЕ) -->
-        <div class="mobile-controls">
-            <button class="control-button" id="leftBtn" style="margin-left: 10px;">←</button>
-            <button class="control-button" id="shopBtn">🛍️</button>
-            <button class="control-button" id="rightBtn" style="margin-right: 10px;">→</button>
-        </div>
-
-        <!-- МАГАЗИН -->
-        <div class="shop-toggle" id="shopToggle" onclick="toggleShop()">🛍️</div>
-
-        <div class="shop-panel" id="shopPanel">
-            <div class="shop-title">🛍️ МАГАЗИН</div>
-
-            <!-- ПОСТОЯННЫЕ УЛУЧШЕНИЯ -->
-            <div class="shop-section">
-                <div class="shop-section-title">⭐ ПОСТОЯННЫЕ УЛУЧШЕНИЯ</div>
+        <div class="modal" id="achievementsModal">
+            <div class="modal-content">
+                <div class="modal-title">🏆 ДОСТИЖЕНИЯ</div>
+                <button class="close-modal-btn" onclick="closeModal('achievementsModal')">✕</button>
                 
-                <button class="shop-item" id="damageBtn" onclick="upgradeDamage()">
-                    <span class="item-name">💥 Урон</span>
-                    <span class="item-desc">Больше урона по врагам</span>
-                    <span class="item-cost" id="damageCost">35🥛</span>
-                </button>
+                <div class="achievements-list" id="achievementsList"></div>
+            </div>
+        </div>
 
-                <button class="shop-item" id="fireRateBtn" onclick="upgradeFireRate()">
-                    <span class="item-name">🔥 Скорость</span>
-                    <span class="item-desc">Быстрее стрелять</span>
-                    <span class="item-cost" id="fireRateCost">50🥛</span>
-                </button>
+        <div class="modal" id="questsModal">
+            <div class="modal-content">
+                <div class="modal-title">📝 НЕДЕЛЬНЫЕ КВЕСТЫ</div>
+                <button class="close-modal-btn" onclick="closeModal('questsModal')">✕</button>
+                
+                <div class="quest-list" id="questsList"></div>
+            </div>
+        </div>
 
-                <button class="shop-item" id="bulletBtn" onclick="upgradeBulletSize()">
-                    <span class="item-name">◯ Размер пули</span>
-                    <span class="item-desc">Большие снаряды</span>
-                    <span class="item-cost" id="bulletCost">40🥛</span>
-                </button>
+        <!-- ИГРОВАЯ ОБЛАСТЬ -->
+        <div class="game-area" id="gameArea">
+            <canvas id="gameCanvas"></canvas>
+            <div class="pause-overlay" id="pauseOverlay"></div>
+            <div class="pause-label" id="pauseLabel" style="display: none;">⏸️ ПАУЗА</div>
 
-                <button class="shop-item" id="healthBtn" onclick="upgradeHealth()">
-                    <span class="item-name">❤️ Здоровье</span>
-                    <span class="item-desc">Больше HP</span>
-                    <span class="item-cost" id="healthCost">70🥛</span>
-                </button>
+            <!-- HUD -->
+            <div class="hud">
+                <div class="hud-item">
+                    <span class="hud-label">❤️ HP:</span>
+                    <div class="health-bar">
+                        <div class="health-fill" id="healthFill" style="width: 100%;"></div>
+                    </div>
+                </div>
+                <div class="hud-item">
+                    <span class="hud-label">🥛:</span>
+                    <span class="hud-value" id="milk">0</span>
+                </div>
             </div>
 
-            <!-- ВРЕМЕННЫЕ БУСТЕРЫ -->
-            <div class="shop-section">
-                <div class="shop-section-title">⚡ ВРЕМЕННЫЕ БУСТЕРЫ (15-30 сек)</div>
-                
-                <button class="shop-item booster" id="quickDrawBtn" onclick="activateBooster('quickDraw')">
-                    <span class="item-name">⚡ Быстрая стрельба</span>
-                    <span class="item-desc">3x скорость стрельки</span>
-                    <span class="item-meta">⏱️ 15 сек</span>
-                    <span class="item-cost">30🥛</span>
-                </button>
+            <div class="fps-counter" id="fpsCounter">FPS: 60</div>
 
-                <button class="shop-item booster" id="powerStrikeBtn" onclick="activateBooster('powerStrike')">
-                    <span class="item-name">💪 Мощный удар</span>
-                    <span class="item-desc">2x урон по врагам</span>
-                    <span class="item-meta">⏱️ 20 сек</span>
-                    <span class="item-cost">40🥛</span>
-                </button>
+            <!-- ИНФОРМАЦИЯ О ВОЛНЕ -->
+            <div class="wave-info-panel">
+                📊 Волна: <span id="waveCounter">1</span>
+                <span class="bonus-indicator" id="bonusIndicator" style="display: none;"></span>
+            </div>
 
-                <button class="shop-item booster" id="shieldBtn" onclick="activateBooster('shield')">
-                    <span class="item-name">🛡️ Щит</span>
-                    <span class="item-desc">-50% получаемый урон</span>
-                    <span class="item-meta">⏱️ 30 сек</span>
-                    <span class="item-cost">50🥛</span>
-                </button>
+            <!-- ДОСКА ОЧКОВ -->
+            <div class="score-board">
+                <div class="score-item">
+                    <span class="score-label">ОЧКИ</span>
+                    <div class="score-value" id="score">0</div>
+                </div>
+                <div class="score-item">
+                    <span class="score-label">УБИЙСТВА</span>
+                    <div class="score-value" id="kills">0</div>
+                </div>
+            </div>
 
-                <button class="shop-item booster" id="speedBoostBtn" onclick="activateBooster('speedBoost')">
-                    <span class="item-name">🚀 Ускорение</span>
-                    <span class="item-desc">1.5x скорос��ь движения</span>
-                    <span class="item-meta">⏱️ 20 сек</span>
-                    <span class="item-cost">25🥛</span>
-                </button>
+            <!-- КНОПКИ УПРАВЛЕНИЯ (МОБИЛЬНЫЕ) -->
+            <div class="mobile-controls">
+                <button class="control-button" id="leftBtn">←</button>
+                <button class="control-button" id="rightBtn">→</button>
+            </div>
+
+            <!-- КНОПКА МАГАЗИНА -->
+            <div class="shop-toggle" id="shopToggle" onclick="toggleShop()">🛍️</div>
+
+            <!-- МАГАЗИН -->
+            <div class="shop-panel" id="shopPanel">
+                <div class="shop-title">🛍️ МАГАЗИН</div>
+
+                <div class="shop-section">
+                    <div class="shop-section-title">⭐ ПОСТОЯННЫЕ УЛУЧШЕНИЯ</div>
+                    
+                    <button class="shop-item" id="damageBtn" onclick="upgradeDamage()">
+                        <span class="item-name">💥 Урон</span>
+                        <span class="item-desc">Больше урона по врагам</span>
+                        <span class="item-cost" id="damageCost">35🥛</span>
+                    </button>
+
+                    <button class="shop-item" id="fireRateBtn" onclick="upgradeFireRate()">
+                        <span class="item-name">🔥 Скорость</span>
+                        <span class="item-desc">Быстрее стрелять</span>
+                        <span class="item-cost" id="fireRateCost">50🥛</span>
+                    </button>
+
+                    <button class="shop-item" id="bulletBtn" onclick="upgradeBulletSize()">
+                        <span class="item-name">◯ Размер пули</span>
+                        <span class="item-desc">Большие снаряды</span>
+                        <span class="item-cost" id="bulletCost">40🥛</span>
+                    </button>
+
+                    <button class="shop-item" id="healthBtn" onclick="upgradeHealth()">
+                        <span class="item-name">❤️ Здоровье</span>
+                        <span class="item-desc">Больше HP</span>
+                        <span class="item-cost" id="healthCost">70🥛</span>
+                    </button>
+                </div>
+
+                <div class="shop-section">
+                    <div class="shop-section-title">⚡ ВРЕМЕННЫЕ БУСТЕРЫ</div>
+                    
+                    <button class="shop-item booster" id="quickDrawBtn" onclick="activateBooster('quickDraw')">
+                        <span class="item-name">⚡ Быстрая стрельба</span>
+                        <span class="item-desc">3x скорость стрельки</span>
+                        <span class="item-meta">⏱️ 15 сек</span>
+                        <span class="item-cost">30🥛</span>
+                    </button>
+
+                    <button class="shop-item booster" id="powerStrikeBtn" onclick="activateBooster('powerStrike')">
+                        <span class="item-name">💪 Мощный удар</span>
+                        <span class="item-desc">2x урон по врагам</span>
+                        <span class="item-meta">⏱️ 20 сек</span>
+                        <span class="item-cost">40🥛</span>
+                    </button>
+
+                    <button class="shop-item booster" id="shieldBtn" onclick="activateBooster('shield')">
+                        <span class="item-name">🛡️ Щит</span>
+                        <span class="item-desc">-50% получаемый урон</span>
+                        <span class="item-meta">⏱️ 30 сек</span>
+                        <span class="item-cost">50🥛</span>
+                    </button>
+
+                    <button class="shop-item booster" id="speedBoostBtn" onclick="activateBooster('speedBoost')">
+                        <span class="item-name">🚀 Ускорение</span>
+                        <span class="item-desc">1.5x скорость движения</span>
+                        <span class="item-meta">⏱️ 20 сек</span>
+                        <span class="item-cost">25🥛</span>
+                    </button>
+                </div>
+
+                <div class="shop-section">
+                    <button class="shop-item" id="skinsBtn" onclick="showSkinsPanel()" style="border-color: #00ffff;">
+                        <span class="item-name" style="color: #00ffff;">🎨 Скины</span>
+                        <span class="item-desc">Новые костюмы и бонусы</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ИНФОРМАЦИЯ ПАУЗЫ -->
+            <div class="pause-info-panel" id="pauseInfoPanel">
+                <div class="pause-info-title">📊 СТАТИСТИКА ВОЛНЫ</div>
+                <div class="pause-info-row">
+                    <span class="pause-info-label">💬 Всего молока:</span>
+                    <span class="pause-info-value" id="totalMilk">0</span>
+                </div>
+                <div class="pause-info-row">
+                    <span class="pause-info-label">⭐ Всего очков:</span>
+                    <span class="pause-info-value" id="totalScore">0</span>
+                </div>
+                <div class="pause-info-row">
+                    <span class="pause-info-label">🏆 Макс волна:</span>
+                    <span class="pause-info-value" id="maxWaveInfo">1</span>
+                </div>
+                <div class="pause-info-row">
+                    <span class="pause-info-label">🎯 Убийств:</span>
+                    <span class="pause-info-value" id="killsInfo">0</span>
+                </div>
+                <div class="pause-info-row">
+                    <span class="pause-info-label">🔥 Макс комбо:</span>
+                    <span class="pause-info-value" id="maxComboInfo">0</span>
+                </div>
+            </div>
+
+            <!-- ВОЛНОВАЯ ПАУЗА -->
+            <div class="wave-pause-screen" id="wavePauseScreen">
+                <h2>✅ ВОЛНА ЗАВЕРШЕНА!</h2>
+                <p id="wavePauseText">Волна 1 завершена!</p>
+                <button class="start-wave-btn" onclick="startNextWave()">▶️ НАЧАТЬ ВОЛНУ</button>
+            </div>
+
+            <!-- КОНЕЦ ИГРЫ -->
+            <div id="gameOver" class="game-over">
+                <h1>💀 ИГРА ОКОНЧЕНА 💀</h1>
+                <p id="gameOverScore">Очки: 0</p>
+                <p id="gameOverKills">Убито ��рагов: 0</p>
+                <p id="gameOverLevel">Волн пройдено: 1</p>
+                <p id="gameOverCombo">Макс комбо: 0</p>
+                <div class="game-over-buttons">
+                    <button onclick="returnToMenu()">📋 МЕНЮ</button>
+                    <button onclick="location.reload()">🔄 ЗАНОВО</button>
+                </div>
             </div>
 
             <!-- СКИНЫ -->
-            <div class="shop-section">
-                <button class="shop-item" id="skinsBtn" onclick="showSkinsPanel()" style="border-color: #00ffff;">
-                    <span class="item-name" style="color: #00ffff;">🎨 Скины</span>
-                    <span class="item-desc">Новые костюмы и бонусы</span>
-                </button>
+            <div id="skinsPanel" class="skins-panel">
+                <button class="close-btn" onclick="hideSkinsPanel()">✕</button>
+                <h1>🎨 СКИНЫ КОТИКА</h1>
+                <div class="skins-grid" id="skinsGrid"></div>
             </div>
-        </div>
 
-        <!-- WAVE PAUSE SCREEN -->
-        <div class="wave-pause-screen" id="wavePauseScreen">
-            <h2>⏸️ ПАУЗА</h2>
-            <p id="wavePauseText">Волна 1 завершена!</p>
-            <button class="start-wave-btn" onclick="startNextWave()">▶️ НАЧАТЬ ВОЛНУ</button>
-        </div>
-
-        <!-- ИНФОРМАЦИЯ О ВОЛНЕ -->
-        <div id="levelInfo" class="level-info">
-            <h2 id="levelTitle">Волна 1</h2>
-            <p id="levelDesc">Начните игру!</p>
-        </div>
-
-        <!-- КОНЕЦ ИГРЫ -->
-        <div id="gameOver" class="game-over">
-            <h1>💀 ИГРА ОКОНЧЕНА 💀</h1>
-            <p id="gameOverScore">Очки: 0</p>
-            <p id="gameOverKills">Убито врагов: 0</p>
-            <p id="gameOverLevel">Волн пройдено: 1</p>
-            <p id="gameOverCombo">Макс комбо: 0</p>
-            <div class="game-over-buttons">
-                <button onclick="location.reload()">🔄 ЗАНОВО</button>
-            </div>
-        </div>
-
-        <!-- ПАНЕЛЬ СКИНОВ -->
-        <div id="skinsPanel" class="skins-panel">
-            <button class="close-btn" onclick="hideSkinsPanel()">✕</button>
-            <h1>🎨 СКИНЫ КОТИКА</h1>
-            <div class="skins-grid" id="skinsGrid"></div>
+            <!-- КОМБО И ВОЛНА -->
+            <div class="combo-display" id="comboDisplay"></div>
+            <div class="wave-title-display" id="waveTitleDisplay"></div>
         </div>
     </div>
 
@@ -1154,11 +1456,6 @@
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        const minigameCanvas = document.getElementById('minigameCanvas');
-        const minigameCtx = minigameCanvas.getContext('2d');
-        minigameCanvas.width = 600;
-        minigameCanvas.height = 400;
-
         let isMobile = window.innerWidth <= 768;
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
@@ -1168,33 +1465,6 @@
 
         // ============ ЛОКАЛЬНОЕ ХРАНИЛИЩЕ ============
         const STORAGE_KEY = 'catVsMiceGameData';
-
-        function getOrCreateDailyChallenge() {
-            const today = new Date().toDateString();
-            const data = localStorage.getItem('dailyChallengeData');
-            
-            if (data) {
-                const challenge = JSON.parse(data);
-                if (challenge.date === today) {
-                    return challenge;
-                }
-            }
-
-            const challenges = [
-                { name: 'Убить 50 врагов без промахов', type: 'kills', target: 50, current: 0 },
-                { name: 'Пройти 5 волн без урона', type: 'waves', target: 5, current: 0 },
-                { name: 'Заработать 1000 молока за игру', type: 'milk', target: 1000, current: 0 },
-                { name: 'Убить 100 врагов', type: 'totalKills', target: 100, current: 0 }
-            ];
-
-            const newChallenge = {
-                ...challenges[Math.floor(Math.random() * challenges.length)],
-                date: today
-            };
-
-            localStorage.setItem('dailyChallengeData', JSON.stringify(newChallenge));
-            return newChallenge;
-        }
 
         function loadGameData() {
             const data = localStorage.getItem(STORAGE_KEY);
@@ -1210,9 +1480,283 @@
                 activeSkin: gameState.activeSkin,
                 ownedSkins: gameState.ownedSkins,
                 totalScore: gameState.totalScore,
-                maxWave: gameState.maxWave
+                maxWave: gameState.maxWave,
+                achievements: Array.from(gameState.achievements),
+                completedQuests: gameState.completedQuests
             };
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
+        // ============ ВОЛНОВЫЕ БОНУСЫ ============
+        const WAVE_BONUSES = [
+            { name: '💰 +200 молока', type: 'milk', value: 200 },
+            { name: '❤️ +50 здоровья', type: 'health', value: 50 },
+            { name: '🔥 x1.5 мультипликатор', type: 'multiplier', value: 1.5 },
+            { name: '⚡ Ускорение бесплатно', type: 'booster', value: 'speedBoost' },
+            { name: '🛡️ Щит бесплатно', type: 'booster', value: 'shield' },
+            { name: '💥 x2 урон', type: 'damage', value: 2 }
+        ];
+
+        function getRandomBonus() {
+            return WAVE_BONUSES[Math.floor(Math.random() * WAVE_BONUSES.length)];
+        }
+
+        // ============ КВЕСТЫ ============
+        const WEEKLY_QUESTS = [
+            {
+                id: 'butcher',
+                name: '🥩 Мясник',
+                desc: 'Убить 100 врагов',
+                type: 'totalKills',
+                goal: 100,
+                reward: 200,
+                rewardSkin: 'king',
+                current: 0
+            },
+            {
+                id: 'hunter',
+                name: '🎯 Охотник',
+                desc: 'Пройти волну за ≤20 сек',
+                type: 'waveSpeed',
+                goal: 20,
+                reward: 150,
+                current: 0
+            },
+            {
+                id: 'rich',
+                name: '💰 Богач',
+                desc: 'Заработать 1000 молока за волну',
+                type: 'waveMilk',
+                goal: 1000,
+                reward: 200,
+                current: 0
+            },
+            {
+                id: 'fastman',
+                name: '⚡ Комбо-мастер',
+                desc: 'Создать комбо x5',
+                type: 'combo',
+                goal: 5,
+                reward: 100,
+                rewardSkin: 'moon',
+                current: 0
+            }
+        ];
+
+        // ============ СКИНЫ ============
+        const SKINS = {
+            tabby: { name: 'Табби', emoji: '🐱', bonus: 'Обычный котик', bonusType: 'none', cost: 0, premium: false },
+            warrior: { name: 'Боевой', emoji: '😾', bonus: '+25% урона', bonusType: 'damage', value: 1.25, cost: 150, premium: false },
+            sniper: { name: 'Снайпер', emoji: '🐯', bonus: '+50% размер', bonusType: 'bulletSize', value: 1.5, cost: 180, premium: false },
+            doctor: { name: 'Доктор', emoji: '🐱‍⚕️', bonus: '+30% HP', bonusType: 'health', value: 1.3, cost: 700, premium: true },
+            gunner: { name: 'Пулемётчик', emoji: '🐱‍🐉', bonus: '+50% скорость', bonusType: 'fireRate', value: 1.5, cost: 750, premium: true },
+            ninja: { name: 'Ниндзя', emoji: '🐱‍👓', bonus: '+20% всё', bonusType: 'all', value: 1.2, cost: 800, premium: true },
+            king: { name: '👑 Король', emoji: '👑', bonus: '+40% всё + свечение', bonusType: 'all', value: 1.4, cost: 0, premium: true, questReward: true },
+            moon: { name: '🌙 Луна', emoji: '🌙', bonus: '+30% скорость', bonusType: 'fireRate', value: 1.3, cost: 0, premium: true, questReward: true },
+            star: { name: '⭐ Звезда', emoji: '⭐', bonus: '+50% комбо', bonusType: 'combo', value: 1.5, cost: 0, premium: true, questReward: true }
+        };
+
+        // ============ ДОСТИЖЕНИЯ ============
+        const ACHIEVEMENTS = {
+            firstBlood: { name: 'Первая кровь', desc: 'Убить 1 врага', icon: '🩸', check: () => gameState.totalKills >= 1 },
+            collector: { name: 'Коллекционер', desc: 'Купить все скины', icon: '👑', check: () => gameState.ownedSkins.length === Object.keys(SKINS).length },
+            warrior: { name: 'Воин', desc: 'Убить 100 врагов', icon: '⚔️', check: () => gameState.totalKills >= 100 },
+            legend: { name: 'Легенда', desc: 'Дойти до волны 20', icon: '⭐', check: () => gameState.maxWave >= 20 },
+            comboMaster: { name: 'Мастер комбо', desc: 'Комбо x5', icon: '🔥', check: () => gameState.maxCombo >= 5 },
+            speedRunner: { name: 'Спидраннер', desc: 'Пройти волну за 15 сек', icon: '⚡', check: () => false },
+            noHit: { name: 'Непобедимый', desc: 'Пройти волну без урона', icon: '🛡️', check: () => false },
+            richMan: { name: 'Богач', desc: 'Накопить 10000 молока', icon: '💰', check: () => gameState.totalScore >= 10000 },
+            tenWaves: { name: 'Десятиволнец', desc: 'Пройти 10 волн', icon: '🌊', check: () => gameState.maxWave >= 10 },
+            premiumSkins: { name: 'Премиум', desc: 'Получить премиум скин', icon: '💎', check: () => gameState.ownedSkins.some(s => SKINS[s]?.premium) }
+        };
+
+        // ============ СОСТОЯНИЕ ИГРЫ ============
+        const gameState = {
+            currentWave: 1,
+            score: 0,
+            kills: 0,
+            milk: 0,
+            isGameOver: false,
+            isPaused: false,
+            totalScore: 0,
+            totalKills: 0,
+            maxWave: 1,
+            maxCombo: 0,
+            combo: 0,
+            lastKillTime: 0,
+            
+            waveStats: {
+                timeTaken: 0,
+                waveStartTime: 0,
+                damageReceivedThisWave: 0,
+                milkThisWave: 0
+            },
+            
+            upgrades: {
+                damage: { level: 1, baseCost: 35 },
+                fireRate: { level: 1, baseCost: 50 },
+                bulletSize: { level: 1, baseCost: 40 },
+                health: { level: 1, baseCost: 70 }
+            },
+
+            activeBoosters: [],
+            achievements: new Set(),
+            activeSkin: 'tabby',
+            ownedSkins: ['tabby'],
+            completedQuests: new Set(),
+            waveBonus: null
+        };
+
+        const savedData = loadGameData();
+        if (savedData) {
+            gameState.upgrades = savedData.upgrades;
+            gameState.activeSkin = savedData.activeSkin;
+            gameState.ownedSkins = savedData.ownedSkins;
+            gameState.totalScore = savedData.totalScore;
+            gameState.maxWave = savedData.maxWave;
+            gameState.achievements = new Set(savedData.achievements);
+            gameState.completedQuests = new Set(savedData.completedQuests);
+        }
+
+        // ============ ФУНКЦИИ МЕНЮ ============
+        function showWaveSelection() {
+            const modal = document.getElementById('waveSelectionModal');
+            const listDiv = document.getElementById('waveSelectionList');
+            listDiv.innerHTML = '';
+
+            document.getElementById('maxWaveDisplay').textContent = gameState.maxWave;
+            
+            const nextWave = gameState.maxWave + 1;
+            const nextBonus = getWaveBonusForWave(nextWave);
+            document.getElementById('nextBonusDisplay').textContent = nextBonus.name;
+
+            for (let wave = 1; wave <= gameState.maxWave; wave++) {
+                const bonus = getWaveBonusForWave(wave);
+                const div = document.createElement('div');
+                div.className = 'wave-option';
+                div.innerHTML = `
+                    <div class="wave-number">🌊 ${wave}</div>
+                    <div class="wave-bonus">${bonus.name}</div>
+                    <button class="wave-start-btn" onclick="startGameFromWave(${wave})">Начать</button>
+                `;
+                listDiv.appendChild(div);
+            }
+
+            openModal('waveSelectionModal');
+        }
+
+        function getWaveBonusForWave(wave) {
+            // Генерируем одинаковый бонус для волны каждый раз
+            const seed = wave * 12345;
+            const index = (seed % WAVE_BONUSES.length);
+            return WAVE_BONUSES[index];
+        }
+
+        function startGameFromWave(wave) {
+            closeAllModals();
+            gameState.currentWave = wave;
+            gameState.waveBonus = getWaveBonusForWave(wave);
+            document.getElementById('mainMenu').classList.add('menu-hidden');
+            document.getElementById('gameArea').classList.add('active');
+            createWave(wave);
+            updateUI();
+            gameLoop();
+        }
+
+        function showStatsModal() {
+            document.getElementById('statMaxWave').textContent = gameState.maxWave;
+            document.getElementById('statTotalMilk').textContent = gameState.totalScore;
+            document.getElementById('statTotalKills').textContent = gameState.totalKills;
+            document.getElementById('statMaxCombo').textContent = gameState.maxCombo;
+            openModal('statsModal');
+        }
+
+        function showAchievementsModal() {
+            const list = document.getElementById('achievementsList');
+            list.innerHTML = '';
+
+            let unlockedCount = 0;
+            Object.keys(ACHIEVEMENTS).forEach(key => {
+                const achievement = ACHIEVEMENTS[key];
+                const unlocked = gameState.achievements.has(key);
+                if (unlocked) unlockedCount++;
+
+                const div = document.createElement('div');
+                div.className = 'achievement-item' + (unlocked ? ' unlocked' : '');
+                div.innerHTML = `
+                    <div class="achievement-icon">${achievement.icon}</div>
+                    <div class="achievement-name">${achievement.name}</div>
+                    <div class="achievement-desc">${achievement.desc}</div>
+                `;
+                list.appendChild(div);
+            });
+
+            document.getElementById('menuAchievements').textContent = `${unlockedCount}/10`;
+            openModal('achievementsModal');
+        }
+
+        function showQuestsModal() {
+            const list = document.getElementById('questsList');
+            list.innerHTML = '';
+
+            let completedCount = 0;
+            WEEKLY_QUESTS.forEach(quest => {
+                const completed = gameState.completedQuests.has(quest.id);
+                if (completed) completedCount++;
+
+                const div = document.createElement('div');
+                div.className = 'quest-item';
+                const progress = Math.min(100, (quest.current / quest.goal) * 100);
+                
+                div.innerHTML = `
+                    <div class="quest-header">
+                        <span class="quest-name">${quest.name}</span>
+                        <span class="quest-reward">${completed ? '✓' : quest.reward + ' 🥛'}</span>
+                    </div>
+                    <div class="quest-desc">${quest.desc}</div>
+                    <div class="quest-progress">
+                        <div class="quest-progress-bar" style="width: ${progress}%"></div>
+                    </div>
+                    <div class="quest-status">${quest.current}/${quest.goal}</div>
+                `;
+                list.appendChild(div);
+            });
+
+            document.getElementById('menuQuests').textContent = `${completedCount}/4`;
+            openModal('questsModal');
+        }
+
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        function closeAllModals() {
+            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+        }
+
+        function returnToMenu() {
+            gameState.isGameOver = false;
+            gameState.isPaused = false;
+            document.getElementById('gameOver').style.display = 'none';
+            document.getElementById('pauseOverlay').classList.remove('active');
+            document.getElementById('gameArea').classList.remove('active');
+            document.getElementById('mainMenu').classList.remove('menu-hidden');
+            updateMenuStats();
+        }
+
+        function updateMenuStats() {
+            document.getElementById('menuMaxWave').textContent = gameState.maxWave;
+            document.getElementById('menuTotalMilk').textContent = gameState.totalScore;
+            
+            let achievements = gameState.achievements.size;
+            document.getElementById('menuAchievements').textContent = `${achievements}/10`;
+            
+            let completed = gameState.completedQuests.size;
+            document.getElementById('menuQuests').textContent = `${completed}/4`;
         }
 
         // ============ СЧЕТЧИК FPS ============
@@ -1231,7 +1775,7 @@
             }
         }
 
-        // ============ УПРАВЛЕНИЕ ДВИЖЕНИЕМ (ТОЛЬКО ВЛЕВО-ВПРАВО) ============
+        // ============ УПРАВЛЕНИЕ ============
         const keys = { a: false, d: false };
 
         window.addEventListener('keydown', (e) => {
@@ -1246,10 +1790,8 @@
             if (key === 'd' || key === 'arrowright') keys.d = false;
         });
 
-        // ============ КНОПКИ УПРАВЛЕНИЯ (МОБИЛЬНЫЕ) ============
         const leftBtn = document.getElementById('leftBtn');
         const rightBtn = document.getElementById('rightBtn');
-        const shopBtnMobile = document.getElementById('shopBtn');
 
         leftBtn.addEventListener('touchstart', (e) => {
             e.preventDefault();
@@ -1269,12 +1811,8 @@
             keys.d = false;
         });
 
-        shopBtnMobile.addEventListener('click', toggleShop);
-
-        // ============ СТРЕЛЬБА ПО КЛИКУ ============
         canvas.addEventListener('click', (e) => {
             if (gameState.isPaused || gameState.isGameOver) return;
-            
             const rect = canvas.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
@@ -1283,12 +1821,10 @@
 
         canvas.addEventListener('touchstart', (e) => {
             if (gameState.isPaused || gameState.isGameOver) return;
-            
             const touch = e.touches[e.touches.length - 1];
             const rect = canvas.getBoundingClientRect();
             const x = touch.clientX - rect.left;
             const y = touch.clientY - rect.top;
-            
             player.shoot(x, y);
         }, { passive: true });
 
@@ -1299,9 +1835,7 @@
             mouse2: new Image(),
             mouse3: new Image(),
             mouse4: new Image(),
-            mouse5: new Image(),
-            boss: new Image(),
-            background: new Image()
+            mouse5: new Image()
         };
 
         images.cat.src = 'cat.png';
@@ -1310,16 +1844,16 @@
         images.mouse3.src = 'mouse3.png';
         images.mouse4.src = 'mouse4.png';
         images.mouse5.src = 'mouse5.png';
-        images.boss.src = 'boss.png';
 
         // ============ ЗВУКИ ============
         function playSound(type) {
             try {
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                let osc, gain;
                 
                 if (type === 'shoot') {
-                    const osc = audioContext.createOscillator();
-                    const gain = audioContext.createGain();
+                    osc = audioContext.createOscillator();
+                    gain = audioContext.createGain();
                     osc.connect(gain);
                     gain.connect(audioContext.destination);
                     osc.frequency.value = 600;
@@ -1328,8 +1862,8 @@
                     osc.start(audioContext.currentTime);
                     osc.stop(audioContext.currentTime + 0.08);
                 } else if (type === 'hit') {
-                    const osc = audioContext.createOscillator();
-                    const gain = audioContext.createGain();
+                    osc = audioContext.createOscillator();
+                    gain = audioContext.createGain();
                     osc.connect(gain);
                     gain.connect(audioContext.destination);
                     osc.frequency.value = 800;
@@ -1338,8 +1872,8 @@
                     osc.start(audioContext.currentTime);
                     osc.stop(audioContext.currentTime + 0.15);
                 } else if (type === 'enemy-death') {
-                    const osc = audioContext.createOscillator();
-                    const gain = audioContext.createGain();
+                    osc = audioContext.createOscillator();
+                    gain = audioContext.createGain();
                     osc.connect(gain);
                     gain.connect(audioContext.destination);
                     osc.frequency.setValueAtTime(600, audioContext.currentTime);
@@ -1348,20 +1882,9 @@
                     gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
                     osc.start(audioContext.currentTime);
                     osc.stop(audioContext.currentTime + 0.3);
-                } else if (type === 'booster') {
-                    const osc = audioContext.createOscillator();
-                    const gain = audioContext.createGain();
-                    osc.connect(gain);
-                    gain.connect(audioContext.destination);
-                    osc.frequency.setValueAtTime(1200, audioContext.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(1600, audioContext.currentTime + 0.2);
-                    gain.gain.setValueAtTime(0.2, audioContext.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-                    osc.start(audioContext.currentTime);
-                    osc.stop(audioContext.currentTime + 0.2);
                 } else if (type === 'combo') {
-                    const osc = audioContext.createOscillator();
-                    const gain = audioContext.createGain();
+                    osc = audioContext.createOscillator();
+                    gain = audioContext.createGain();
                     osc.connect(gain);
                     gain.connect(audioContext.destination);
                     osc.frequency.setValueAtTime(1000, audioContext.currentTime);
@@ -1370,272 +1893,8 @@
                     gain.gain.exponentialRampToValueAtTime(0, audioContext.currentTime + 0.1);
                     osc.start(audioContext.currentTime);
                     osc.stop(audioContext.currentTime + 0.1);
-                } else if (type === 'danger') {
-                    const osc = audioContext.createOscillator();
-                    const gain = audioContext.createGain();
-                    osc.connect(gain);
-                    gain.connect(audioContext.destination);
-                    osc.frequency.setValueAtTime(400, audioContext.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.3);
-                    gain.gain.setValueAtTime(0.3, audioContext.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-                    osc.start(audioContext.currentTime);
-                    osc.stop(audioContext.currentTime + 0.3);
-                } else if (type === 'treasure') {
-                    const osc = audioContext.createOscillator();
-                    const gain = audioContext.createGain();
-                    osc.connect(gain);
-                    gain.connect(audioContext.destination);
-                    osc.frequency.setValueAtTime(1600, audioContext.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(1200, audioContext.currentTime + 0.3);
-                    gain.gain.setValueAtTime(0.25, audioContext.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-                    osc.start(audioContext.currentTime);
-                    osc.stop(audioContext.currentTime + 0.3);
                 }
             } catch (e) {}
-        }
-
-        // ============ СОСТОЯНИЕ ИГРЫ ============
-        let dailyChallenge = getOrCreateDailyChallenge();
-
-        const gameState = {
-            currentWave: 1,
-            score: 0,
-            kills: 0,
-            milk: 0,
-            isGameOver: false,
-            isPaused: false,
-            totalScore: 0,
-            maxWave: 1,
-            combo: 0,
-            maxCombo: 0,
-            lastKillTime: 0,
-            waveStats: {
-                timeTaken: 0,
-                waveStartTime: 0,
-                damageReceivedThisWave: 0,
-                accurateOneshots: 0,
-                noMissesCount: 0
-            },
-            
-            upgrades: {
-                damage: { level: 1, baseCost: 35 },
-                fireRate: { level: 1, baseCost: 50 },
-                bulletSize: { level: 1, baseCost: 40 },
-                health: { level: 1, baseCost: 70 }
-            },
-
-            activeBoosters: [],
-            achievements: new Set(),
-            activeSkin: 'tabby',
-            ownedSkins: ['tabby'],
-            minigamePlayedWaves: new Set()
-        };
-
-        const savedData = loadGameData();
-        if (savedData) {
-            gameState.upgrades = savedData.upgrades;
-            gameState.activeSkin = savedData.activeSkin;
-            gameState.ownedSkins = savedData.ownedSkins;
-            gameState.totalScore = savedData.totalScore;
-            gameState.maxWave = savedData.maxWave;
-        }
-
-        // ============ ДОСТИЖЕНИЯ ============
-        const ACHIEVEMENTS = {
-            firstBlood: { name: '🩸 Первая кровь', desc: 'Убить 1 врага', icon: '🩸', check: () => gameState.kills >= 1 },
-            collector: { name: '👑 Коллекционер', desc: 'Купить все скины', icon: '👑', check: () => gameState.ownedSkins.length === Object.keys(SKINS).length },
-            warrior: { name: '⚔️ Воин', desc: 'Убить 100 врагов', icon: '⚔️', check: () => gameState.kills >= 100 },
-            legend: { name: '⭐ Легенда', desc: 'Дойти до волны 20', icon: '⭐', check: () => gameState.maxWave >= 20 },
-            comboMaster: { name: '🔥 Мастер комбо', desc: 'Создать комбо x5', icon: '🔥', check: () => gameState.maxCombo >= 5 }
-        };
-
-        function unlockAchievement(key) {
-            if (!gameState.achievements.has(key)) {
-                gameState.achievements.add(key);
-                updateAchievementsDisplay();
-            }
-        }
-
-        function updateAchievementsDisplay() {
-            const panel = document.getElementById('achievementsPanel');
-            panel.innerHTML = '';
-
-            gameState.achievements.forEach(key => {
-                const achievement = ACHIEVEMENTS[key];
-                if (achievement) {
-                    const badge = document.createElement('div');
-                    badge.className = 'achievement-badge';
-                    badge.innerHTML = `${achievement.icon} ${achievement.name}`;
-                    badge.title = achievement.desc;
-                    panel.appendChild(badge);
-                }
-            });
-        }
-
-        function checkAchievements() {
-            Object.keys(ACHIEVEMENTS).forEach(key => {
-                const achievement = ACHIEVEMENTS[key];
-                if (achievement.check()) {
-                    unlockAchievement(key);
-                }
-            });
-        }
-
-        // ============ СКИНЫ ============
-        const SKINS = {
-            tabby: { name: 'Табби', emoji: '🐱', bonus: 'Обычный котик', bonusType: 'none', cost: 0 },
-            warrior: { name: 'Боевой', emoji: '😾', bonus: '+25% урона', bonusType: 'damage', value: 1.25, cost: 150 },
-            sniper: { name: 'Снайпер', emoji: '🐯', bonus: '+50% размер', bonusType: 'bulletSize', value: 1.5, cost: 180 },
-            doctor: { name: 'Доктор', emoji: '🐱‍⚕️', bonus: '+30% HP', bonusType: 'health', value: 1.3, cost: 200 },
-            gunner: { name: 'Пулемётчик', emoji: '🐱‍🐉', bonus: '+50% скорость', bonusType: 'fireRate', value: 1.5, cost: 220 },
-            ninja: { name: 'Ниндзя', emoji: '🐱‍👓', bonus: '+20% всё', bonusType: 'all', value: 1.2, cost: 350 }
-        };
-
-        // ============ СИСТЕМА ВОЛН И СЛОЖНОСТИ ============
-        function getWaveDifficulty(wave) {
-            if (wave <= 5) return { name: 'Обучение', multiplier: 1 };
-            if (wave <= 10) return { name: 'Первое испытание', multiplier: 1.25 };
-            if (wave <= 15) return { name: 'Испытание боевое', multiplier: 1.5 };
-            if (wave <= 20) return { name: 'Апокалипсис', multiplier: 2 };
-            return { name: 'Бесконечность', multiplier: 2.5 };
-        }
-
-        function getThreatLevel(wave) {
-            if (wave === 10) return { type: 'danger', text: '🔴 КРАСНАЯ УГРОЗА', color: '#FF6B6B' };
-            if (wave === 15) return { type: 'gold', text: '🟡 ЗОЛОТАЯ ДОБЫЧА', color: '#FFD700' };
-            return null;
-        }
-
-        // ============ ЧАСТИЦЫ ============
-        let particles = [];
-
-        function createParticle(x, y, type) {
-            const velocity = {
-                x: (Math.random() - 0.5) * 6,
-                y: (Math.random() - 0.5) * 6 - 2
-            };
-
-            const color = type === 'milk' ? '#90EE90' : '#FF6B6B';
-            const life = type === 'milk' ? 60 : 40;
-
-            particles.push({
-                x: x,
-                y: y,
-                vx: velocity.x,
-                vy: velocity.y,
-                life: life,
-                maxLife: life,
-                color: color,
-                size: Math.random() * 4 + 2,
-                type: type
-            });
-        }
-
-        function updateParticles() {
-            for (let i = particles.length - 1; i >= 0; i--) {
-                const p = particles[i];
-                p.x += p.vx;
-                p.y += p.vy;
-                p.vy += 0.15;
-                p.life--;
-
-                if (p.life <= 0) {
-                    particles.splice(i, 1);
-                }
-            }
-        }
-
-        function drawParticles() {
-            particles.forEach(p => {
-                ctx.globalAlpha = p.life / p.maxLife;
-                ctx.fillStyle = p.color;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                ctx.fill();
-            });
-            ctx.globalAlpha = 1;
-        }
-
-        // ============ SCREEN SHAKE ============
-        let screenShakeIntensity = 0;
-
-        function triggerScreenShake(intensity = 2) {
-            screenShakeIntensity = intensity;
-        }
-
-        function applyScreenShake() {
-            if (screenShakeIntensity > 0) {
-                const offsetX = (Math.random() - 0.5) * screenShakeIntensity;
-                const offsetY = (Math.random() - 0.5) * screenShakeIntensity;
-                ctx.translate(offsetX, offsetY);
-                screenShakeIntensity *= 0.9;
-            }
-        }
-
-        // ============ RED/GREEN FLASH ============
-        let flashIntensity = 0;
-        let flashColor = 'rgba(0, 0, 0, 0)';
-
-        function triggerFlash(type) {
-            flashIntensity = 0.4;
-            if (type === 'damage') {
-                flashColor = 'rgba(255, 0, 0, 0.4)';
-            } else if (type === 'kill') {
-                flashColor = 'rgba(0, 255, 0, 0.3)';
-            }
-        }
-
-        function drawFlash() {
-            if (flashIntensity > 0) {
-                ctx.fillStyle = flashColor.replace('0.4', flashIntensity).replace('0.3', flashIntensity * 0.75);
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                flashIntensity *= 0.9;
-            }
-        }
-
-        // ============ COMBO FEEDBACK ============
-        function showComboDisplay(combo) {
-            const display = document.getElementById('comboDisplay');
-            display.textContent = `КОМБО x${combo}`;
-            display.style.display = 'block';
-            setTimeout(() => {
-                display.style.display = 'none';
-            }, 600);
-        }
-
-        // ============ WAVE TITLE DISPLAY ============
-        function showWaveTitleDisplay(title) {
-            const display = document.getElementById('waveTitleDisplay');
-            display.textContent = title;
-            display.style.display = 'block';
-            setTimeout(() => {
-                display.style.display = 'none';
-            }, 1000);
-        }
-
-        // ============ BONUS FLOAT ============
-        function showBonusFloat(text) {
-            const bonusDiv = document.createElement('div');
-            bonusDiv.className = 'bonus-float';
-            bonusDiv.textContent = text;
-            document.querySelector('.score-board').appendChild(bonusDiv);
-            setTimeout(() => bonusDiv.remove(), 2000);
-        }
-
-        // ============ PAUSE INFO PANEL ============
-        function updatePauseInfoPanel() {
-            document.getElementById('totalMilk').textContent = gameState.milk;
-            document.getElementById('totalScore').textContent = gameState.totalScore;
-            document.getElementById('maxWaveInfo').textContent = gameState.maxWave;
-            document.getElementById('killsInfo').textContent = gameState.kills;
-            document.getElementById('maxComboInfo').textContent = gameState.maxCombo;
-            
-            if (dailyChallenge) {
-                const challengeText = `${dailyChallenge.name} (${dailyChallenge.current}/${dailyChallenge.target})`;
-                document.getElementById('challengeInfo').textContent = challengeText;
-            }
         }
 
         // ============ ИГРОК ============
@@ -1645,21 +1904,16 @@
             width: 80,
             height: 80,
             velocityX: 0,
-            velocityY: 0,
             health: 100,
             maxHealth: 100,
             fireRate: 0,
             rotation: 0,
-            lastDamageTime: 0,
             
             getDamage() {
                 let dmg = 10 + (gameState.upgrades.damage.level - 1) * 5;
-                
                 const skin = SKINS[gameState.activeSkin];
                 if (skin.bonusType === 'damage' || skin.bonusType === 'all') dmg *= skin.value;
-                
                 if (gameState.activeBoosters.some(b => b.type === 'powerStrike')) dmg *= 2;
-                
                 return dmg;
             },
 
@@ -1667,9 +1921,7 @@
                 let rate = Math.max(3, 10 - (gameState.upgrades.fireRate.level - 1) * 1.5);
                 const skin = SKINS[gameState.activeSkin];
                 if (skin.bonusType === 'fireRate' || skin.bonusType === 'all') rate /= skin.value;
-                
                 if (gameState.activeBoosters.some(b => b.type === 'quickDraw')) rate /= 3;
-                
                 return rate;
             },
 
@@ -1700,12 +1952,9 @@
                 else this.velocityX *= 0.85;
 
                 this.x += this.velocityX;
-                this.y += this.velocityY;
 
                 if (this.x < 40) this.x = 40;
                 if (this.x + 40 > canvas.width) this.x = canvas.width - 40;
-                if (this.y < 40) this.y = 40;
-                if (this.y + 40 > canvas.height) this.y = canvas.height - 40;
 
                 if (this.fireRate > 0) this.fireRate--;
             },
@@ -1714,19 +1963,15 @@
                 if (gameState.activeBoosters.some(b => b.type === 'shield')) {
                     amount *= 0.5;
                 }
-                
                 this.health -= amount;
                 if (this.health < 0) this.health = 0;
-                this.lastDamageTime = Date.now();
                 gameState.waveStats.damageReceivedThisWave += amount;
                 playSound('hit');
-                triggerFlash('damage');
             },
 
             shoot(targetX, targetY) {
                 if (this.fireRate <= 0) {
-                    const angle = Math.atan2(targetY - (this.y + this.height / 2), 
-                                           targetX - (this.x + this.width / 2));
+                    const angle = Math.atan2(targetY - (this.y + this.height / 2), targetX - (this.x + this.width / 2));
                     this.rotation = angle;
                     
                     bullets.push({
@@ -1761,15 +2006,15 @@
                     ctx.fillRect(10, -5, 5, 5);
                 }
 
-                ctx.restore();
-                
                 if (gameState.activeBoosters.some(b => b.type === 'shield')) {
                     ctx.strokeStyle = 'rgba(0, 255, 255, 0.6)';
                     ctx.lineWidth = 3;
                     ctx.beginPath();
-                    ctx.arc(this.x, this.y, 50, 0, Math.PI * 2);
+                    ctx.arc(0, 0, 50, 0, Math.PI * 2);
                     ctx.stroke();
                 }
+
+                ctx.restore();
             }
         };
 
@@ -1778,29 +2023,17 @@
         let bossActive = false;
         let waveEnemySpawnCount = 0;
 
-        function getBackgroundImage() {
-            if (gameState.currentWave <= 2) {
-                images.background.src = 'house.jpg';
-            } else if (gameState.currentWave <= 4) {
-                images.background.src = 'garden.jpg';
-            } else {
-                images.background.src = 'room.jpg';
-            }
-        }
-
         function createEnemy(type) {
             const baseX = Math.random() * (canvas.width - 60) + 30;
             const baseY = Math.random() * (canvas.height / 2 - 60) + 30;
-            const difficulty = getWaveDifficulty(gameState.currentWave);
 
             if (type === 'normal') {
                 const mouseType = Math.floor(Math.random() * 4) + 1;
                 const mouseImg = images['mouse' + mouseType];
-                const enemyHealth = Math.floor((15 + gameState.currentWave * 2) * difficulty.multiplier);
+                const enemyHealth = 15 + gameState.currentWave * 2;
 
                 return {
                     type: 'normal',
-                    mouseType: mouseType,
                     x: baseX,
                     y: baseY,
                     width: 40,
@@ -1810,9 +2043,6 @@
                     health: enemyHealth,
                     maxHealth: enemyHealth,
                     alive: true,
-                    isRed: gameState.currentWave === 10,
-                    isGold: gameState.currentWave === 15,
-                    damageBonus: gameState.currentWave === 10 ? 3 : (gameState.currentWave === 15 ? 0 : 1),
 
                     update() {
                         this.x += this.velocityX;
@@ -1826,20 +2056,11 @@
                         this.health -= amount;
                         if (this.health <= 0) {
                             this.alive = false;
-                            const scoreReward = 50;
-                            gameState.score += scoreReward;
-                            gameState.totalScore += scoreReward;
-                            
-                            let milkReward = 10 + gameState.currentWave * 2;
-                            if (this.isRed) milkReward *= 3;
-                            gameState.milk += milkReward;
-
-                            if (this.isGold) {
-                                waveEnemySpawnCount = 999;
-                            }
-
+                            gameState.score += 50;
+                            gameState.milk += 10 + gameState.currentWave * 2;
                             gameState.kills++;
-                            gameState.maxCombo++;
+                            gameState.totalKills++;
+                            gameState.waveStats.milkThisWave += 10 + gameState.currentWave * 2;
 
                             const now = Date.now();
                             if (now - gameState.lastKillTime < 2000) {
@@ -1854,21 +2075,10 @@
                             }
                             gameState.lastKillTime = now;
 
-                            if (gameState.combo >= 5) {
-                                gameState.milk += Math.floor((10 + gameState.currentWave * 2) * 2);
-                                triggerFlash('kill');
-                            } else if (gameState.combo >= 3) {
-                                gameState.milk += Math.floor((10 + gameState.currentWave * 2) * 1.5);
-                            } else if (gameState.combo >= 2) {
-                                gameState.milk += Math.floor((10 + gameState.currentWave * 2) * 0.5);
-                            }
-
-                            if (dailyChallenge.type === 'kills') dailyChallenge.current++;
-                            if (dailyChallenge.type === 'totalKills') dailyChallenge.current++;
-
-                            for (let i = 0; i < 5; i++) {
-                                createParticle(this.x, this.y, 'milk');
-                            }
+                            WEEKLY_QUESTS.forEach(quest => {
+                                if (quest.type === 'totalKills') quest.current++;
+                                if (quest.type === 'combo' && gameState.combo >= quest.goal) quest.current = quest.goal;
+                            });
 
                             playSound('enemy-death');
                         }
@@ -1879,14 +2089,6 @@
                             ctx.drawImage(mouseImg, this.x - 20, this.y - 20, this.width, this.height);
                         }
 
-                        if (this.isRed) {
-                            ctx.fillStyle = 'rgba(255, 0, 0, 0.3)';
-                            ctx.fillRect(this.x - 20, this.y - 20, 40, 40);
-                        } else if (this.isGold) {
-                            ctx.fillStyle = 'rgba(255, 215, 0, 0.3)';
-                            ctx.fillRect(this.x - 20, this.y - 20, 40, 40);
-                        }
-
                         ctx.fillStyle = '#333';
                         ctx.fillRect(this.x - 20, this.y - 30, 40, 5);
                         ctx.fillStyle = '#00ff00';
@@ -1894,22 +2096,10 @@
                     }
                 };
             } else if (type === 'boss') {
-                const bossHealth = Math.floor((200 + gameState.currentWave * 50) * difficulty.multiplier);
+                const bossHealth = 200 + gameState.currentWave * 50;
                 
-                let bossImageSource = images.boss;
-                if (gameState.currentWave === 10) bossImageSource = images.mouse3;
-                else if (gameState.currentWave === 15) bossImageSource = images.mouse5;
-                else if (gameState.currentWave === 20) bossImageSource = images.mouse3;
-                else if (gameState.currentWave > 20) {
-                    const pattern = (gameState.currentWave - 20) % 3;
-                    if (pattern === 1) bossImageSource = images.mouse3;
-                    else if (pattern === 2) bossImageSource = images.mouse5;
-                    else bossImageSource = images.boss;
-                }
-
                 return {
                     type: 'boss',
-                    bossImageSource: bossImageSource,
                     x: canvas.width / 2,
                     y: 150,
                     width: 140,
@@ -1972,25 +2162,18 @@
                             gameState.totalScore += 1000;
                             gameState.milk += 200 + gameState.currentWave * 100;
                             gameState.kills++;
+                            gameState.totalKills += 5;
                             playSound('enemy-death');
                             bossActive = false;
-                            triggerScreenShake(5);
-
-                            for (let i = 0; i < 10; i++) {
-                                createParticle(this.x, this.y, 'milk');
-                            }
                         }
                     },
 
                     draw() {
-                        if (this.bossImageSource.complete && this.bossImageSource.naturalHeight !== 0) {
-                            ctx.drawImage(this.bossImageSource, this.x - 70, this.y - 70, this.width, this.height);
+                        if (images.mouse5.complete && images.mouse5.naturalHeight !== 0) {
+                            ctx.drawImage(images.mouse5, this.x - 70, this.y - 70, this.width, this.height);
                         } else {
                             ctx.fillStyle = '#8B4513';
                             ctx.fillRect(this.x - 70, this.y - 70, this.width, this.height);
-                            ctx.fillStyle = '#000';
-                            ctx.fillRect(this.x - 20, this.y - 30, 10, 10);
-                            ctx.fillRect(this.x + 10, this.y - 30, 10, 10);
                         }
 
                         ctx.fillStyle = '#333';
@@ -2014,34 +2197,34 @@
         function showWavePause() {
             gameState.isPaused = true;
             document.getElementById('wavePauseScreen').style.display = 'block';
-            document.getElementById('pauseOverlay').style.display = 'block';
-            updatePauseInfoPanel();
+            document.getElementById('pauseOverlay').classList.add('active');
+            document.getElementById('pauseLabel').style.display = 'block';
             document.getElementById('pauseInfoPanel').classList.add('active');
             
             const timeTaken = Math.round((Date.now() - gameState.waveStats.waveStartTime) / 1000);
             document.getElementById('wavePauseText').textContent = `Волна ${gameState.currentWave} завершена за ${timeTaken}сек!`;
+            updatePauseInfoPanel();
+        }
+
+        function updatePauseInfoPanel() {
+            document.getElementById('totalMilk').textContent = gameState.milk;
+            document.getElementById('totalScore').textContent = gameState.score;
+            document.getElementById('maxWaveInfo').textContent = gameState.maxWave;
+            document.getElementById('killsInfo').textContent = gameState.kills;
+            document.getElementById('maxComboInfo').textContent = gameState.maxCombo;
         }
 
         function startNextWave() {
             gameState.isPaused = false;
             document.getElementById('wavePauseScreen').style.display = 'none';
-            document.getElementById('pauseOverlay').style.display = 'none';
+            document.getElementById('pauseOverlay').classList.remove('active');
+            document.getElementById('pauseLabel').style.display = 'none';
             document.getElementById('pauseInfoPanel').classList.remove('active');
             
             gameState.currentWave++;
             gameState.maxWave = Math.max(gameState.maxWave, gameState.currentWave);
             saveGameData();
             
-            if ((gameState.currentWave - 1) % 5 === 0 && gameState.currentWave > 1) {
-                if (!gameState.minigamePlayedWaves.has(gameState.currentWave)) {
-                    const shouldPlayMinigame = (gameState.currentWave - 1) / 5;
-                    if (shouldPlayMinigame === Math.floor(shouldPlayMinigame)) {
-                        startMinigame();
-                        return;
-                    }
-                }
-            }
-
             createWave(gameState.currentWave);
         }
 
@@ -2056,41 +2239,24 @@
                 timeTaken: 0,
                 waveStartTime: Date.now(),
                 damageReceivedThisWave: 0,
-                accurateOneshots: 0,
-                noMissesCount: 0
+                milkThisWave: 0
             };
 
             player.health = player.getMaxHealth();
             player.velocityX = 0;
 
-            getBackgroundImage();
-            updateDifficultyDisplay();
+            gameState.waveBonus = getWaveBonusForWave(waveNum);
+            document.getElementById('bonusIndicator').textContent = gameState.waveBonus.name;
+            document.getElementById('bonusIndicator').style.display = 'inline';
 
-            const difficulty = getWaveDifficulty(waveNum);
-            showWaveTitleDisplay(`ВОЛНА ${waveNum}: ${difficulty.name}`);
-
-            const threat = getThreatLevel(waveNum);
-            if (threat) {
-                document.getElementById('threatIndicator').style.display = 'inline';
-                document.getElementById('threatIndicator').textContent = threat.text;
-                document.getElementById('threatIndicator').style.color = threat.color;
-                
-                if (threat.type === 'danger') {
-                    playSound('danger');
-                } else {
-                    playSound('treasure');
-                }
-            } else {
-                document.getElementById('threatIndicator').style.display = 'none';
-            }
+            showWaveTitleDisplay(`ВОЛНА ${waveNum}`);
 
             if (waveNum % 5 === 0) {
                 enemies.push(createEnemy('boss'));
                 bossActive = true;
-                showLevelInfo(`👹 ВОЛНА БОССА ${waveNum}`, 'Королева Крыс с УСИЛЕННЫМИ АТАКАМИ!');
             } else {
                 const baseEnemyCount = 4 + Math.floor(waveNum / 2);
-                const enemyCount = baseEnemyCount + gameState.currentWave;
+                const enemyCount = baseEnemyCount + waveNum;
                 
                 let spawnedCount = 0;
                 const spawnInterval = setInterval(() => {
@@ -2105,149 +2271,64 @@
                         spawnedCount += toSpawn;
                     }
                 }, 1500);
-
-                showLevelInfo(`ВОЛНА ${waveNum}`, `Приготовьтесь: ${enemyCount} врагов`);
-            }
-        }
-
-        function showLevelInfo(title, desc) {
-            document.getElementById('levelTitle').textContent = title;
-            document.getElementById('levelDesc').textContent = desc;
-            document.getElementById('levelInfo').style.display = 'block';
-            setTimeout(() => {
-                document.getElementById('levelInfo').style.display = 'none';
-            }, 3000);
-        }
-
-        function updateDifficultyDisplay() {
-            const difficulty = getWaveDifficulty(gameState.currentWave);
-            document.getElementById('difficultyLevel').textContent = difficulty.name;
-        }
-
-        // ============ МИНИ-ИГРА ЛОВЛЯ МЫШЕЙ ============
-        let minigameState = {
-            active: false,
-            timeLeft: 15,
-            mice: [],
-            caught: 0,
-            startTime: 0
-        };
-
-        function startMinigame() {
-            if (!gameState.minigamePlayedWaves.has(gameState.currentWave)) {
-                gameState.minigamePlayedWaves.add(gameState.currentWave);
-                
-                if (gameState.minigamePlayedWaves.size === 1) {
-                    alert('🎯 МИНИ-ИГРА: Ловля мышей!\n\nКликайте на мышек за 15 секунд.\n+25 молока за каждую пойманную мышку!');
-                }
             }
 
-            minigameState.active = true;
-            minigameState.timeLeft = 15;
-            minigameState.caught = 0;
-            minigameState.mice = [];
-            minigameState.startTime = Date.now();
+            // Применяем бонус волны
+            applyWaveBonus();
+        }
 
-            document.getElementById('minigameScreen').classList.add('active');
-
-            for (let i = 0; i < 10; i++) {
-                minigameState.mice.push({
-                    x: Math.random() * (minigameCanvas.width - 40) + 20,
-                    y: Math.random() * (minigameCanvas.height - 40) + 20,
-                    radius: 20,
-                    caught: false
+        function applyWaveBonus() {
+            const bonus = gameState.waveBonus;
+            
+            if (bonus.type === 'milk') {
+                gameState.milk += bonus.value;
+            } else if (bonus.type === 'health') {
+                player.health = Math.min(player.health + bonus.value, player.getMaxHealth());
+            } else if (bonus.type === 'booster') {
+                gameState.activeBoosters.push({
+                    type: bonus.value,
+                    endTime: Date.now() + 20000,
+                    duration: 20000
                 });
             }
-
-            minigameCanvas.addEventListener('click', handleMinigameClick);
-            playMinigame();
         }
 
-        function handleMinigameClick(e) {
-            if (!minigameState.active) return;
-
-            const rect = minigameCanvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-
-            for (let mouse of minigameState.mice) {
-                if (!mouse.caught) {
-                    const dist = Math.hypot(x - mouse.x, y - mouse.y);
-                    if (dist < mouse.radius) {
-                        mouse.caught = true;
-                        minigameState.caught++;
-                        playSound('enemy-death');
-                    }
-                }
-            }
-        }
-
-        function playMinigame() {
-            const elapsed = (Date.now() - minigameState.startTime) / 1000;
-            minigameState.timeLeft = Math.max(0, 15 - elapsed);
-
-            minigameCtx.fillStyle = 'rgba(26, 26, 62, 0.9)';
-            minigameCtx.fillRect(0, 0, minigameCanvas.width, minigameCanvas.height);
-
-            for (let mouse of minigameState.mice) {
-                minigameCtx.fillStyle = mouse.caught ? '#666' : '#FF6B6B';
-                minigameCtx.beginPath();
-                minigameCtx.arc(mouse.x, mouse.y, mouse.radius, 0, Math.PI * 2);
-                minigameCtx.fill();
-
-                if (!mouse.caught) {
-                    minigameCtx.fillStyle = '#000';
-                    minigameCtx.font = '24px Arial';
-                    minigameCtx.textAlign = 'center';
-                    minigameCtx.textBaseline = 'middle';
-                    minigameCtx.fillText('🐭', mouse.x, mouse.y);
-                }
-            }
-
-            minigameCtx.fillStyle = '#FFD700';
-            minigameCtx.font = 'bold 20px Arial';
-            minigameCtx.textAlign = 'left';
-            minigameCtx.fillText(`⏱️ ${minigameState.timeLeft.toFixed(1)}s`, 10, 30);
-            minigameCtx.fillText(`🎯 ${minigameState.caught}/10`, 10, 60);
-
-            if (minigameState.timeLeft > 0) {
-                requestAnimationFrame(playMinigame);
-            } else {
-                finishMinigame();
-            }
-        }
-
-        function finishMinigame() {
-            minigameState.active = false;
-            const reward = minigameState.caught * 25;
-            gameState.milk += reward;
-
-            document.getElementById('minigameResult').textContent = 
-                `Поймано: ${minigameState.caught}/10 | Получено: +${reward}🥛`;
-
-            minigameCanvas.removeEventListener('click', handleMinigameClick);
-
+        function showWaveTitleDisplay(title) {
+            const display = document.getElementById('waveTitleDisplay');
+            display.textContent = title;
+            display.style.display = 'block';
             setTimeout(() => {
-                document.getElementById('minigameScreen').classList.remove('active');
-                createWave(gameState.currentWave);
-            }, 3000);
+                display.style.display = 'none';
+            }, 1000);
         }
 
-        // ============ МАГАЗИН И ПАУЗА ============
+        function showComboDisplay(combo) {
+            const display = document.getElementById('comboDisplay');
+            display.textContent = `КОМБО x${combo}`;
+            display.style.display = 'block';
+            setTimeout(() => {
+                display.style.display = 'none';
+            }, 600);
+        }
+
+        // ============ МАГАЗИН ============
         function toggleShop() {
             const panel = document.getElementById('shopPanel');
             const overlay = document.getElementById('pauseOverlay');
             const infoPanel = document.getElementById('pauseInfoPanel');
+            const label = document.getElementById('pauseLabel');
             
             if (panel.classList.contains('open')) {
                 panel.classList.remove('open');
-                overlay.style.display = 'none';
+                overlay.classList.remove('active');
                 infoPanel.classList.remove('active');
+                label.style.display = 'none';
                 gameState.isPaused = false;
             } else {
                 panel.classList.add('open');
-                overlay.style.display = 'block';
+                overlay.classList.add('active');
                 infoPanel.classList.add('active');
+                label.style.display = 'block';
                 updatePauseInfoPanel();
                 gameState.isPaused = true;
             }
@@ -2295,7 +2376,6 @@
             }
         }
 
-        // ============ БУСТЕРЫ ============
         function activateBooster(type) {
             let cost = 0;
             let duration = 0;
@@ -2314,8 +2394,7 @@
                     endTime: Date.now() + duration,
                     duration: duration
                 });
-                playSound('booster');
-                triggerFlash('kill');
+                playSound('enemy-death');
                 updateUI();
             }
         }
@@ -2345,6 +2424,32 @@
             document.getElementById('healthBtn').disabled = gameState.milk < healthCost;
 
             checkAchievements();
+            checkQuests();
+        }
+
+        function checkAchievements() {
+            Object.keys(ACHIEVEMENTS).forEach(key => {
+                const achievement = ACHIEVEMENTS[key];
+                if (achievement.check() && !gameState.achievements.has(key)) {
+                    gameState.achievements.add(key);
+                    saveGameData();
+                }
+            });
+        }
+
+        function checkQuests() {
+            WEEKLY_QUESTS.forEach(quest => {
+                if (!gameState.completedQuests.has(quest.id) && quest.current >= quest.goal) {
+                    gameState.completedQuests.add(quest.id);
+                    gameState.milk += quest.reward;
+                    
+                    if (quest.rewardSkin) {
+                        gameState.ownedSkins.push(quest.rewardSkin);
+                    }
+                    
+                    saveGameData();
+                }
+            });
         }
 
         // ============ СКИНЫ ============
@@ -2357,19 +2462,29 @@
                 const active = gameState.activeSkin === key;
 
                 const item = document.createElement('div');
-                item.className = 'skin-item';
+                item.className = 'skin-item' + (skin.premium ? ' premium' : '');
                 if (owned) item.classList.add('owned');
                 if (active) item.classList.add('active');
+
+                let costText = '';
+                if (skin.questReward) {
+                    costText = '📝 Квест';
+                } else if (owned) {
+                    costText = active ? '✓ Активен' : '✓ Куплен';
+                } else {
+                    costText = skin.cost + ' 🥛';
+                }
 
                 item.innerHTML = `
                     <div class="skin-emoji">${skin.emoji}</div>
                     <div class="skin-name">${skin.name}</div>
                     <div class="skin-bonus">${skin.bonus}</div>
-                    <div class="skin-cost">${owned ? (active ? '✓ Активен' : '✓ Куплен') : skin.cost + ' 🥛'}</div>
+                    ${skin.premium && !owned ? '<div class="skin-premium-badge">💎 ПРЕМИУМ</div>' : ''}
+                    <div class="skin-cost">${costText}</div>
                 `;
 
                 item.onclick = () => {
-                    if (!owned && gameState.milk >= skin.cost) {
+                    if (!owned && !skin.questReward && gameState.milk >= skin.cost) {
                         gameState.milk -= skin.cost;
                         gameState.ownedSkins.push(key);
                         gameState.activeSkin = key;
@@ -2391,23 +2506,17 @@
                 grid.appendChild(item);
             }
 
-            document.getElementById('skinsPanel').style.display = 'block';
+            document.getElementById('skinsPanel').classList.add('active');
         }
 
         function hideSkinsPanel() {
-            document.getElementById('skinsPanel').style.display = 'none';
+            document.getElementById('skinsPanel').classList.remove('active');
         }
 
-        // ============ ОСНОВНОЙ ИГРОВОЙ ЦИКЛ ============
+        // ============ ОСНОВНОЙ ЦИКЛ ============
         function gameLoop() {
-            ctx.save();
-            
-            if (images.background.complete && images.background.naturalHeight !== 0) {
-                ctx.drawImage(images.background, 0, 0, canvas.width, canvas.height);
-            } else {
-                ctx.fillStyle = '#87ceeb';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-            }
+            ctx.fillStyle = '#87ceeb';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
             for (let i = 0; i < 5; i++) {
@@ -2420,11 +2529,8 @@
                 ctx.fill();
             }
 
-            applyScreenShake();
-
             if (!gameState.isGameOver && !gameState.isPaused) {
                 updateBoosters();
-                updateParticles();
                 player.update();
                 
                 for (let enemy of enemies) {
@@ -2448,7 +2554,6 @@
                             bullet.y > enemy.y - 25 && bullet.y < enemy.y + 25) {
                             
                             enemy.takeDamage(bullet.damage);
-                            triggerFlash('kill');
                             playSound('hit');
                             bullets.splice(i, 1);
                             break;
@@ -2492,33 +2597,16 @@
                 }
 
                 const allEnemiesDead = enemies.every(e => !e.alive);
-                if (allEnemiesDead && enemies.length > 0 && waveEnemySpawnCount > 0) {
+                if (allEnemiesDead && enemies.length > 0) {
                     const timeTaken = Math.round((Date.now() - gameState.waveStats.waveStartTime) / 1000);
-                    let bonusText = '';
-                    let bonusMilk = 0;
+                    
+                    WEEKLY_QUESTS.forEach(quest => {
+                        if (quest.type === 'waveSpeed' && timeTaken <= quest.goal) quest.current = quest.goal;
+                        if (quest.type === 'waveMilk' && gameState.waveStats.milkThisWave >= quest.goal) quest.current = quest.goal;
+                    });
 
-                    if (timeTaken <= 30) {
-                        bonusText = '⚡ БЫСТРАЯ ВОЛНА! +200🥛';
-                        bonusMilk = 200;
-                    }
-
-                    if (gameState.waveStats.damageReceivedThisWave === 0) {
-                        bonusText = '🛡️ БЕЗ УРОНА! +500🥛';
-                        bonusMilk = 500;
-                    }
-
-                    if (bonusText) {
-                        gameState.milk += bonusMilk;
-                        showBonusFloat(bonusText);
-                    }
-
-                    if (dailyChallenge.type === 'waves') {
-                        dailyChallenge.current++;
-                        if (dailyChallenge.current >= dailyChallenge.target) {
-                            gameState.milk += Math.floor(gameState.milk * 0.5);
-                        }
-                    }
-
+                    gameState.totalScore += gameState.score;
+                    saveGameData();
                     showWavePause();
                 }
 
@@ -2561,13 +2649,7 @@
                     ctx.arc(bullet.x, bullet.y, 5, 0, Math.PI * 2);
                     ctx.stroke();
                 }
-
-                drawParticles();
             }
-
-            drawFlash();
-
-            ctx.restore();
 
             document.getElementById('healthFill').style.width = (player.health / player.maxHealth * 100) + '%';
             document.getElementById('score').textContent = gameState.score;
@@ -2580,14 +2662,7 @@
         }
 
         // ============ ИНИЦИАЛИЗАЦИЯ ============
-        function init() {
-            createWave(1);
-            updateUI();
-            updateAchievementsDisplay();
-            gameLoop();
-        }
-
-        init();
+        updateMenuStats();
     </script>
 </body>
 </html>
