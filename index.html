@@ -59,6 +59,219 @@
             z-index: 102;
         }
 
+        /* ============ КНОПКИ УПРАВЛЕНИЯ (МОБИЛЬНЫЕ) ============ */
+        .mobile-controls {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 105;
+            justify-content: center;
+        }
+
+        @media (min-width: 769px) {
+            .mobile-controls {
+                display: none;
+            }
+        }
+
+        .control-button {
+            background: linear-gradient(135deg, #FFD700, #FFED4E);
+            border: 3px solid #FF6B00;
+            color: #000;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.1s;
+            touch-action: manipulation;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .control-button:active {
+            transform: scale(0.9);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        /* ============ HUD STYLES (ТОЛЬКО ВО ВРЕМЯ ИГРЫ) ============ */
+        .hud {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 3px solid #ff6b9d;
+            z-index: 100;
+            font-size: 12px;
+            min-width: 160px;
+            pointer-events: none;
+        }
+
+        .fps-counter {
+            position: absolute;
+            top: 10px;
+            left: auto;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 2px solid #00ff00;
+            font-size: 12px;
+            color: #00ff00;
+            font-weight: bold;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .hud-item {
+            margin: 6px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .hud-label {
+            color: #ffd700;
+            font-weight: bold;
+            min-width: 60px;
+            font-size: 11px;
+        }
+
+        .hud-value {
+            color: #fff;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .health-bar {
+            width: 90px;
+            height: 12px;
+            background: #333;
+            border: 2px solid #ffd700;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .health-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b9d, #ffd700);
+            transition: width 0.2s;
+        }
+
+        .score-board {
+            position: absolute;
+            bottom: 90px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 3px solid #ffd700;
+            z-index: 100;
+            text-align: left;
+            font-size: 11px;
+            pointer-events: none;
+        }
+
+        .score-item {
+            margin: 4px 0;
+        }
+
+        .score-label {
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 10px;
+        }
+
+        .score-value {
+            color: #fff;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* ============ ИНФОРМАЦИЯ (ПОКАЗЫВАЕТСЯ ТОЛЬКО ВО ВРЕМЯ ПАУЗЫ) ============ */
+        .pause-info-panel {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            padding: 20px;
+            border-radius: 12px;
+            border: 3px solid #00FFFF;
+            z-index: 101;
+            font-size: 12px;
+            pointer-events: auto;
+            display: none;
+            max-width: 90vw;
+            max-height: 60vh;
+            overflow-y: auto;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+        }
+
+        .pause-info-panel.active {
+            display: block;
+        }
+
+        .pause-info-title {
+            color: #00FFFF;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #00FFFF;
+            padding-bottom: 10px;
+        }
+
+        .pause-info-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+        }
+
+        .pause-info-label {
+            color: #00FFFF;
+            font-weight: bold;
+        }
+
+        .pause-info-value {
+            color: #FFD700;
+            font-weight: bold;
+        }
+
+        .bonus-float {
+            position: absolute;
+            bottom: 180px;
+            left: 20px;
+            color: #00FF00;
+            font-weight: bold;
+            font-size: 14px;
+            text-shadow: 0 0 10px #00FF00;
+            pointer-events: none;
+            animation: bonusFloat 2s ease-out;
+            z-index: 50;
+        }
+
+        @keyframes bonusFloat {
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-60px);
+            }
+        }
+
         /* ============ TOP PANEL ACHIEVEMENTS ============ */
         .achievements-panel {
             position: absolute;
@@ -81,10 +294,15 @@
             background: linear-gradient(135deg, #FF6B6B, #FFD700);
             padding: 4px 8px;
             border-radius: 6px;
-            font-size: 12px;
+            font-size: 11px;
             white-space: nowrap;
             border: 1px solid #fff;
             animation: popIn 0.3s ease-out;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
         .combo-display {
@@ -145,11 +363,11 @@
             left: 50%;
             transform: translateX(-50%);
             background: rgba(0, 0, 0, 0.8);
-            padding: 10px 20px;
+            padding: 8px 15px;
             border-radius: 8px;
             border: 2px solid #00FFFF;
             z-index: 99;
-            font-size: 12px;
+            font-size: 11px;
             pointer-events: none;
         }
 
@@ -169,284 +387,27 @@
             color: #FFD700;
         }
 
-        .record-panel {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 10px 14px;
-            border-radius: 8px;
-            border: 2px solid #FF00FF;
-            z-index: 99;
-            font-size: 11px;
-            pointer-events: none;
-        }
-
-        .record-item {
-            color: #FF00FF;
-            margin: 3px 0;
-            font-size: 10px;
-        }
-
-        /* ============ HUD STYLES ============ */
-        .hud {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 12px 16px;
-            border-radius: 10px;
-            border: 3px solid #ff6b9d;
-            z-index: 100;
-            font-size: 12px;
-            min-width: 200px;
-            pointer-events: none;
-        }
-
-        .fps-counter {
-            position: absolute;
-            top: 10px;
-            left: 220px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: 2px solid #00ff00;
-            font-size: 12px;
-            color: #00ff00;
-            font-weight: bold;
-            z-index: 100;
-            pointer-events: none;
-        }
-
-        .hud-item {
-            margin: 6px 0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-        }
-
-        .hud-label {
-            color: #ffd700;
-            font-weight: bold;
-            min-width: 80px;
-            font-size: 11px;
-        }
-
-        .hud-value {
-            color: #fff;
-            font-weight: bold;
-            font-size: 15px;
-        }
-
-        .health-bar {
-            width: 100px;
-            height: 14px;
-            background: #333;
-            border: 2px solid #ffd700;
-            border-radius: 6px;
-            overflow: hidden;
-        }
-
-        .health-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #ff6b9d, #ffd700);
-            transition: width 0.2s;
-        }
-
-        .score-board {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 12px 16px;
-            border-radius: 10px;
-            border: 3px solid #ffd700;
-            z-index: 100;
-            text-align: left;
-            font-size: 12px;
-            pointer-events: none;
-            min-width: 140px;
-        }
-
-        .score-item {
-            margin: 6px 0;
-        }
-
-        .score-label {
-            color: #ffd700;
-            font-weight: bold;
-            font-size: 10px;
-        }
-
-        .score-value {
-            color: #fff;
-            font-size: 17px;
-            font-weight: bold;
-        }
-
-        .bonus-float {
-            position: absolute;
-            bottom: 60px;
-            left: 20px;
-            color: #00FF00;
-            font-weight: bold;
-            font-size: 14px;
-            text-shadow: 0 0 10px #00FF00;
-            pointer-events: none;
-            animation: bonusFloat 2s ease-out;
-            z-index: 50;
-        }
-
-        @keyframes bonusFloat {
-            0% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-60px);
-            }
-        }
-
-        /* ============ CHALLENGE HUD ============ */
-        .challenge-hud {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 12px 16px;
-            border-radius: 10px;
-            border: 2px solid #00FFFF;
-            z-index: 100;
-            font-size: 11px;
-            pointer-events: none;
-            min-width: 180px;
-        }
-
-        .challenge-title {
-            color: #00FFFF;
-            font-weight: bold;
-            margin-bottom: 6px;
-            font-size: 10px;
-        }
-
-        .challenge-progress-bar {
-            width: 160px;
-            height: 10px;
-            background: #333;
-            border: 1px solid #00FFFF;
-            border-radius: 5px;
-            overflow: hidden;
-            margin-bottom: 4px;
-        }
-
-        .challenge-progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #00FFFF, #00FF00);
-            transition: width 0.3s;
-        }
-
-        .challenge-text {
-            color: #fff;
-            font-size: 10px;
-        }
-
-        /* ============ BOOSTERS DISPLAY ============ */
-        .boosters-display {
-            position: absolute;
-            top: 100px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 8px;
-            border-radius: 8px;
-            border: 2px solid #ff00ff;
-            z-index: 100;
-            pointer-events: none;
-            min-width: 100px;
-        }
-
-        .booster-item {
-            color: #ff00ff;
-            font-size: 11px;
-            margin: 4px 0;
-            padding: 2px 4px;
-            background: rgba(255, 0, 255, 0.2);
-            border-radius: 4px;
-        }
-
-        .booster-name {
-            font-weight: bold;
-            color: #ffff00;
-        }
-
-        .booster-timer {
-            color: #00ff00;
-            font-weight: bold;
-        }
-
-        /* ============ SWIPE HINT ============ */
-        .swipe-hint {
-            position: absolute;
-            bottom: 50px;
-            left: 0;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            padding: 0 20px;
-            pointer-events: none;
-            z-index: 80;
-            animation: fadeOut 3s ease-out forwards;
-        }
-
-        @keyframes fadeOut {
-            0% { opacity: 1; }
-            70% { opacity: 1; }
-            100% { opacity: 0; }
-        }
-
-        .swipe-arrow {
-            font-size: 2em;
-            color: #FFD700;
-            text-shadow: 0 0 10px #FFD700;
-            animation: slideHint 1s ease-in-out infinite;
-        }
-
-        .swipe-arrow.left {
-            animation: slideLeft 1s ease-in-out infinite;
-        }
-
-        .swipe-arrow.right {
-            animation: slideRight 1s ease-in-out infinite;
-        }
-
-        @keyframes slideLeft {
-            0%, 100% { transform: translateX(0); }
-            50% { transform: translateX(-20px); }
-        }
-
-        @keyframes slideRight {
-            0%, 100% { transform: translateX(0); }
-            50% { transform: translateX(20px); }
-        }
-
         /* ============ SHOP ============ */
         .shop-toggle {
             position: absolute;
-            bottom: 15px;
+            bottom: 100px;
             right: 15px;
-            background: rgba(255, 215, 0, 0.3);
-            border: 3px solid #ffd700;
-            padding: 12px 16px;
-            border-radius: 10px;
+            background: linear-gradient(135deg, #FFD700, #FFED4E);
+            border: 3px solid #FF6B00;
+            color: #000;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
             font-size: 28px;
             cursor: pointer;
             z-index: 104;
             transition: all 0.2s;
             touch-action: manipulation;
-            min-width: 50px;
-            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             animation: pulse 1s infinite;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
 
         @keyframes pulse {
@@ -455,8 +416,17 @@
         }
 
         .shop-toggle:active {
-            background: rgba(255, 215, 0, 0.7);
-            transform: scale(0.95) !important;
+            transform: scale(0.9) !important;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .shop-toggle {
+                bottom: 90px;
+                width: 55px;
+                height: 55px;
+                font-size: 24px;
+            }
         }
 
         .shop-panel {
@@ -710,11 +680,6 @@
             margin: 8px 0;
         }
 
-        @keyframes popIn {
-            0% { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
-            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-        }
-
         /* ============ GAME OVER ============ */
         .game-over {
             position: absolute;
@@ -879,49 +844,33 @@
             }
 
             .hud {
-                font-size: 11px;
-                padding: 10px 12px;
-                min-width: 160px;
-                top: auto;
-                bottom: 70px;
-                left: 5px;
-            }
-
-            .score-board {
-                font-size: 11px;
-                padding: 10px 12px;
-                min-width: 120px;
-                left: 5px;
-            }
-
-            .record-panel {
-                display: none;
-            }
-
-            .challenge-hud {
                 font-size: 10px;
-                padding: 10px 12px;
-                min-width: 150px;
-                right: 5px;
-                bottom: auto;
-                top: 60px;
-            }
-
-            .achievements-panel {
+                padding: 8px 10px;
+                min-width: 140px;
                 top: 5px;
-                padding: 6px 10px;
-                font-size: 10px;
-            }
-
-            .achievement-badge {
-                font-size: 10px;
-                padding: 3px 6px;
             }
 
             .wave-info-panel {
-                top: 50px;
-                font-size: 11px;
-                padding: 8px 12px;
+                top: 60px;
+                font-size: 10px;
+                padding: 6px 12px;
+            }
+
+            .achievements-panel {
+                top: 120px;
+                font-size: 9px;
+            }
+
+            .achievement-badge {
+                font-size: 9px;
+                padding: 2px 5px;
+            }
+
+            .score-board {
+                font-size: 10px;
+                padding: 8px 10px;
+                bottom: 100px;
+                min-width: 110px;
             }
 
             .shop-panel {
@@ -935,8 +884,15 @@
                 gap: 10px;
             }
 
-            .swipe-hint {
-                display: flex;
+            .pause-info-panel {
+                max-width: 85vw;
+                max-height: 50vh;
+                padding: 15px;
+                font-size: 11px;
+            }
+
+            .pause-info-title {
+                font-size: 12px;
             }
         }
 
@@ -949,14 +905,19 @@
                 grid-template-columns: repeat(2, 1fr);
             }
 
-            .boosters-display {
-                font-size: 10px;
-                right: 5px;
-                top: 140px;
+            .mobile-controls {
+                gap: 10px;
+                bottom: 5px;
+            }
+
+            .control-button {
+                width: 60px;
+                height: 60px;
+                font-size: 24px;
             }
 
             .wave-pause-screen {
-                padding: 30px 20px;
+                padding: 25px 20px;
                 max-width: 90vw;
             }
 
@@ -967,6 +928,17 @@
             .start-wave-btn {
                 padding: 12px 30px;
                 font-size: 14px;
+            }
+
+            .hud {
+                font-size: 9px;
+                min-width: 120px;
+            }
+
+            .pause-info-panel {
+                max-width: 90vw;
+                padding: 12px;
+                font-size: 10px;
             }
         }
     </style>
@@ -984,32 +956,46 @@
             <div class="minigame-result" id="minigameResult"></div>
         </div>
 
-        <!-- ДОСТИЖЕНИЯ И ИНФОРМАЦИЯ -->
+        <!-- ДОСТИЖЕНИЯ -->
         <div class="achievements-panel" id="achievementsPanel"></div>
 
-        <!-- ИНФОРМАЦИЯ О ВОЛНЕ И СЛОЖНОСТИ -->
+        <!-- ИНФОРМАЦИЯ О ВОЛНЕ -->
         <div class="wave-info-panel" id="waveInfoPanel">
             📊 Волна: <span id="waveCounter">1</span> | 
-            <span class="wave-difficulty" id="difficultyLevel">Обычная</span>
+            <span class="wave-difficulty" id="difficultyLevel">Обучение</span>
             <span class="threat-indicator" id="threatIndicator" style="display: none;"></span>
         </div>
 
-        <!-- ЛИЧНЫЙ РЕКОРД -->
-        <div class="record-panel" id="recordPanel">
-            <div class="record-item">🏆 Макс волна: <span id="maxWave">1</span></div>
-            <div class="record-item">⭐ Всего очков: <span id="totalScore">0</span></div>
-        </div>
-
-        <!-- CHALLENGE HUD -->
-        <div class="challenge-hud" id="challengeHud" style="display: none;">
-            <div class="challenge-title" id="challengeTitle">📌 Челлендж</div>
-            <div class="challenge-progress-bar">
-                <div class="challenge-progress-fill" id="challengeProgress" style="width: 0%;"></div>
+        <!-- ИНФОРМАЦИЯ ПАУЗЫ (СКРЫТА ВО ВРЕМЯ ИГРЫ) -->
+        <div class="pause-info-panel" id="pauseInfoPanel">
+            <div class="pause-info-title">📊 СТАТИСТИКА ВОЛНЫ</div>
+            <div class="pause-info-row">
+                <span class="pause-info-label">💬 Всего молока:</span>
+                <span class="pause-info-value" id="totalMilk">0</span>
             </div>
-            <div class="challenge-text" id="challengeText">0/0</div>
+            <div class="pause-info-row">
+                <span class="pause-info-label">⭐ Всего очков:</span>
+                <span class="pause-info-value" id="totalScore">0</span>
+            </div>
+            <div class="pause-info-row">
+                <span class="pause-info-label">🏆 Макс волна:</span>
+                <span class="pause-info-value" id="maxWaveInfo">1</span>
+            </div>
+            <div class="pause-info-row">
+                <span class="pause-info-label">🎯 Убийств:</span>
+                <span class="pause-info-value" id="killsInfo">0</span>
+            </div>
+            <div class="pause-info-row">
+                <span class="pause-info-label">🔥 Макс комбо:</span>
+                <span class="pause-info-value" id="maxComboInfo">0</span>
+            </div>
+            <div class="pause-info-row">
+                <span class="pause-info-label">📌 Челлендж:</span>
+                <span class="pause-info-value" id="challengeInfo">-</span>
+            </div>
         </div>
 
-        <!-- HUD -->
+        <!-- HUD (МИНИМАЛЬНЫЙ) -->
         <div class="hud">
             <div class="hud-item">
                 <span class="hud-label">❤️ HP:</span>
@@ -1018,12 +1004,8 @@
                 </div>
             </div>
             <div class="hud-item">
-                <span class="hud-label">🥛 Молоко:</span>
+                <span class="hud-label">🥛:</span>
                 <span class="hud-value" id="milk">0</span>
-            </div>
-            <div class="hud-item">
-                <span class="hud-label">💥 Урон:</span>
-                <span class="hud-value" id="damage">10</span>
             </div>
         </div>
 
@@ -1035,13 +1017,10 @@
                 <div class="score-value" id="score">0</div>
             </div>
             <div class="score-item">
-                <span class="score-label">УБИЙСТВ</span>
+                <span class="score-label">УБИЙСТВА</span>
                 <div class="score-value" id="kills">0</div>
             </div>
         </div>
-
-        <!-- АКТИВНЫЕ БУСТЕРЫ -->
-        <div class="boosters-display" id="boostersDisplay" style="display: none;"></div>
 
         <!-- КОМБО ДИСПЛЕЙ -->
         <div class="combo-display" id="comboDisplay"></div>
@@ -1049,10 +1028,11 @@
         <!-- ВОЛНА ДИСПЛЕЙ -->
         <div class="wave-title-display" id="waveTitleDisplay"></div>
 
-        <!-- SWIPE HINT -->
-        <div class="swipe-hint" id="swipeHint" style="display: none;">
-            <div class="swipe-arrow left">←</div>
-            <div class="swipe-arrow right">→</div>
+        <!-- КНОПКИ УПРАВЛЕНИЯ (МОБИЛЬНЫЕ) -->
+        <div class="mobile-controls">
+            <button class="control-button" id="leftBtn" style="margin-left: 10px;">←</button>
+            <button class="control-button" id="shopBtn">🛍️</button>
+            <button class="control-button" id="rightBtn" style="margin-right: 10px;">→</button>
         </div>
 
         <!-- МАГАЗИН -->
@@ -1117,7 +1097,7 @@
 
                 <button class="shop-item booster" id="speedBoostBtn" onclick="activateBooster('speedBoost')">
                     <span class="item-name">🚀 Ускорение</span>
-                    <span class="item-desc">1.5x скорость движения</span>
+                    <span class="item-desc">1.5x скорос��ь движения</span>
                     <span class="item-meta">⏱️ 20 сек</span>
                     <span class="item-cost">25🥛</span>
                 </button>
@@ -1253,8 +1233,6 @@
 
         // ============ УПРАВЛЕНИЕ ДВИЖЕНИЕМ (ТОЛЬКО ВЛЕВО-ВПРАВО) ============
         const keys = { a: false, d: false };
-        let swipeStartX = 0;
-        let swipeStartTime = 0;
 
         window.addEventListener('keydown', (e) => {
             const key = e.key.toLowerCase();
@@ -1268,35 +1246,30 @@
             if (key === 'd' || key === 'arrowright') keys.d = false;
         });
 
-        // ============ СВАЙП УПРАВЛЕНИЕ ============
-        canvas.addEventListener('touchstart', (e) => {
-            swipeStartX = e.touches[0].clientX;
-            swipeStartTime = Date.now();
-        }, { passive: true });
+        // ============ КНОПКИ УПРАВЛЕНИЯ (МОБИЛЬНЫЕ) ============
+        const leftBtn = document.getElementById('leftBtn');
+        const rightBtn = document.getElementById('rightBtn');
+        const shopBtnMobile = document.getElementById('shopBtn');
 
-        canvas.addEventListener('touchmove', (e) => {
-            if (gameState.isPaused || gameState.isGameOver) return;
-            
-            const currentX = e.touches[0].clientX;
-            const diff = currentX - swipeStartX;
-            const threshold = 30;
-
-            // Левый край экрана = движение влево
-            if (swipeStartX < canvas.width * 0.2) {
-                keys.a = diff < -threshold;
-                keys.d = false;
-            }
-            // Правый край экрана = движение вправо
-            else if (swipeStartX > canvas.width * 0.8) {
-                keys.d = diff > threshold;
-                keys.a = false;
-            }
-        }, { passive: true });
-
-        canvas.addEventListener('touchend', () => {
+        leftBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            keys.a = true;
+        });
+        leftBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
             keys.a = false;
+        });
+
+        rightBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            keys.d = true;
+        });
+        rightBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
             keys.d = false;
-        }, { passive: true });
+        });
+
+        shopBtnMobile.addEventListener('click', toggleShop);
 
         // ============ СТРЕЛЬБА ПО КЛИКУ ============
         canvas.addEventListener('click', (e) => {
@@ -1315,11 +1288,8 @@
             const rect = canvas.getBoundingClientRect();
             const x = touch.clientX - rect.left;
             const y = touch.clientY - rect.top;
-
-            // Центр экрана = стрельба
-            if (x > canvas.width * 0.2 && x < canvas.width * 0.8) {
-                player.shoot(x, y);
-            }
+            
+            player.shoot(x, y);
         }, { passive: true });
 
         // ============ ИЗОБРАЖЕНИЯ ============
@@ -1460,7 +1430,6 @@
             achievements: new Set(),
             activeSkin: 'tabby',
             ownedSkins: ['tabby'],
-            swipeHintShown: false,
             minigamePlayedWaves: new Set()
         };
 
@@ -1655,24 +1624,17 @@
             setTimeout(() => bonusDiv.remove(), 2000);
         }
 
-        // ============ CHALLENGE HUD ============
-        function updateChallengeHUD() {
-            const hud = document.getElementById('challengeHud');
-            if (!dailyChallenge) {
-                hud.style.display = 'none';
-                return;
-            }
-
-            hud.style.display = 'block';
-            document.getElementById('challengeTitle').textContent = `📌 ${dailyChallenge.name.split(' ')[0]}...`;
+        // ============ PAUSE INFO PANEL ============
+        function updatePauseInfoPanel() {
+            document.getElementById('totalMilk').textContent = gameState.milk;
+            document.getElementById('totalScore').textContent = gameState.totalScore;
+            document.getElementById('maxWaveInfo').textContent = gameState.maxWave;
+            document.getElementById('killsInfo').textContent = gameState.kills;
+            document.getElementById('maxComboInfo').textContent = gameState.maxCombo;
             
-            const progress = (dailyChallenge.current / dailyChallenge.target) * 100;
-            document.getElementById('challengeProgress').style.width = Math.min(progress, 100) + '%';
-            document.getElementById('challengeText').textContent = `${dailyChallenge.current}/${dailyChallenge.target}`;
-
-            if (dailyChallenge.current >= dailyChallenge.target && dailyChallenge.current > 0) {
-                document.getElementById('challengeTitle').textContent = '✅ Челлендж выполнен!';
-                document.getElementById('challengeText').textContent = '+50% молока!';
+            if (dailyChallenge) {
+                const challengeText = `${dailyChallenge.name} (${dailyChallenge.current}/${dailyChallenge.target})`;
+                document.getElementById('challengeInfo').textContent = challengeText;
             }
         }
 
@@ -1873,7 +1835,7 @@
                             gameState.milk += milkReward;
 
                             if (this.isGold) {
-                                waveEnemySpawnCount = 999; // Победа волны
+                                waveEnemySpawnCount = 999;
                             }
 
                             gameState.kills++;
@@ -1901,7 +1863,6 @@
                                 gameState.milk += Math.floor((10 + gameState.currentWave * 2) * 0.5);
                             }
 
-                            // UPDATE CHALLENGE
                             if (dailyChallenge.type === 'kills') dailyChallenge.current++;
                             if (dailyChallenge.type === 'totalKills') dailyChallenge.current++;
 
@@ -1918,7 +1879,6 @@
                             ctx.drawImage(mouseImg, this.x - 20, this.y - 20, this.width, this.height);
                         }
 
-                        // Red/Gold overlay
                         if (this.isRed) {
                             ctx.fillStyle = 'rgba(255, 0, 0, 0.3)';
                             ctx.fillRect(this.x - 20, this.y - 20, 40, 40);
@@ -1936,8 +1896,7 @@
             } else if (type === 'boss') {
                 const bossHealth = Math.floor((200 + gameState.currentWave * 50) * difficulty.multiplier);
                 
-                // Выбираем какой босс в какой волне
-                let bossImageSource = images.boss; // По умолчанию boss.png
+                let bossImageSource = images.boss;
                 if (gameState.currentWave === 10) bossImageSource = images.mouse3;
                 else if (gameState.currentWave === 15) bossImageSource = images.mouse5;
                 else if (gameState.currentWave === 20) bossImageSource = images.mouse3;
@@ -2056,6 +2015,8 @@
             gameState.isPaused = true;
             document.getElementById('wavePauseScreen').style.display = 'block';
             document.getElementById('pauseOverlay').style.display = 'block';
+            updatePauseInfoPanel();
+            document.getElementById('pauseInfoPanel').classList.add('active');
             
             const timeTaken = Math.round((Date.now() - gameState.waveStats.waveStartTime) / 1000);
             document.getElementById('wavePauseText').textContent = `Волна ${gameState.currentWave} завершена за ${timeTaken}сек!`;
@@ -2065,12 +2026,12 @@
             gameState.isPaused = false;
             document.getElementById('wavePauseScreen').style.display = 'none';
             document.getElementById('pauseOverlay').style.display = 'none';
+            document.getElementById('pauseInfoPanel').classList.remove('active');
             
             gameState.currentWave++;
             gameState.maxWave = Math.max(gameState.maxWave, gameState.currentWave);
             saveGameData();
             
-            // Мини-игра
             if ((gameState.currentWave - 1) % 5 === 0 && gameState.currentWave > 1) {
                 if (!gameState.minigamePlayedWaves.has(gameState.currentWave)) {
                     const shouldPlayMinigame = (gameState.currentWave - 1) / 5;
@@ -2105,11 +2066,9 @@
             getBackgroundImage();
             updateDifficultyDisplay();
 
-            // Show wave title
             const difficulty = getWaveDifficulty(waveNum);
             showWaveTitleDisplay(`ВОЛНА ${waveNum}: ${difficulty.name}`);
 
-            // Show threat if exists
             const threat = getThreatLevel(waveNum);
             if (threat) {
                 document.getElementById('threatIndicator').style.display = 'inline';
@@ -2178,7 +2137,6 @@
             if (!gameState.minigamePlayedWaves.has(gameState.currentWave)) {
                 gameState.minigamePlayedWaves.add(gameState.currentWave);
                 
-                // Подсказка перед первой мини-игрой
                 if (gameState.minigamePlayedWaves.size === 1) {
                     alert('🎯 МИНИ-ИГРА: Ловля мышей!\n\nКликайте на мышек за 15 секунд.\n+25 молока за каждую пойманную мышку!');
                 }
@@ -2191,11 +2149,7 @@
             minigameState.startTime = Date.now();
 
             document.getElementById('minigameScreen').classList.add('active');
-            document.getElementById('minigameTitle').textContent = '🐭 ЛОВЛЯ МЫШЕЙ 🐭';
-            document.getElementById('minigameHint').textContent = 'Клики по мышкам! 15 сек';
-            document.getElementById('minigameResult').textContent = '';
 
-            // Создаём мышек
             for (let i = 0; i < 10; i++) {
                 minigameState.mice.push({
                     x: Math.random() * (minigameCanvas.width - 40) + 20,
@@ -2232,11 +2186,9 @@
             const elapsed = (Date.now() - minigameState.startTime) / 1000;
             minigameState.timeLeft = Math.max(0, 15 - elapsed);
 
-            // Draw game
             minigameCtx.fillStyle = 'rgba(26, 26, 62, 0.9)';
             minigameCtx.fillRect(0, 0, minigameCanvas.width, minigameCanvas.height);
 
-            // Draw mice
             for (let mouse of minigameState.mice) {
                 minigameCtx.fillStyle = mouse.caught ? '#666' : '#FF6B6B';
                 minigameCtx.beginPath();
@@ -2252,7 +2204,6 @@
                 }
             }
 
-            // Draw timer and caught count
             minigameCtx.fillStyle = '#FFD700';
             minigameCtx.font = 'bold 20px Arial';
             minigameCtx.textAlign = 'left';
@@ -2282,18 +2233,22 @@
             }, 3000);
         }
 
-        // ============ МА��АЗИН И ПАУЗА ============
+        // ============ МАГАЗИН И ПАУЗА ============
         function toggleShop() {
             const panel = document.getElementById('shopPanel');
             const overlay = document.getElementById('pauseOverlay');
+            const infoPanel = document.getElementById('pauseInfoPanel');
             
             if (panel.classList.contains('open')) {
                 panel.classList.remove('open');
                 overlay.style.display = 'none';
+                infoPanel.classList.remove('active');
                 gameState.isPaused = false;
             } else {
                 panel.classList.add('open');
                 overlay.style.display = 'block';
+                infoPanel.classList.add('active');
+                updatePauseInfoPanel();
                 gameState.isPaused = true;
             }
         }
@@ -2368,40 +2323,11 @@
         function updateBoosters() {
             const now = Date.now();
             gameState.activeBoosters = gameState.activeBoosters.filter(b => b.endTime > now);
-            updateBoostersDisplay();
-        }
-
-        function updateBoostersDisplay() {
-            const display = document.getElementById('boostersDisplay');
-            
-            if (gameState.activeBoosters.length === 0) {
-                display.style.display = 'none';
-                return;
-            }
-
-            display.style.display = 'block';
-            display.innerHTML = '<div style="color: #ff00ff; font-weight: bold; margin-bottom: 4px;">⚡ Активные:</div>';
-
-            const now = Date.now();
-            gameState.activeBoosters.forEach(booster => {
-                const remaining = Math.ceil((booster.endTime - now) / 1000);
-                const emoji = {
-                    quickDraw: '⚡',
-                    powerStrike: '💪',
-                    shield: '🛡️',
-                    speedBoost: '🚀'
-                }[booster.type];
-
-                display.innerHTML += `<div class="booster-item"><span class="booster-name">${emoji}</span> <span class="booster-timer">${remaining}s</span></div>`;
-            });
         }
 
         function updateUI() {
             document.getElementById('milk').textContent = gameState.milk;
-            document.getElementById('damage').textContent = Math.round(player.getDamage());
             document.getElementById('waveCounter').textContent = gameState.currentWave;
-            document.getElementById('totalScore').textContent = gameState.totalScore;
-            document.getElementById('maxWave').textContent = gameState.maxWave;
             
             const damageCost = gameState.upgrades.damage.baseCost * gameState.upgrades.damage.level;
             const fireRateCost = gameState.upgrades.fireRate.baseCost * gameState.upgrades.fireRate.level;
@@ -2418,7 +2344,6 @@
             document.getElementById('bulletBtn').disabled = gameState.milk < bulletCost;
             document.getElementById('healthBtn').disabled = gameState.milk < healthCost;
 
-            updateChallengeHUD();
             checkAchievements();
         }
 
@@ -2477,7 +2402,6 @@
         function gameLoop() {
             ctx.save();
             
-            // Рисуем фон
             if (images.background.complete && images.background.naturalHeight !== 0) {
                 ctx.drawImage(images.background, 0, 0, canvas.width, canvas.height);
             } else {
@@ -2485,7 +2409,6 @@
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
             }
 
-            // Облака
             ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
             for (let i = 0; i < 5; i++) {
                 const x = (Date.now() / 80 + i * 250) % (canvas.width + 100);
@@ -2508,7 +2431,6 @@
                     if (enemy.alive) enemy.update();
                 }
 
-                // Обновляем пули
                 for (let i = bullets.length - 1; i >= 0; i--) {
                     const bullet = bullets[i];
                     bullet.x += bullet.vx;
@@ -2534,7 +2456,6 @@
                     }
                 }
 
-                // Враги стреляют
                 for (let enemy of enemies) {
                     if (enemy.alive && Math.random() < 0.008) {
                         if (Math.hypot(enemy.x - player.x, enemy.y - player.y) < 400) {
@@ -2551,7 +2472,6 @@
                     }
                 }
 
-                // Обновляем пули врагов
                 for (let i = enemyBullets.length - 1; i >= 0; i--) {
                     const bullet = enemyBullets[i];
                     bullet.x += bullet.vx;
@@ -2571,10 +2491,8 @@
                     }
                 }
 
-                // Проверяем завершение волны
                 const allEnemiesDead = enemies.every(e => !e.alive);
                 if (allEnemiesDead && enemies.length > 0 && waveEnemySpawnCount > 0) {
-                    // Clear bonus logic
                     const timeTaken = Math.round((Date.now() - gameState.waveStats.waveStartTime) / 1000);
                     let bonusText = '';
                     let bonusMilk = 0;
@@ -2594,7 +2512,6 @@
                         showBonusFloat(bonusText);
                     }
 
-                    // UPDATE CHALLENGE
                     if (dailyChallenge.type === 'waves') {
                         dailyChallenge.current++;
                         if (dailyChallenge.current >= dailyChallenge.target) {
@@ -2605,7 +2522,6 @@
                     showWavePause();
                 }
 
-                // Проверяем конец игры
                 if (player.health <= 0) {
                     gameState.isGameOver = true;
                     document.getElementById('gameOverScore').textContent = `Очки: ${gameState.score}`;
@@ -2622,7 +2538,6 @@
                     if (enemy.alive) enemy.draw();
                 }
 
-                // Рисуем пули игрока
                 for (let bullet of bullets) {
                     ctx.fillStyle = '#ffff00';
                     ctx.beginPath();
@@ -2635,7 +2550,6 @@
                     ctx.stroke();
                 }
 
-                // Рисуем пули врагов
                 for (let bullet of enemyBullets) {
                     ctx.fillStyle = '#ff6b9d';
                     ctx.beginPath();
@@ -2648,16 +2562,13 @@
                     ctx.stroke();
                 }
 
-                // Рисуем частицы
                 drawParticles();
             }
 
-            // Flash effect
             drawFlash();
 
             ctx.restore();
 
-            // Обновляем HUD
             document.getElementById('healthFill').style.width = (player.health / player.maxHealth * 100) + '%';
             document.getElementById('score').textContent = gameState.score;
             document.getElementById('kills').textContent = gameState.kills;
@@ -2670,15 +2581,6 @@
 
         // ============ ИНИЦИАЛИЗАЦИЯ ============
         function init() {
-            // Show swipe hint on mobile
-            if (isMobile) {
-                const hint = document.getElementById('swipeHint');
-                hint.style.display = 'flex';
-                setTimeout(() => {
-                    hint.style.display = 'none';
-                }, 3000);
-            }
-
             createWave(1);
             updateUI();
             updateAchievementsDisplay();
