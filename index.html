@@ -65,7 +65,7 @@
             max-height: 100vh;
             background: linear-gradient(180deg, #0f172a 0%, #1a1f3a 50%, #0f172a 100%);
             border-radius: 40px;
-            padding: 35px 28px;
+            padding: calc(env(safe-area-inset-top, 0px) + 18px) 28px calc(env(safe-area-inset-bottom, 0px) + 14px);
             box-shadow: 0 25px 80px rgba(0, 0, 0, 0.9), 
                         inset 0 1px 0 rgba(255, 255, 255, 0.15),
                         0 0 40px rgba(100, 200, 255, 0.2);
@@ -99,7 +99,7 @@
         .top {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             gap: 12px;
             flex-shrink: 0;
             position: relative;
@@ -168,7 +168,7 @@
             background: rgba(100, 200, 255, 0.1);
             height: 12px;
             border-radius: 15px;
-            margin: 18px 0;
+            margin: 8px 0;
             overflow: hidden;
             border: 1.5px solid rgba(100, 200, 255, 0.25);
             box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -226,16 +226,56 @@
             font-size: 11px;
             color: #a78bfa;
             font-weight: 700;
-            margin-top: 6px;
+            margin-top: 4px;
             opacity: 0.9;
             min-height: 14px;
         }
 
+        .rank-progress-bar {
+            background: rgba(167, 139, 250, 0.15);
+            height: 6px;
+            border-radius: 8px;
+            margin: 5px 0 3px 0;
+            overflow: hidden;
+            border: 1px solid rgba(167, 139, 250, 0.3);
+        }
+
+        .rank-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #a78bfa 0%, #7c3aed 100%);
+            border-radius: 8px;
+            transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 0 8px rgba(167, 139, 250, 0.5);
+            will-change: width;
+        }
+
+        .rank-next-display {
+            font-size: 9px;
+            color: rgba(167, 139, 250, 0.7);
+            font-weight: 600;
+            margin-top: 2px;
+            min-height: 12px;
+        }
+
+        .streak-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: linear-gradient(135deg, rgba(251, 146, 60, 0.25) 0%, rgba(239, 68, 68, 0.15) 100%);
+            border: 1.5px solid rgba(251, 146, 60, 0.4);
+            border-radius: 10px;
+            padding: 4px 10px;
+            font-size: 10px;
+            font-weight: 700;
+            color: #fb923c;
+            margin-top: 4px;
+        }
+
         .cat-scene {
             position: relative;
-            margin: 8px auto;
+            margin: 4px auto;
             width: 280px;
-            height: 240px;
+            height: 220px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -750,7 +790,8 @@
 
         .tab-btn {
             flex: 1;
-            padding: 8px;
+            padding: 10px 8px;
+            min-height: 44px;
             background: transparent;
             border: 1.5px solid transparent;
             color: white;
@@ -973,7 +1014,7 @@
         @media (max-width: 480px) {
             .container {
                 border-radius: 30px;
-                padding: 22px 18px;
+                padding: calc(env(safe-area-inset-top, 0px) + 14px) 18px calc(env(safe-area-inset-bottom, 0px) + 10px);
             }
 
             .top {
@@ -1034,7 +1075,12 @@
             </div>
             <div class="progression-text" id="progressionText">Прогресс: 0 / 500</div>
             <div class="level-display" id="levelDisplay">Уровень: 1</div>
-            <div class="rank-display" id="rankDisplay">Ранг: Бронза 🥉</div>
+            <div class="rank-display" id="rankDisplay">Ранг: Котёнок 🐱</div>
+            <div class="rank-progress-bar">
+                <div class="rank-progress-fill" id="rankProgressFill" style="width: 0%"></div>
+            </div>
+            <div class="rank-next-display" id="rankNextDisplay"></div>
+            <div id="streakBadge" class="streak-badge" style="display:none;">🔥 <span id="streakCount">0</span> дней подряд!</div>
         </div>
 
         <div class="cat-scene">
@@ -1058,12 +1104,12 @@
         <div class="scroll-content">
             <div id="shop" class="section active">
                 <div class="tabs">
-                    <button class="tab-btn active" onclick="switchTab('tap-upgrades')">⚡ Клик</button>
-                    <button class="tab-btn" onclick="switchTab('passive-upgrades')">🤖 Пассив</button>
-                    <button class="tab-btn" onclick="switchTab('boosters')">🚀 Бустеры</button>
+                    <button class="tab-btn active" onclick="switchTab('tap-upgrades', this)">⚡ Клик</button>
+                    <button class="tab-btn" onclick="switchTab('passive-upgrades', this)">🤖 Пассив</button>
+                    <button class="tab-btn" onclick="switchTab('boosters', this)">🚀 Бустеры</button>
                 </div>
 
-                <div id="tap-upgrades">
+                <div id="tap-upgrades" class="tab-panel">
                     <div class="item" onclick="buyUpgrade('tap')">
                         <div class="item-header">
                             <div class="item-info">
@@ -1079,7 +1125,7 @@
                     </div>
                 </div>
 
-                <div id="passive-upgrades" style="display: none;">
+                <div id="passive-upgrades" class="tab-panel" style="display: none;">
                     <div class="item" onclick="buyUpgrade('auto')">
                         <div class="item-header">
                             <div class="item-info">
@@ -1134,7 +1180,7 @@
                     </div>
                 </div>
 
-                <div id="boosters" style="display: none;">
+                <div id="boosters" class="tab-panel" style="display: none;">
                     <div class="item" onclick="buyUpgrade('boost1')">
                         <div class="item-header">
                             <div class="item-info">
@@ -1193,7 +1239,7 @@
                             <div class="item-name">✨ Золотой кот</div>
                             <div class="item-desc">25% шанс крита</div>
                         </div>
-                        <div class="item-cost">5000</div>
+                        <div class="item-cost" id="skinGoldCost">5000</div>
                     </div>
                 </div>
                 <div class="item skin-item" id="skinDevil" onclick="buySkin('devil')">
@@ -1202,7 +1248,34 @@
                             <div class="item-name">😈 Дьявольский кот</div>
                             <div class="item-desc">35% шанс крита</div>
                         </div>
-                        <div class="item-cost">15000</div>
+                        <div class="item-cost" id="skinDevilCost">15000</div>
+                    </div>
+                </div>
+                <div class="item skin-item" id="skinNight" onclick="buySkin('night')">
+                    <div class="item-header">
+                        <div class="item-info">
+                            <div class="item-name">🌙 Ночной кот</div>
+                            <div class="item-desc">40% шанс крита</div>
+                        </div>
+                        <div class="item-cost" id="skinNightCost">25000</div>
+                    </div>
+                </div>
+                <div class="item skin-item" id="skinElectro" onclick="buySkin('electro')">
+                    <div class="item-header">
+                        <div class="item-info">
+                            <div class="item-name">⚡ Электрокот</div>
+                            <div class="item-desc">45% шанс крита</div>
+                        </div>
+                        <div class="item-cost" id="skinElectroCost">50000</div>
+                    </div>
+                </div>
+                <div class="item skin-item" id="skinRainbow" onclick="buySkin('rainbow')">
+                    <div class="item-header">
+                        <div class="item-info">
+                            <div class="item-name">🌈 Радужный кот</div>
+                            <div class="item-desc">50% шанс крита</div>
+                        </div>
+                        <div class="item-cost" id="skinRainbowCost">100000</div>
                     </div>
                 </div>
             </div>
@@ -1308,24 +1381,27 @@
         </div>
     </div>
 
+    <!-- Daily Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">🔥 Ежедневный бонус!</div>
+            <div class="modal-text" id="loginBonusText"></div>
+            <div class="modal-buttons">
+                <button class="modal-btn primary" onclick="closeLoginModal()">Забрать!</button>
+            </div>
+        </div>
+    </div>
+
     <div id="notification" class="notification"></div>
     <audio id="clickSound" preload="auto">
         <source src="meow.mp3" type="audio/mpeg">
     </audio>
 
     <script>
-        // Disable zoom
+        // Disable zoom on iOS (CSS touch-action: manipulation handles double-tap zoom)
         document.addEventListener('gesturestart', (e) => { e.preventDefault(); }, false);
         
-        let lastTouchEnd = 0;
-        document.addEventListener('touchend', (e) => {
-            const now = Date.now();
-            if (now - lastTouchEnd <= 300) {
-                e.preventDefault();
-            }
-            lastTouchEnd = now;
-        }, false);
-
+        // Prevent multi-finger zoom only — do NOT block single taps
         document.addEventListener('touchmove', (e) => {
             if (e.touches.length > 1) {
                 e.preventDefault();
@@ -1344,6 +1420,9 @@
             skin: 'default',
             multiplier: 1,
             multiplierEndTime: 0,
+            streak: 0,
+            lastLoginDate: 0,
+            lastSaveTime: 0,
             stats: {
                 totalClicks: 0,
                 totalMilkEarned: 0,
@@ -1392,6 +1471,10 @@
             progressionText: document.getElementById('progressionText'),
             levelDisplay: document.getElementById('levelDisplay'),
             rankDisplay: document.getElementById('rankDisplay'),
+            rankProgressFill: document.getElementById('rankProgressFill'),
+            rankNextDisplay: document.getElementById('rankNextDisplay'),
+            streakBadge: document.getElementById('streakBadge'),
+            streakCount: document.getElementById('streakCount'),
             questContainer: document.getElementById('questContainer'),
             bedItem: document.getElementById('bedItem'),
             bowlItem: document.getElementById('bowlItem'),
@@ -1401,21 +1484,51 @@
             resetModal: document.getElementById('resetModal'),
             riskModal: document.getElementById('riskModal'),
             dailyModal: document.getElementById('dailyModal'),
-            giftModal: document.getElementById('giftModal')
+            giftModal: document.getElementById('giftModal'),
+            loginModal: document.getElementById('loginModal')
         };
 
-        function getRankInfo(milk) {
-            if (milk < 100000) return { name: 'Бронза', emoji: '🥉' };
-            if (milk < 1000000) return { name: 'Серебро', emoji: '🥈' };
-            if (milk < 10000000) return { name: 'Золото', emoji: '🥇' };
-            return { name: 'Алмаз', emoji: '💎' };
+        const ranks = [
+            { name: 'Котёнок',     emoji: '🐱', threshold: 0,         desc: 'Начинающий молочник' },
+            { name: 'Любопытный',  emoji: '😺', threshold: 1000,      desc: 'Кот начинает интересоваться' },
+            { name: 'Активный',    emoji: '😸', threshold: 10000,     desc: 'Кот в полном разгаре' },
+            { name: 'Бронза',      emoji: '🥉', threshold: 100000,    desc: 'Бронзовый молочник' },
+            { name: 'Серебро',     emoji: '🥈', threshold: 500000,    desc: 'Серебряная лапка' },
+            { name: 'Золото',      emoji: '🥇', threshold: 2000000,   desc: 'Золотой хозяин молока' },
+            { name: 'Платина',     emoji: '💿', threshold: 10000000,  desc: 'Платиновый молочный барон' },
+            { name: 'Алмаз',       emoji: '💎', threshold: 50000000,  desc: 'Алмазный мастер' },
+            { name: 'Легенда',     emoji: '👑', threshold: 200000000, desc: 'Легендарный кот' }
+        ];
+
+        function getRankInfo(totalMilk) {
+            let idx = 0;
+            for (let i = ranks.length - 1; i >= 0; i--) {
+                if (totalMilk >= ranks[i].threshold) { idx = i; break; }
+            }
+            return { ...ranks[idx], nextRank: ranks[idx + 1] || null };
+        }
+
+        function getRankProgress(totalMilk) {
+            const info = getRankInfo(totalMilk);
+            if (!info.nextRank) return 100;
+            const progress = totalMilk - info.threshold;
+            const needed = info.nextRank.threshold - info.threshold;
+            return Math.min((progress / needed) * 100, 100);
+        }
+
+        function haptic(type = 'light') {
+            try {
+                if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+                    window.Telegram.WebApp.HapticFeedback.impactOccurred(type);
+                } else if (navigator.vibrate) {
+                    navigator.vibrate(type === 'heavy' ? 50 : 20);
+                }
+            } catch(e) {}
         }
 
         function getCritChance() {
-            let chance = 10;
-            if (gameState.skin === 'gold') chance = 25;
-            if (gameState.skin === 'devil') chance = 35;
-            return chance;
+            const critBySkin = { default: 10, gold: 25, devil: 35, night: 40, electro: 45, rainbow: 50 };
+            return critBySkin[gameState.skin] || 10;
         }
 
         function checkCrit() {
@@ -1427,9 +1540,9 @@
         }
 
         function getCurrentLevelProgress() {
-            const currentLevelMilk = getMilkForLevel(gameState.level - 1);
+            const currentLevelMilk = gameState.level < 2 ? 0 : getMilkForLevel(gameState.level - 1);
             const nextLevelMilk = getMilkForLevel(gameState.level);
-            const progress = gameState.milk - currentLevelMilk;
+            const progress = Math.max(0, gameState.milk - currentLevelMilk);
             const needed = nextLevelMilk - currentLevelMilk;
             return { progress, needed, currentLevelMilk, nextLevelMilk };
         }
@@ -1443,14 +1556,22 @@
 
         function loadGame() {
             const saved = localStorage.getItem('milkTycoonState');
-            if (saved) gameState = JSON.parse(saved);
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                // Merge saved state preserving new default fields
+                gameState = Object.assign({}, gameState, parsed);
+                gameState.stats = Object.assign({}, gameState.stats, parsed.stats || {});
+            }
+            calculateOfflineEarnings();
             updateUI();
             updateSkinDisplay();
             checkProgression();
+            checkDailyStreak();
             scheduleEvents();
         }
 
         function saveGame() {
+            gameState.lastSaveTime = Date.now();
             localStorage.setItem('milkTycoonState', JSON.stringify(gameState));
         }
 
@@ -1467,6 +1588,9 @@
                 skin: 'default',
                 multiplier: 1,
                 multiplierEndTime: 0,
+                streak: 0,
+                lastLoginDate: 0,
+                lastSaveTime: 0,
                 stats: {
                     totalClicks: 0,
                     totalMilkEarned: 0,
@@ -1502,8 +1626,16 @@
             DOM.passiveDisplay.textContent = gameState.passive;
             DOM.levelDisplay.textContent = `Уровень: ${gameState.level}`;
             
-            const rankInfo = getRankInfo(gameState.milk);
-            DOM.rankDisplay.textContent = `Ранг: ${rankInfo.name} ${rankInfo.emoji}`;
+            const rankInfo = getRankInfo(gameState.stats.totalMilkEarned);
+            DOM.rankDisplay.textContent = `${rankInfo.emoji} ${rankInfo.name} — ${rankInfo.desc}`;
+            
+            const rankPct = getRankProgress(gameState.stats.totalMilkEarned);
+            DOM.rankProgressFill.style.width = rankPct + '%';
+            if (rankInfo.nextRank) {
+                DOM.rankNextDisplay.textContent = `До ${rankInfo.nextRank.emoji} ${rankInfo.nextRank.name}: ${formatNumber(rankInfo.nextRank.threshold - gameState.stats.totalMilkEarned)}`;
+            } else {
+                DOM.rankNextDisplay.textContent = '👑 Максимальный ранг достигнут!';
+            }
             
             if (gameState.multiplier > 1) {
                 DOM.multiplierBadge.style.display = 'block';
@@ -1579,16 +1711,16 @@
             });
         }
 
-        function switchTab(tabId) {
-            const allTabs = document.querySelectorAll('[id$="-upgrades"]');
-            allTabs.forEach(tab => tab.style.display = 'none');
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-panel').forEach(tab => tab.style.display = 'none');
             
             const selectedTab = document.getElementById(tabId);
             if (selectedTab) selectedTab.style.display = 'block';
             
             const buttons = document.querySelectorAll('.tab-btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            buttons.forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            haptic('light');
         }
 
         function toggleSection(sectionId) {
@@ -1601,9 +1733,10 @@
             if (!isActive) {
                 section.classList.add('active');
             }
+            haptic('light');
         }
 
-        DOM.catImage.addEventListener('click', function(e) {
+        function handleCatClick(x, y) {
             let gain = Math.floor(gameState.perTap * gameState.multiplier);
             let isCrit = false;
             
@@ -1617,11 +1750,13 @@
                     gameState.stats.maxCritsInRow = gameState.stats.critsInRow;
                 }
                 
-                createCritEffect(e.clientX, e.clientY);
-                showCritIndicator(e.clientX, e.clientY);
-                createParticles(e.clientX, e.clientY);
+                createCritEffect(x, y);
+                showCritIndicator(x, y);
+                createParticles(x, y);
+                haptic('heavy');
             } else {
                 gameState.stats.critsInRow = 0;
+                haptic('light');
             }
             
             gameState.milk += gain;
@@ -1650,11 +1785,27 @@
                 DOM.catImage.style.filter = 'drop-shadow(0 15px 40px rgba(100, 200, 255, 0.4))'; 
             }, 100);
             
-            createFloatText('+' + formatNumber(gain), e.clientX, e.clientY, isCrit);
+            createFloatText('+' + formatNumber(gain), x, y, isCrit);
             updateUI();
             saveGame();
             checkProgression();
             checkAchievements();
+        }
+
+        // Use touchstart for instant response on iOS; fall back to click on desktop
+        let lastCatTouchTime = 0;
+
+        DOM.catImage.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            lastCatTouchTime = Date.now();
+            const touch = e.changedTouches[0];
+            handleCatClick(touch.clientX, touch.clientY);
+        }, { passive: false });
+
+        DOM.catImage.addEventListener('click', function(e) {
+            // Suppress click if a touchstart handled it within the last 500ms
+            if (Date.now() - lastCatTouchTime < 500) return;
+            handleCatClick(e.clientX, e.clientY);
         }, { passive: false });
 
         function createCritEffect(x, y) {
@@ -1711,6 +1862,7 @@
             
             if (gameState.milk < cost) {
                 showNotification('Недостаточно молока! ❌', 'error');
+                haptic('medium');
                 return;
             }
             
@@ -1726,6 +1878,7 @@
                 showNotification(`+${income} молока в сек! 🚀`, 'success');
             }
             
+            haptic('medium');
             updateUI();
             saveGame();
             checkProgression();
@@ -1733,24 +1886,31 @@
         }
 
         function buySkin(skinType) {
-            const costs = { default: 0, gold: 5000, devil: 15000 };
+            const costs = { default: 0, gold: 5000, devil: 15000, night: 25000, electro: 50000, rainbow: 100000 };
             const cost = costs[skinType];
+            
+            if (cost === undefined) return;
             
             if (gameState.milk < cost) {
                 showNotification('Недостаточно молока! ❌', 'error');
+                haptic('medium');
                 return;
             }
             
-            gameState.milk -= cost;
+            if (cost > 0) gameState.milk -= cost;
             gameState.skin = skinType;
             gameState.stats.skinsUnlocked[skinType] = true;
             
             const skinNames = {
                 default: 'обычный кот',
                 gold: 'золотой кот',
-                devil: 'дьявольский кот'
+                devil: 'дьявольский кот',
+                night: 'ночной кот',
+                electro: 'электрокот',
+                rainbow: 'радужный кот'
             };
             
+            haptic('medium');
             showNotification(`Выбран ${skinNames[skinType]}! ✨`, 'success');
             updateSkinDisplay();
             updateUI();
@@ -1760,17 +1920,29 @@
 
         function updateSkinDisplay() {
             const skinMap = {
-                default: 'cat.png',
-                gold: 'gold_cat.png',
-                devil: 'devil_cat.png'
+                default:  { src: 'cat.png',       filter: 'none' },
+                gold:     { src: 'gold_cat.png',   filter: 'none' },
+                devil:    { src: 'devil_cat.png',  filter: 'none' },
+                night:    { src: 'cat.png',        filter: 'hue-rotate(240deg) brightness(0.75) saturate(1.5)' },
+                electro:  { src: 'cat.png',        filter: 'hue-rotate(60deg) saturate(4) brightness(1.1)' },
+                rainbow:  { src: 'gold_cat.png',   filter: 'hue-rotate(0deg) saturate(3)' }
             };
             
-            DOM.catImage.src = skinMap[gameState.skin];
+            const skin = skinMap[gameState.skin] || skinMap.default;
+            DOM.catImage.src = skin.src;
+            DOM.catImage.style.filter = skin.filter === 'none'
+                ? 'drop-shadow(0 15px 40px rgba(100, 200, 255, 0.4))'
+                : skin.filter + ' drop-shadow(0 15px 40px rgba(100, 200, 255, 0.4))';
             
-            document.getElementById('skinDefault').classList.remove('selected');
-            document.getElementById('skinGold').classList.remove('selected');
-            document.getElementById('skinDevil').classList.remove('selected');
-            document.getElementById('skin' + gameState.skin.charAt(0).toUpperCase() + gameState.skin.slice(1)).classList.add('selected');
+            const allSkinIds = ['skinDefault', 'skinGold', 'skinDevil', 'skinNight', 'skinElectro', 'skinRainbow'];
+            allSkinIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.remove('selected');
+            });
+            
+            const activeId = 'skin' + gameState.skin.charAt(0).toUpperCase() + gameState.skin.slice(1);
+            const activeEl = document.getElementById(activeId);
+            if (activeEl) activeEl.classList.add('selected');
         }
 
         function showNotification(message, type = '') {
@@ -1842,7 +2014,7 @@
             if (gameState.stats.critCount >= 50) unlockAchievement('ach5');
             
             const skinsUnlockedCount = Object.keys(gameState.stats.skinsUnlocked).length;
-            if (skinsUnlockedCount >= 2) unlockAchievement('ach6');
+            if (skinsUnlockedCount >= 3) unlockAchievement('ach6');
             
             if (gameState.stats.starsCount >= 20) unlockAchievement('ach7');
             if (gameState.stats.totalMilkEarned >= 100000000) unlockAchievement('ach8');
@@ -1942,6 +2114,74 @@
             }, 8000);
         }
 
+        function calculateOfflineEarnings() {
+            const now = Date.now();
+            if (gameState.passive > 0 && gameState.lastSaveTime > 0) {
+                const elapsed = (now - gameState.lastSaveTime) / 1000;
+                const maxOffline = 4 * 60 * 60; // max 4 hours
+                const offlineTime = Math.min(elapsed, maxOffline);
+                if (offlineTime >= 60) {
+                    const earnings = Math.floor(gameState.passive * offlineTime * 0.5);
+                    if (earnings > 0) {
+                        gameState.milk += earnings;
+                        gameState.stats.totalMilkEarned += earnings;
+                        const mins = Math.floor(offlineTime / 60);
+                        setTimeout(() => {
+                            showNotification(`📴 Оффлайн: +${formatNumber(earnings)} за ${mins} мин`, 'success');
+                        }, 1500);
+                    }
+                }
+            }
+            gameState.lastSaveTime = now;
+        }
+
+        function checkDailyStreak() {
+            const now = Date.now();
+            const lastLogin = gameState.lastLoginDate || 0;
+            const msPerDay = 24 * 60 * 60 * 1000;
+            const daysSince = Math.floor((now - lastLogin) / msPerDay);
+
+            if (daysSince >= 1) {
+                if (daysSince === 1) {
+                    gameState.streak = (gameState.streak || 0) + 1;
+                } else {
+                    gameState.streak = 1;
+                }
+                gameState.lastLoginDate = now;
+
+                const streakDay = Math.min(gameState.streak, 7);
+                const bonus = 500 * streakDay * streakDay;
+                gameState.milk += bonus;
+                gameState.stats.totalMilkEarned += bonus;
+
+                document.getElementById('loginBonusText').textContent =
+                    `День ${gameState.streak} подряд! 🔥\n+${formatNumber(bonus)} молока!\n` +
+                    (gameState.streak < 7 ? `Завтра бонус будет больше!` : `Максимальный бонус!`);
+                DOM.loginModal.classList.add('show');
+
+                // Update streak badge
+                DOM.streakBadge.style.display = 'inline-flex';
+                DOM.streakCount.textContent = gameState.streak;
+                saveGame();
+            } else if (!lastLogin) {
+                gameState.lastLoginDate = now;
+                gameState.streak = 1;
+                DOM.streakBadge.style.display = 'inline-flex';
+                DOM.streakCount.textContent = gameState.streak;
+                saveGame();
+            } else if (gameState.streak > 0) {
+                DOM.streakBadge.style.display = 'inline-flex';
+                DOM.streakCount.textContent = gameState.streak;
+            }
+        }
+
+        function closeLoginModal() {
+            DOM.loginModal.classList.remove('show');
+            updateUI();
+            checkProgression();
+            checkAchievements();
+        }
+
         function scheduleEvents() {
             scheduleQuest();
             scheduleSnack();
@@ -2032,19 +2272,38 @@
             saveGame();
         }
 
+        let _uiUpdatePending = false;
+        function scheduleUIUpdate() {
+            if (!_uiUpdatePending) {
+                _uiUpdatePending = true;
+                requestAnimationFrame(() => {
+                    _uiUpdatePending = false;
+                    updateUI();
+                });
+            }
+        }
+
+        let _lastPassiveSave = 0;
         setInterval(() => {
-            if (gameState.passive > 0) {
+            const hadPassive = gameState.passive > 0;
+            if (hadPassive) {
                 let gain = Math.floor(gameState.passive * gameState.multiplier);
                 gameState.milk += gain;
                 gameState.stats.totalMilkEarned += gain;
-                updateUI();
                 checkProgression();
-                saveGame();
+                // Throttle saves: every 5 seconds
+                const now = Date.now();
+                if (now - _lastPassiveSave >= 5000) {
+                    _lastPassiveSave = now;
+                    saveGame();
+                }
             }
             
             if (Math.random() < 0.05 && gameState.multiplier === 1) {
                 activateRandomMultiplier();
             }
+            
+            if (hadPassive) updateUI();
         }, 1000);
 
         loadGame();
