@@ -118,40 +118,141 @@
         }
 
         .mobile-controls {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            width: 130px;
-            height: 130px;
-            background: rgba(0, 0, 0, 0.6);
-            border: 3px solid #ffd700;
-            border-radius: 12px;
-            z-index: 100;
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            grid-template-rows: 1fr 1fr 1fr;
-            gap: 3px;
-            padding: 6px;
+            display: none;
         }
 
-        .joystick-btn {
-            background: rgba(255, 215, 0, 0.3);
-            border: 2px solid #ffd700;
-            border-radius: 6px;
+        /* ===== ВИРТУАЛЬНЫЙ ДЖОЙСТИК ===== */
+        .joystick-container {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 120px;
+            height: 120px;
+            z-index: 100;
+            display: none;
+            touch-action: none;
+        }
+
+        .joystick-outer {
+            width: 120px;
+            height: 120px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 3px solid rgba(255, 215, 0, 0.6);
+            border-radius: 50%;
+            position: relative;
+            touch-action: none;
+        }
+
+        .joystick-inner {
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 215, 0, 0.6);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        /* ===== КНОПКИ СПОСОБНОСТЕЙ ===== */
+        .ability-buttons {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            z-index: 100;
+            touch-action: none;
+        }
+
+        .ability-row {
+            display: flex;
+            gap: 6px;
+            justify-content: flex-end;
+        }
+
+        .ability-btn {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.6);
             cursor: pointer;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
+            font-weight: bold;
+            color: #fff;
             user-select: none;
             -webkit-user-select: none;
-            transition: all 0.1s;
-            font-weight: bold;
+            touch-action: none;
+            position: relative;
+            transition: transform 0.1s;
+            opacity: 0.85;
         }
 
-        .joystick-btn:active {
-            background: rgba(255, 215, 0, 0.8);
-            transform: scale(0.95);
+        .ability-btn:active {
+            transform: scale(0.9);
+            opacity: 1;
+        }
+
+        .ability-btn .btn-icon {
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        .ability-btn .btn-label {
+            font-size: 9px;
+            margin-top: 1px;
+            opacity: 0.9;
+        }
+
+        .ability-q { background: rgba(180, 30, 30, 0.6); border-color: rgba(255, 80, 80, 0.7); }
+        .ability-w { background: rgba(30, 60, 180, 0.6); border-color: rgba(80, 120, 255, 0.7); }
+        .ability-e { background: rgba(30, 140, 30, 0.6); border-color: rgba(60, 220, 60, 0.7); }
+        .ability-p { background: rgba(80, 80, 80, 0.6); border-color: rgba(160, 160, 160, 0.7); }
+
+        .ability-btn.on-cooldown {
+            background: rgba(100, 20, 20, 0.6) !important;
+            border-color: rgba(180, 0, 0, 0.5) !important;
+            opacity: 0.6;
+        }
+
+        .ability-btn .cooldown-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 4px #000;
+            pointer-events: none;
+        }
+
+        @keyframes abilityPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(255, 255, 255, 0); }
+        }
+
+        .ability-btn.ready {
+            animation: abilityPulse 1.5s infinite;
+        }
+
+        /* ===== ЗОНА СТРЕЛЬБЫ ===== */
+        .shoot-zone {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            pointer-events: none;
+            display: none;
+            border-left: 1px dashed rgba(255, 255, 255, 0.08);
+            z-index: 50;
         }
 
         .shop-panel {
@@ -417,29 +518,51 @@
             .hud, .score-board, .shop-panel {
                 font-size: 11px;
             }
-            
+
             .skins-grid {
                 grid-template-columns: repeat(2, 1fr);
+            }
+
+            /* Show mobile controls on mobile */
+            .joystick-container,
+            .ability-buttons {
+                display: flex;
+            }
+
+            .shoot-zone {
+                display: block;
+            }
+
+            /* Move shop panel up to make room for ability buttons */
+            .shop-panel {
+                bottom: 135px;
+                max-height: 200px;
             }
         }
 
         @media (max-width: 480px) {
-            .mobile-controls {
+            .joystick-container {
                 width: 100px;
                 height: 100px;
-                bottom: 5px;
-                left: 5px;
+                bottom: 15px;
+                left: 15px;
+            }
+
+            .joystick-outer {
+                width: 100px;
+                height: 100px;
+            }
+
+            .ability-btn {
+                width: 50px;
+                height: 50px;
             }
 
             .shop-panel {
                 max-width: 140px;
                 font-size: 10px;
-                bottom: 5px;
+                bottom: 120px;
                 right: 5px;
-            }
-
-            .joystick-btn {
-                font-size: 16px;
             }
         }
     </style>
@@ -480,19 +603,39 @@
             </div>
         </div>
 
-        <div class="mobile-controls">
-            <div></div>
-            <div class="joystick-btn" id="upBtn">⬆️</div>
-            <div></div>
-            
-            <div class="joystick-btn" id="leftBtn">⬅️</div>
-            <div class="joystick-btn" id="centerBtn" style="cursor: default; background: rgba(100,100,100,0.3); border: 2px solid #666;">●</div>
-            <div class="joystick-btn" id="rightBtn">➡️</div>
-            
-            <div></div>
-            <div class="joystick-btn" id="downBtn">⬇️</div>
-            <div></div>
+        <!-- Виртуальный джойстик -->
+        <div id="joystickContainer" class="joystick-container">
+            <div id="joystickOuter" class="joystick-outer">
+                <div id="joystickInner" class="joystick-inner"></div>
+            </div>
         </div>
+
+        <!-- Кнопки способностей -->
+        <div id="abilityButtons" class="ability-buttons">
+            <div class="ability-row">
+                <button id="btnQ" class="ability-btn ability-q ready" aria-label="Тройная стрельба (Q)">
+                    <span class="btn-icon">🔱</span>
+                    <span class="btn-label">Q</span>
+                </button>
+                <button id="btnW" class="ability-btn ability-w ready" aria-label="Волна энергии (W)">
+                    <span class="btn-icon">⚡</span>
+                    <span class="btn-label">W</span>
+                </button>
+            </div>
+            <div class="ability-row">
+                <button id="btnE" class="ability-btn ability-e ready" aria-label="Щит (E)">
+                    <span class="btn-icon">🛡️</span>
+                    <span class="btn-label">E</span>
+                </button>
+                <button id="btnP" class="ability-btn ability-p" aria-label="Пауза (P)">
+                    <span class="btn-icon">⏸</span>
+                    <span class="btn-label">P</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Индикатор зоны стрельбы -->
+        <div class="shoot-zone"></div>
 
         <div class="shop-panel">
             <div class="shop-title">🛍️ МАГАЗИН</div>
@@ -643,17 +786,169 @@
             ninja: { name: 'Ниндзя', emoji: '🐱‍👓', bonus: '+20% ко всему', bonusType: 'all', value: 1.2, cost: 500 }
         };
 
-        // ============ МОБИЛЬНОЕ УПРАВЛЕНИЕ ============
+        // ============ МОБИЛЬНОЕ УПРАВЛЕНИЕ (ДЖОЙСТИК + СПОСОБНОСТИ) ============
         const keys = { a: false, d: false, w: false, s: false };
 
-        document.getElementById('upBtn').addEventListener('touchstart', () => { keys.w = true; });
-        document.getElementById('upBtn').addEventListener('touchend', () => { keys.w = false; });
-        document.getElementById('downBtn').addEventListener('touchstart', () => { keys.s = true; });
-        document.getElementById('downBtn').addEventListener('touchend', () => { keys.s = false; });
-        document.getElementById('leftBtn').addEventListener('touchstart', () => { keys.a = true; });
-        document.getElementById('leftBtn').addEventListener('touchend', () => { keys.a = false; });
-        document.getElementById('rightBtn').addEventListener('touchstart', () => { keys.d = true; });
-        document.getElementById('rightBtn').addEventListener('touchend', () => { keys.d = false; });
+        // --- Виртуальный джойстик ---
+        const joystickOuter = document.getElementById('joystickOuter');
+        const joystickInner = document.getElementById('joystickInner');
+        const JOYSTICK_MAX_DIST = 38;
+        let joystickCenterX = 0, joystickCenterY = 0;
+        let joystickTouchId = null;
+
+        function updateJoystick(touchX, touchY) {
+            const dx = touchX - joystickCenterX;
+            const dy = touchY - joystickCenterY;
+            const dist = Math.hypot(dx, dy);
+            const clampedDist = Math.min(dist, JOYSTICK_MAX_DIST);
+            const angle = Math.atan2(dy, dx);
+            const nx = Math.cos(angle) * clampedDist;
+            const ny = Math.sin(angle) * clampedDist;
+            joystickInner.style.transform = `translate(calc(-50% + ${nx}px), calc(-50% + ${ny}px))`;
+            const threshold = JOYSTICK_MAX_DIST * 0.3;
+            keys.a = dx < -threshold;
+            keys.d = dx > threshold;
+            keys.w = dy < -threshold;
+            keys.s = dy > threshold;
+        }
+
+        joystickOuter.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (joystickTouchId !== null) return;
+            const touch = e.changedTouches[0];
+            joystickTouchId = touch.identifier;
+            const rect = joystickOuter.getBoundingClientRect();
+            joystickCenterX = rect.left + rect.width / 2;
+            joystickCenterY = rect.top + rect.height / 2;
+            updateJoystick(touch.clientX, touch.clientY);
+        }, { passive: false });
+
+        document.addEventListener('touchmove', (e) => {
+            if (joystickTouchId === null) return;
+            for (const touch of e.changedTouches) {
+                if (touch.identifier === joystickTouchId) {
+                    e.preventDefault();
+                    updateJoystick(touch.clientX, touch.clientY);
+                    break;
+                }
+            }
+        }, { passive: false });
+
+        document.addEventListener('touchend', (e) => {
+            for (const touch of e.changedTouches) {
+                if (touch.identifier === joystickTouchId) {
+                    joystickTouchId = null;
+                    keys.a = keys.d = keys.w = keys.s = false;
+                    joystickInner.style.transform = 'translate(-50%, -50%)';
+                    break;
+                }
+            }
+        });
+
+        // --- Система способностей ---
+        let isPaused = false;
+        let shieldActive = false;
+        let shieldTimer = 0;
+
+        const abilities = {
+            q: { cooldown: 0, maxCooldown: 5 * 60 },  // 5 секунд
+            w: { cooldown: 0, maxCooldown: 8 * 60 },  // 8 секунд
+            e: { cooldown: 0, maxCooldown: 10 * 60 }  // 10 секунд
+        };
+
+        const abilityBtns = {
+            q: document.getElementById('btnQ'),
+            w: document.getElementById('btnW'),
+            e: document.getElementById('btnE'),
+            p: document.getElementById('btnP')
+        };
+
+        function useAbility(key) {
+            if (gameState.isGameOver) return;
+
+            if (key === 'p') {
+                isPaused = !isPaused;
+                const btn = abilityBtns.p;
+                if (btn) btn.querySelector('.btn-icon').textContent = isPaused ? '▶️' : '⏸';
+                return;
+            }
+
+            const ability = abilities[key];
+            if (!ability || ability.cooldown > 0) return;
+
+            if (key === 'q') {
+                const angle = player.rotation;
+                for (let i = -1; i <= 1; i++) {
+                    const a = angle + i * 0.25;
+                    bullets.push({
+                        x: player.x + Math.cos(a) * 45,
+                        y: player.y + Math.sin(a) * 45,
+                        vx: Math.cos(a) * 9,
+                        vy: Math.sin(a) * 9,
+                        life: 120,
+                        damage: player.getDamage(),
+                        size: player.getBulletSize()
+                    });
+                }
+                playSound('shoot');
+                ability.cooldown = ability.maxCooldown;
+            } else if (key === 'w') {
+                for (let i = 0; i < 12; i++) {
+                    const a = (i / 12) * Math.PI * 2;
+                    bullets.push({
+                        x: player.x + Math.cos(a) * 45,
+                        y: player.y + Math.sin(a) * 45,
+                        vx: Math.cos(a) * 7,
+                        vy: Math.sin(a) * 7,
+                        life: 90,
+                        damage: player.getDamage() * 0.8,
+                        size: player.getBulletSize() * 1.2
+                    });
+                }
+                playSound('shoot');
+                ability.cooldown = ability.maxCooldown;
+            } else if (key === 'e') {
+                shieldActive = true;
+                shieldTimer = 180;
+                ability.cooldown = ability.maxCooldown;
+            }
+        }
+
+        ['q', 'w', 'e', 'p'].forEach(key => {
+            const btn = abilityBtns[key];
+            if (btn) {
+                btn.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    useAbility(key);
+                }, { passive: false });
+                btn.addEventListener('click', () => useAbility(key));
+            }
+        });
+
+        function updateAbilityButtons() {
+            for (const key of ['q', 'w', 'e']) {
+                const ab = abilities[key];
+                const btn = abilityBtns[key];
+                if (!btn) continue;
+                if (ab.cooldown > 0) {
+                    ab.cooldown--;
+                    btn.classList.add('on-cooldown');
+                    btn.classList.remove('ready');
+                    let cdEl = btn.querySelector('.cooldown-text');
+                    if (!cdEl) {
+                        cdEl = document.createElement('span');
+                        cdEl.className = 'cooldown-text';
+                        btn.appendChild(cdEl);
+                    }
+                    cdEl.textContent = Math.ceil(ab.cooldown / 60);
+                } else {
+                    btn.classList.remove('on-cooldown');
+                    btn.classList.add('ready');
+                    const cdEl = btn.querySelector('.cooldown-text');
+                    if (cdEl) cdEl.remove();
+                }
+            }
+        }
 
         window.addEventListener('keydown', (e) => {
             const key = e.key.toLowerCase();
@@ -665,6 +960,9 @@
             if (key === 'arrowright') keys.d = true;
             if (key === 'arrowup') keys.w = true;
             if (key === 'arrowdown') keys.s = true;
+            if (key === 'q') useAbility('q');
+            if (key === 'e') useAbility('e');
+            if (key === 'p') useAbility('p');
         });
 
         window.addEventListener('keyup', (e) => {
@@ -746,6 +1044,7 @@
             },
 
             takeDamage(amount) {
+                if (shieldActive) return;
                 this.health -= amount;
                 if (this.health < 0) this.health = 0;
                 playSound('hit');
@@ -787,6 +1086,14 @@
                     ctx.fillStyle = '#000';
                     ctx.fillRect(-10, -5, 5, 5);
                     ctx.fillRect(10, -5, 5, 5);
+                }
+
+                if (shieldActive) {
+                    ctx.strokeStyle = `rgba(0, 200, 255, ${0.5 + 0.3 * Math.sin(Date.now() / 100)})`;
+                    ctx.lineWidth = 4;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, 50, 0, Math.PI * 2);
+                    ctx.stroke();
                 }
 
                 ctx.restore();
@@ -1084,12 +1391,16 @@
 
         // ============ СТРЕЛЬБА ============
         canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
             const rect = canvas.getBoundingClientRect();
-            const touch = e.touches[0];
-            const x = touch.clientX - rect.left;
-            const y = touch.clientY - rect.top;
-            player.shoot(x, y);
-        });
+            for (const touch of e.changedTouches) {
+                const x = touch.clientX - rect.left;
+                const y = touch.clientY - rect.top;
+                // На мобиле стрелять только с правой половины экрана
+                if (window.innerWidth <= 768 && x < canvas.width / 2) continue;
+                player.shoot(x, y);
+            }
+        }, { passive: false });
 
         canvas.addEventListener('click', (e) => {
             const rect = canvas.getBoundingClientRect();
@@ -1125,7 +1436,13 @@
                 ctx.fill();
             }
 
-            if (!gameState.isGameOver) {
+            if (!gameState.isGameOver && !isPaused) {
+                // Обновление щита
+                if (shieldActive) {
+                    shieldTimer--;
+                    if (shieldTimer <= 0) shieldActive = false;
+                }
+
                 player.update();
                 
                 for (let enemy of enemies) {
@@ -1234,6 +1551,19 @@
                     ctx.arc(bullet.x, bullet.y, 5, 0, Math.PI * 2);
                     ctx.stroke();
                 }
+            } else if (isPaused && !gameState.isGameOver) {
+                // Отрисовка паузы
+                player.draw();
+                for (let enemy of enemies) { if (enemy.alive) enemy.draw(); }
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#ffd700';
+                ctx.font = 'bold 48px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('⏸ ПАУЗА', canvas.width / 2, canvas.height / 2);
+                ctx.font = '22px Arial';
+                ctx.fillStyle = '#fff';
+                ctx.fillText('Нажмите P или кнопку ▶️, чтобы продолжить', canvas.width / 2, canvas.height / 2 + 50);
             }
 
             document.getElementById('healthFill').style.width = (player.health / player.maxHealth * 100) + '%';
@@ -1242,6 +1572,7 @@
             document.getElementById('kills').textContent = gameState.kills;
 
             updateUI();
+            updateAbilityButtons();
 
             requestAnimationFrame(gameLoop);
         }
