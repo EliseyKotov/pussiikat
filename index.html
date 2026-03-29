@@ -47,6 +47,111 @@
             touch-action: none;
         }
 
+        /* ============ ТЕМНЫЙ ОВЕРЛЕЙ ДЛЯ ПАУЗЫ ============ */
+        .pause-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 102;
+        }
+
+        /* ============ TOP PANEL ACHIEVEMENTS ============ */
+        .achievements-panel {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 2px solid #FFD700;
+            z-index: 99;
+            max-width: 90vw;
+            overflow-x: auto;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .achievement-badge {
+            background: linear-gradient(135deg, #FF6B6B, #FFD700);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            border: 1px solid #fff;
+            animation: popIn 0.3s ease-out;
+        }
+
+        .combo-display {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4em;
+            font-weight: bold;
+            color: #FFD700;
+            text-shadow: 0 0 20px #FF6B9D, 0 0 40px #FFD700;
+            pointer-events: none;
+            display: none;
+            animation: comboFloat 0.6s ease-out;
+            z-index: 50;
+        }
+
+        @keyframes comboFloat {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -80%) scale(1.5);
+            }
+        }
+
+        .wave-info-panel {
+            position: absolute;
+            top: 45px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 2px solid #00FFFF;
+            z-index: 99;
+            font-size: 12px;
+            pointer-events: none;
+        }
+
+        .wave-difficulty {
+            color: #00FF00;
+            font-weight: bold;
+            margin: 0 8px;
+        }
+
+        .record-panel {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 2px solid #FF00FF;
+            z-index: 99;
+            font-size: 11px;
+            pointer-events: none;
+        }
+
+        .record-item {
+            color: #FF00FF;
+            margin: 3px 0;
+            font-size: 10px;
+        }
+
         /* ============ HUD STYLES ============ */
         .hud {
             position: absolute;
@@ -144,22 +249,6 @@
             font-weight: bold;
         }
 
-        .progress-info {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.8);
-            padding: 8px 16px;
-            border-radius: 8px;
-            border: 2px solid #00ffff;
-            z-index: 100;
-            font-size: 12px;
-            pointer-events: none;
-            color: #00ffff;
-            font-weight: bold;
-        }
-
         /* ============ BOOSTERS DISPLAY ============ */
         .boosters-display {
             position: absolute;
@@ -214,18 +303,38 @@
             .hud {
                 font-size: 11px;
                 padding: 10px 12px;
-                min-width: 180px;
+                min-width: 160px;
+                top: 95px;
+                left: 5px;
             }
 
             .score-board {
                 font-size: 11px;
                 padding: 10px 12px;
-                min-width: 130px;
+                min-width: 120px;
+                top: 95px;
+                right: 5px;
             }
 
-            .progress-info {
+            .record-panel {
+                display: none;
+            }
+
+            .achievements-panel {
+                top: 5px;
+                padding: 6px 10px;
+                font-size: 10px;
+            }
+
+            .achievement-badge {
+                font-size: 10px;
+                padding: 3px 6px;
+            }
+
+            .wave-info-panel {
+                top: 50px;
                 font-size: 11px;
-                padding: 6px 12px;
+                padding: 8px 12px;
             }
         }
 
@@ -271,11 +380,17 @@
             touch-action: manipulation;
             min-width: 50px;
             text-align: center;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
 
         .shop-toggle:active {
             background: rgba(255, 215, 0, 0.7);
-            transform: scale(0.95);
+            transform: scale(0.95) !important;
         }
 
         .shop-panel {
@@ -283,7 +398,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(10, 10, 30, 0.98);
+            background: linear-gradient(135deg, rgba(10, 10, 30, 0.98), rgba(30, 10, 50, 0.98));
             padding: 18px;
             border-radius: 12px;
             border: 3px solid #ffd700;
@@ -292,8 +407,20 @@
             max-width: 280px;
             max-height: 500px;
             overflow-y: auto;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
             display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
         }
 
         .shop-panel.open {
@@ -482,7 +609,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(10, 10, 30, 0.98);
+            background: linear-gradient(135deg, rgba(10, 10, 30, 0.98), rgba(30, 10, 50, 0.98));
             border: 4px solid #ffd700;
             padding: 25px;
             border-radius: 15px;
@@ -492,6 +619,7 @@
             max-height: 85vh;
             overflow-y: auto;
             box-shadow: 0 0 40px rgba(255, 215, 0, 0.4);
+            animation: slideIn 0.3s ease-out;
         }
 
         .skins-panel h1 {
@@ -580,6 +708,12 @@
             transform: scale(0.9);
         }
 
+        /* ============ PARTICLES ============ */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+        }
+
         @media (max-width: 768px) {
             .shop-panel {
                 max-width: 220px;
@@ -624,9 +758,22 @@
 <body>
     <div id="gameContainer">
         <canvas id="gameCanvas"></canvas>
+        <div class="pause-overlay" id="pauseOverlay"></div>
 
-        <!-- ПРОГРЕСС И ВОЛНЫ -->
-        <div class="progress-info" id="progressInfo">📊 Волна: <span id="waveCounter">1</span> | 🎯 Прогресс: <span id="milestone">0/5</span></div>
+        <!-- ДОСТИЖЕНИЯ И ИНФОРМАЦИЯ -->
+        <div class="achievements-panel" id="achievementsPanel"></div>
+
+        <!-- ИНФОРМАЦИЯ О ВОЛНЕ И СЛОЖНОСТИ -->
+        <div class="wave-info-panel" id="waveInfoPanel">
+            📊 Волна: <span id="waveCounter">1</span> | 
+            <span class="wave-difficulty" id="difficultyLevel">Обычная</span>
+        </div>
+
+        <!-- ЛИЧНЫЙ РЕКОРД -->
+        <div class="record-panel" id="recordPanel">
+            <div class="record-item">🏆 Макс волна: <span id="maxWave">1</span></div>
+            <div class="record-item">⭐ Всего очков: <span id="totalScore">0</span></div>
+        </div>
 
         <!-- HUD -->
         <div class="hud">
@@ -661,6 +808,9 @@
 
         <!-- АКТИВНЫЕ БУСТЕРЫ -->
         <div class="boosters-display" id="boostersDisplay" style="display: none;"></div>
+
+        <!-- КОМБО ДИСПЛЕЙ -->
+        <div class="combo-display" id="comboDisplay"></div>
 
         <!-- МОБИЛЬНЫЕ ЭЛЕМЕНТЫ УПРАВЛЕНИЯ -->
         <div class="mobile-controls">
@@ -741,7 +891,7 @@
             <div class="shop-section">
                 <button class="shop-item" id="skinsBtn" onclick="showSkinsPanel()" style="border-color: #00ffff;">
                     <span class="item-name" style="color: #00ffff;">🎨 Скины</span>
-                    <span class="item-desc">Новые костюмы и бонусы</span>
+                    <span class="item-desc">Новые костюмы и бонус��</span>
                 </button>
             </div>
         </div>
@@ -756,8 +906,9 @@
         <div id="gameOver" class="game-over">
             <h1>💀 ИГРА ОКОНЧЕНА 💀</h1>
             <p id="gameOverScore">Очки: 0</p>
-            <p id="gameOverKills">Убито мышей: 0</p>
+            <p id="gameOverKills">Убито врагов: 0</p>
             <p id="gameOverLevel">Волн пройдено: 1</p>
+            <p id="gameOverCombo">Макс комбо: 0</p>
             <div class="game-over-buttons">
                 <button onclick="location.reload()">🔄 ЗАНОВО</button>
             </div>
@@ -962,8 +1113,41 @@
                     gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
                     osc.start(audioContext.currentTime);
                     osc.stop(audioContext.currentTime + 0.2);
+                } else if (type === 'combo') {
+                    const osc = audioContext.createOscillator();
+                    const gain = audioContext.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioContext.destination);
+                    osc.frequency.setValueAtTime(1000, audioContext.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(1400, audioContext.currentTime + 0.1);
+                    gain.gain.setValueAtTime(0.25, audioContext.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0, audioContext.currentTime + 0.1);
+                    osc.start(audioContext.currentTime);
+                    osc.stop(audioContext.currentTime + 0.1);
                 }
             } catch (e) {}
+        }
+
+        // ============ ЛОКАЛЬНОЕ ХРАНИЛИЩЕ ============
+        const STORAGE_KEY = 'catVsMiceGameData';
+
+        function loadGameData() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            if (data) {
+                return JSON.parse(data);
+            }
+            return null;
+        }
+
+        function saveGameData() {
+            const data = {
+                upgrades: gameState.upgrades,
+                activeSkin: gameState.activeSkin,
+                ownedSkins: gameState.ownedSkins,
+                totalScore: gameState.totalScore,
+                maxWave: gameState.maxWave
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
         }
 
         // ============ СОСТОЯНИЕ ИГРЫ ============
@@ -974,8 +1158,11 @@
             milk: 0,
             isGameOver: false,
             isPaused: false,
-            waveBonus: 50,
-            milestoneBonus: 200,
+            totalScore: 0,
+            maxWave: 1,
+            combo: 0,
+            maxCombo: 0,
+            lastKillTime: 0,
             
             upgrades: {
                 damage: { level: 1, baseCost: 35 },
@@ -985,10 +1172,63 @@
             },
 
             activeBoosters: [],
-
+            achievements: new Set(),
             activeSkin: 'tabby',
             ownedSkins: ['tabby']
         };
+
+        // Загружаем сохраненные данные
+        const savedData = loadGameData();
+        if (savedData) {
+            gameState.upgrades = savedData.upgrades;
+            gameState.activeSkin = savedData.activeSkin;
+            gameState.ownedSkins = savedData.ownedSkins;
+            gameState.totalScore = savedData.totalScore;
+            gameState.maxWave = savedData.maxWave;
+        }
+
+        // ============ ДОСТИЖЕНИЯ ============
+        const ACHIEVEMENTS = {
+            firstBlood: { name: '🩸 Первая кровь', desc: 'Убить 1 врага', icon: '🩸', check: () => gameState.kills >= 1 },
+            daemonSlayer: { name: '👹 Истребитель', desc: 'Завершить волну без урона', icon: '👹', check: () => false },
+            collector: { name: '👑 Коллекционер', desc: 'Купить все скины', icon: '👑', check: () => gameState.ownedSkins.length === Object.keys(SKINS).length },
+            millionaire: { name: '💰 Миллионер', desc: 'Накопить 1000 молока', icon: '💰', check: () => gameState.totalScore >= 1000 },
+            warrior: { name: '⚔️ Воин', desc: 'Убить 100 врагов', icon: '⚔️', check: () => gameState.kills >= 100 },
+            legend: { name: '⭐ Легенда', desc: 'Дойти до волны 20', icon: '⭐', check: () => gameState.currentWave >= 20 },
+            comboMaster: { name: '🔥 Мастер комбо', desc: 'Создать комбо x5', icon: '🔥', check: () => gameState.maxCombo >= 5 }
+        };
+
+        function unlockAchievement(key) {
+            if (!gameState.achievements.has(key)) {
+                gameState.achievements.add(key);
+                updateAchievementsDisplay();
+            }
+        }
+
+        function updateAchievementsDisplay() {
+            const panel = document.getElementById('achievementsPanel');
+            panel.innerHTML = '';
+
+            gameState.achievements.forEach(key => {
+                const achievement = ACHIEVEMENTS[key];
+                if (achievement) {
+                    const badge = document.createElement('div');
+                    badge.className = 'achievement-badge';
+                    badge.innerHTML = `${achievement.icon} ${achievement.name}`;
+                    badge.title = achievement.desc;
+                    panel.appendChild(badge);
+                }
+            });
+        }
+
+        function checkAchievements() {
+            Object.keys(ACHIEVEMENTS).forEach(key => {
+                const achievement = ACHIEVEMENTS[key];
+                if (achievement.check()) {
+                    unlockAchievement(key);
+                }
+            });
+        }
 
         // ============ СКИНЫ ============
         const SKINS = {
@@ -999,6 +1239,64 @@
             gunner: { name: 'Пулемётчик', emoji: '🐱‍🐉', bonus: '+50% скорость', bonusType: 'fireRate', value: 1.5, cost: 220 },
             ninja: { name: 'Ниндзя', emoji: '🐱‍👓', bonus: '+20% всё', bonusType: 'all', value: 1.2, cost: 350 }
         };
+
+        // ============ СИСТЕМА ВОЛН И СЛОЖНОСТИ ============
+        function getWaveDifficulty(wave) {
+            if (wave <= 5) return { name: 'Обычная', multiplier: 1 };
+            if (wave <= 10) return { name: 'Сложная', multiplier: 1.25 };
+            if (wave <= 15) return { name: 'Очень сложная', multiplier: 1.5 };
+            return { name: 'Экстремальная', multiplier: 2 };
+        }
+
+        // ============ ЧАСТИЦЫ ============
+        let particles = [];
+
+        function createParticle(x, y, type) {
+            const velocity = {
+                x: (Math.random() - 0.5) * 6,
+                y: (Math.random() - 0.5) * 6 - 2
+            };
+
+            const color = type === 'milk' ? '#90EE90' : '#FF6B6B';
+            const life = type === 'milk' ? 60 : 40;
+
+            particles.push({
+                x: x,
+                y: y,
+                vx: velocity.x,
+                vy: velocity.y,
+                life: life,
+                maxLife: life,
+                color: color,
+                size: Math.random() * 4 + 2,
+                type: type
+            });
+        }
+
+        function updateParticles() {
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.15;
+                p.life--;
+
+                if (p.life <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+        }
+
+        function drawParticles() {
+            particles.forEach(p => {
+                ctx.globalAlpha = p.life / p.maxLife;
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            ctx.globalAlpha = 1;
+        }
 
         // ============ ИГРОК ============
         const player = {
@@ -1012,15 +1310,14 @@
             maxHealth: 100,
             fireRate: 0,
             rotation: 0,
+            lastDamageTime: 0,
             
             getDamage() {
                 let dmg = 10 + (gameState.upgrades.damage.level - 1) * 5;
                 
-                // Боевой скин
                 const skin = SKINS[gameState.activeSkin];
                 if (skin.bonusType === 'damage' || skin.bonusType === 'all') dmg *= skin.value;
                 
-                // Бустер Мощный удар
                 if (gameState.activeBoosters.some(b => b.type === 'powerStrike')) dmg *= 2;
                 
                 return dmg;
@@ -1031,7 +1328,6 @@
                 const skin = SKINS[gameState.activeSkin];
                 if (skin.bonusType === 'fireRate' || skin.bonusType === 'all') rate /= skin.value;
                 
-                // Бустер Быстрая стрельба
                 if (gameState.activeBoosters.some(b => b.type === 'quickDraw')) rate /= 3;
                 
                 return rate;
@@ -1079,13 +1375,13 @@
             },
 
             takeDamage(amount) {
-                // Щит уменьшает урон на 50%
                 if (gameState.activeBoosters.some(b => b.type === 'shield')) {
                     amount *= 0.5;
                 }
                 
                 this.health -= amount;
                 if (this.health < 0) this.health = 0;
+                this.lastDamageTime = Date.now();
                 playSound('hit');
             },
 
@@ -1129,7 +1425,6 @@
 
                 ctx.restore();
                 
-                // Рисуем щит если активен
                 if (gameState.activeBoosters.some(b => b.type === 'shield')) {
                     ctx.strokeStyle = 'rgba(0, 255, 255, 0.6)';
                     ctx.lineWidth = 3;
@@ -1157,10 +1452,12 @@
         function createEnemy(type) {
             const baseX = Math.random() * (canvas.width - 60) + 30;
             const baseY = Math.random() * (canvas.height / 2 - 60) + 30;
+            const difficulty = getWaveDifficulty(gameState.currentWave);
 
             if (type === 'normal') {
                 const mouseType = Math.floor(Math.random() * 4) + 1;
                 const mouseImg = images['mouse' + mouseType];
+                const enemyHealth = Math.floor((15 + gameState.currentWave * 2) * difficulty.multiplier);
 
                 return {
                     type: 'normal',
@@ -1171,8 +1468,8 @@
                     height: 40,
                     velocityX: (Math.random() - 0.5) * 2.5,
                     velocityY: (Math.random() - 0.5) * 2.5,
-                    health: 15 + gameState.currentWave * 2,
-                    maxHealth: 15 + gameState.currentWave * 2,
+                    health: enemyHealth,
+                    maxHealth: enemyHealth,
                     alive: true,
 
                     update() {
@@ -1188,8 +1485,39 @@
                         if (this.health <= 0) {
                             this.alive = false;
                             gameState.score += 50;
+                            gameState.totalScore += 50;
                             gameState.milk += 10 + gameState.currentWave * 2;
                             gameState.kills++;
+                            gameState.maxCombo++;
+
+                            // Проверка комбо
+                            const now = Date.now();
+                            if (now - gameState.lastKillTime < 2000) {
+                                gameState.combo++;
+                                if (gameState.combo >= 2) {
+                                    playSound('combo');
+                                    showComboDisplay(gameState.combo);
+                                    gameState.maxCombo = Math.max(gameState.maxCombo, gameState.combo);
+                                }
+                            } else {
+                                gameState.combo = 1;
+                            }
+                            gameState.lastKillTime = now;
+
+                            // Бонусы за комбо
+                            if (gameState.combo >= 5) {
+                                gameState.milk += Math.floor((10 + gameState.currentWave * 2) * 2);
+                            } else if (gameState.combo >= 3) {
+                                gameState.milk += Math.floor((10 + gameState.currentWave * 2) * 1.5);
+                            } else if (gameState.combo >= 2) {
+                                gameState.milk += Math.floor((10 + gameState.currentWave * 2) * 0.5);
+                            }
+
+                            // Частицы
+                            for (let i = 0; i < 5; i++) {
+                                createParticle(this.x, this.y, 'milk');
+                            }
+
                             playSound('enemy-death');
                         }
                     },
@@ -1206,6 +1534,7 @@
                     }
                 };
             } else if (type === 'boss') {
+                const bossHealth = Math.floor((200 + gameState.currentWave * 50) * difficulty.multiplier);
                 return {
                     type: 'boss',
                     x: canvas.width / 2,
@@ -1215,8 +1544,8 @@
                     velocityX: 3,
                     velocityY: 2,
                     changeDirectionTimer: 0,
-                    health: 200 + gameState.currentWave * 50,
-                    maxHealth: 200 + gameState.currentWave * 50,
+                    health: bossHealth,
+                    maxHealth: bossHealth,
                     shootTimer: 0,
                     alive: true,
 
@@ -1267,10 +1596,15 @@
                         if (this.health <= 0) {
                             this.alive = false;
                             gameState.score += 1000;
-                            gameState.milk += 200 + gameState.currentWave * 100 + gameState.milestoneBonus;
+                            gameState.totalScore += 1000;
+                            gameState.milk += 200 + gameState.currentWave * 100;
                             gameState.kills++;
                             playSound('enemy-death');
                             bossActive = false;
+
+                            for (let i = 0; i < 10; i++) {
+                                createParticle(this.x, this.y, 'milk');
+                            }
                         }
                     },
 
@@ -1278,7 +1612,6 @@
                         if (images.boss.complete && images.boss.naturalHeight !== 0) {
                             ctx.drawImage(images.boss, this.x - 70, this.y - 70, this.width, this.height);
                         } else {
-                            // Fallback если изображение не загрузилось
                             ctx.fillStyle = '#8B4513';
                             ctx.fillRect(this.x - 70, this.y - 70, this.width, this.height);
                             ctx.fillStyle = '#000';
@@ -1309,20 +1642,20 @@
             bullets = [];
             enemyBullets = [];
             bossActive = false;
+            gameState.combo = 0;
 
             player.health = player.getMaxHealth();
             player.velocityX = 0;
             player.velocityY = 0;
 
             getBackgroundImage();
+            updateDifficultyDisplay();
 
             if (waveNum % 5 === 0) {
-                // ВОЛНА БОССА
                 enemies.push(createEnemy('boss'));
                 bossActive = true;
                 showLevelInfo(`👹 ВОЛНА БОССА ${waveNum}`, 'Королева Крыс с УСИЛЕННЫМИ АТАКАМИ!');
             } else {
-                // ОБЫЧНАЯ ВОЛНА
                 const baseEnemyCount = 4 + Math.floor(waveNum / 2);
                 const enemyCount = baseEnemyCount + gameState.currentWave;
                 
@@ -1339,7 +1672,7 @@
                     }
                 }, 1500);
 
-                showLevelInfo(`ВОЛНА ${waveNum}`, `Приготовьтесь: ${enemyCount} мышей`);
+                showLevelInfo(`ВОЛНА ${waveNum}`, `Приготовьтесь: ${enemyCount} врагов`);
             }
         }
 
@@ -1352,10 +1685,34 @@
             }, 3000);
         }
 
-        // ============ МАГАЗИН ============
+        function showComboDisplay(combo) {
+            const display = document.getElementById('comboDisplay');
+            display.textContent = `КОМБО x${combo}`;
+            display.style.display = 'block';
+            setTimeout(() => {
+                display.style.display = 'none';
+            }, 600);
+        }
+
+        function updateDifficultyDisplay() {
+            const difficulty = getWaveDifficulty(gameState.currentWave);
+            document.getElementById('difficultyLevel').textContent = difficulty.name;
+        }
+
+        // ============ МАГАЗИН И ПАУЗА ============
         function toggleShop() {
             const panel = document.getElementById('shopPanel');
-            panel.classList.toggle('open');
+            const overlay = document.getElementById('pauseOverlay');
+            
+            if (panel.classList.contains('open')) {
+                panel.classList.remove('open');
+                overlay.style.display = 'none';
+                gameState.isPaused = false;
+            } else {
+                panel.classList.add('open');
+                overlay.style.display = 'block';
+                gameState.isPaused = true;
+            }
         }
 
         function upgradeDamage() {
@@ -1363,6 +1720,7 @@
             if (gameState.milk >= cost) {
                 gameState.milk -= cost;
                 gameState.upgrades.damage.level++;
+                saveGameData();
                 updateUI();
             }
         }
@@ -1372,6 +1730,7 @@
             if (gameState.milk >= cost) {
                 gameState.milk -= cost;
                 gameState.upgrades.fireRate.level++;
+                saveGameData();
                 updateUI();
             }
         }
@@ -1381,6 +1740,7 @@
             if (gameState.milk >= cost) {
                 gameState.milk -= cost;
                 gameState.upgrades.bulletSize.level++;
+                saveGameData();
                 updateUI();
             }
         }
@@ -1392,6 +1752,7 @@
                 gameState.upgrades.health.level++;
                 player.maxHealth = player.getMaxHealth();
                 player.health = player.maxHealth;
+                saveGameData();
                 updateUI();
             }
         }
@@ -1455,9 +1816,8 @@
             document.getElementById('milk').textContent = gameState.milk;
             document.getElementById('damage').textContent = Math.round(player.getDamage());
             document.getElementById('waveCounter').textContent = gameState.currentWave;
-            
-            const milestone = gameState.currentWave % 5;
-            document.getElementById('milestone').textContent = `${milestone}/5`;
+            document.getElementById('totalScore').textContent = gameState.totalScore;
+            document.getElementById('maxWave').textContent = gameState.maxWave;
             
             const damageCost = gameState.upgrades.damage.baseCost * gameState.upgrades.damage.level;
             const fireRateCost = gameState.upgrades.fireRate.baseCost * gameState.upgrades.fireRate.level;
@@ -1473,6 +1833,8 @@
             document.getElementById('fireRateBtn').disabled = gameState.milk < fireRateCost;
             document.getElementById('bulletBtn').disabled = gameState.milk < bulletCost;
             document.getElementById('healthBtn').disabled = gameState.milk < healthCost;
+
+            checkAchievements();
         }
 
         // ============ СКИНЫ ============
@@ -1503,12 +1865,14 @@
                         gameState.activeSkin = key;
                         player.maxHealth = player.getMaxHealth();
                         player.health = player.maxHealth;
+                        saveGameData();
                         showSkinsPanel();
                         updateUI();
                     } else if (owned) {
                         gameState.activeSkin = key;
                         player.maxHealth = player.getMaxHealth();
                         player.health = player.maxHealth;
+                        saveGameData();
                         showSkinsPanel();
                         updateUI();
                     }
@@ -1546,8 +1910,9 @@
                 ctx.fill();
             }
 
-            if (!gameState.isGameOver) {
+            if (!gameState.isGameOver && !gameState.isPaused) {
                 updateBoosters();
+                updateParticles();
                 player.update();
                 
                 for (let enemy of enemies) {
@@ -1620,6 +1985,8 @@
                 const allEnemiesDead = enemies.every(e => !e.alive);
                 if (allEnemiesDead && enemies.length > 0) {
                     gameState.currentWave++;
+                    gameState.maxWave = Math.max(gameState.maxWave, gameState.currentWave);
+                    saveGameData();
                     createWave(gameState.currentWave);
                 }
 
@@ -1627,9 +1994,11 @@
                 if (player.health <= 0) {
                     gameState.isGameOver = true;
                     document.getElementById('gameOverScore').textContent = `Очки: ${gameState.score}`;
-                    document.getElementById('gameOverKills').textContent = `Убито мышей: ${gameState.kills}`;
+                    document.getElementById('gameOverKills').textContent = `Убито врагов: ${gameState.kills}`;
                     document.getElementById('gameOverLevel').textContent = `Волн пройдено: ${gameState.currentWave}`;
+                    document.getElementById('gameOverCombo').textContent = `Макс комбо: ${gameState.maxCombo}`;
                     document.getElementById('gameOver').style.display = 'block';
+                    saveGameData();
                 }
 
                 player.draw();
@@ -1663,6 +2032,9 @@
                     ctx.arc(bullet.x, bullet.y, 5, 0, Math.PI * 2);
                     ctx.stroke();
                 }
+
+                // Рисуем частицы
+                drawParticles();
             }
 
             // Обновляем HUD
@@ -1679,6 +2051,7 @@
         // Начинаем игру
         createWave(1);
         updateUI();
+        updateAchievementsDisplay();
         gameLoop();
     </script>
 </body>
