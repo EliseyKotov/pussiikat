@@ -53,19 +53,19 @@
             top: 10px;
             left: 10px;
             background: rgba(0, 0, 0, 0.8);
-            padding: 10px 14px;
+            padding: 12px 16px;
             border-radius: 10px;
             border: 3px solid #ff6b9d;
             z-index: 100;
-            font-size: 11px;
-            min-width: 180px;
+            font-size: 12px;
+            min-width: 200px;
             pointer-events: none;
         }
 
         .fps-counter {
             position: absolute;
             top: 10px;
-            left: 200px;
+            left: 220px;
             background: rgba(0, 0, 0, 0.8);
             padding: 8px 12px;
             border-radius: 8px;
@@ -78,7 +78,7 @@
         }
 
         .hud-item {
-            margin: 4px 0;
+            margin: 6px 0;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -88,19 +88,19 @@
         .hud-label {
             color: #ffd700;
             font-weight: bold;
-            min-width: 70px;
-            font-size: 10px;
+            min-width: 80px;
+            font-size: 11px;
         }
 
         .hud-value {
             color: #fff;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 15px;
         }
 
         .health-bar {
             width: 100px;
-            height: 12px;
+            height: 14px;
             background: #333;
             border: 2px solid #ffd700;
             border-radius: 6px;
@@ -118,36 +118,86 @@
             top: 10px;
             right: 10px;
             background: rgba(0, 0, 0, 0.8);
-            padding: 10px 14px;
+            padding: 12px 16px;
             border-radius: 10px;
             border: 3px solid #ffd700;
             z-index: 100;
             text-align: right;
-            font-size: 11px;
+            font-size: 12px;
             pointer-events: none;
+            min-width: 140px;
         }
 
         .score-item {
-            margin: 4px 0;
+            margin: 6px 0;
         }
 
         .score-label {
             color: #ffd700;
             font-weight: bold;
-            font-size: 9px;
+            font-size: 10px;
         }
 
         .score-value {
             color: #fff;
-            font-size: 16px;
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        .progress-info {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 2px solid #00ffff;
+            z-index: 100;
+            font-size: 12px;
+            pointer-events: none;
+            color: #00ffff;
+            font-weight: bold;
+        }
+
+        /* ============ BOOSTERS DISPLAY ============ */
+        .boosters-display {
+            position: absolute;
+            top: 100px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 8px;
+            border-radius: 8px;
+            border: 2px solid #ff00ff;
+            z-index: 100;
+            pointer-events: none;
+            min-width: 100px;
+        }
+
+        .booster-item {
+            color: #ff00ff;
+            font-size: 11px;
+            margin: 4px 0;
+            padding: 2px 4px;
+            background: rgba(255, 0, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        .booster-name {
+            font-weight: bold;
+            color: #ffff00;
+        }
+
+        .booster-timer {
+            color: #00ff00;
             font-weight: bold;
         }
 
         /* ============ MOBILE JOYSTICK ============ */
         .mobile-controls {
             position: absolute;
-            bottom: 10px;
-            left: 10px;
+            bottom: 15px;
+            left: 15px;
             z-index: 105;
             display: none;
         }
@@ -156,46 +206,71 @@
             .mobile-controls {
                 display: block;
             }
+
+            .fps-counter {
+                display: none;
+            }
+
+            .hud {
+                font-size: 11px;
+                padding: 10px 12px;
+                min-width: 180px;
+            }
+
+            .score-board {
+                font-size: 11px;
+                padding: 10px 12px;
+                min-width: 130px;
+            }
+
+            .progress-info {
+                font-size: 11px;
+                padding: 6px 12px;
+            }
         }
 
         .joystick-container {
-            width: 120px;
-            height: 120px;
+            width: 140px;
+            height: 140px;
             background: rgba(0, 0, 0, 0.6);
             border: 3px solid #ffd700;
             border-radius: 50%;
             position: relative;
             touch-action: none;
             margin-bottom: 10px;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
         }
 
         .joystick-inner {
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 50px;
-            height: 50px;
-            background: rgba(255, 215, 0, 0.7);
-            border: 2px solid #ffd700;
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 215, 0, 0.8);
+            border: 3px solid #ffd700;
             border-radius: 50%;
             transform: translate(-50%, -50%);
             transition: background 0.1s;
+            box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
         }
 
         /* ============ SHOP ============ */
         .shop-toggle {
             position: absolute;
-            bottom: 10px;
-            right: 10px;
+            bottom: 15px;
+            right: 15px;
             background: rgba(255, 215, 0, 0.3);
             border: 3px solid #ffd700;
-            padding: 10px 12px;
+            padding: 12px 16px;
             border-radius: 10px;
-            font-size: 24px;
+            font-size: 28px;
             cursor: pointer;
             z-index: 104;
             transition: all 0.2s;
             touch-action: manipulation;
+            min-width: 50px;
+            text-align: center;
         }
 
         .shop-toggle:active {
@@ -209,13 +284,13 @@
             left: 50%;
             transform: translate(-50%, -50%);
             background: rgba(10, 10, 30, 0.98);
-            padding: 15px;
+            padding: 18px;
             border-radius: 12px;
             border: 3px solid #ffd700;
             z-index: 103;
-            font-size: 11px;
-            max-width: 250px;
-            max-height: 400px;
+            font-size: 12px;
+            max-width: 280px;
+            max-height: 500px;
             overflow-y: auto;
             box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
             display: none;
@@ -228,11 +303,24 @@
         .shop-title {
             color: #ffd700;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             text-align: center;
             border-bottom: 2px solid #ffd700;
-            padding-bottom: 8px;
-            font-size: 13px;
+            padding-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .shop-section {
+            margin-bottom: 15px;
+        }
+
+        .shop-section-title {
+            color: #00ffff;
+            font-weight: bold;
+            font-size: 11px;
+            margin: 8px 0 6px 0;
+            border-left: 3px solid #00ffff;
+            padding-left: 6px;
         }
 
         .shop-item {
@@ -245,13 +333,24 @@
             margin: 6px 0;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 10px;
+            font-size: 11px;
             transition: all 0.2s;
             touch-action: manipulation;
+            min-height: 60px;
+        }
+
+        .shop-item.booster {
+            border-color: #ff00ff;
+            background: linear-gradient(135deg, rgba(255,0,255,0.15), rgba(255,0,255,0.05));
         }
 
         .shop-item:active:not(:disabled) {
             background: linear-gradient(135deg, rgba(255,215,0,0.4), rgba(255,215,0,0.2));
+            transform: scale(0.98);
+        }
+
+        .shop-item.booster:active:not(:disabled) {
+            background: linear-gradient(135deg, rgba(255,0,255,0.4), rgba(255,0,255,0.2));
         }
 
         .shop-item:disabled {
@@ -263,21 +362,32 @@
             color: #ffd700;
             font-weight: bold;
             margin-bottom: 3px;
-            font-size: 11px;
+            font-size: 12px;
+        }
+
+        .shop-item.booster .item-name {
+            color: #ff00ff;
         }
 
         .item-desc {
             color: #aaa;
-            font-size: 9px;
+            font-size: 10px;
             margin-bottom: 5px;
             line-height: 1.3;
+            flex-grow: 1;
+        }
+
+        .item-meta {
+            color: #00ff00;
+            font-size: 10px;
+            margin-bottom: 3px;
         }
 
         .item-cost {
             color: #ffff00;
             font-weight: bold;
             text-align: right;
-            font-size: 10px;
+            font-size: 11px;
         }
 
         /* ============ LEVEL INFO ============ */
@@ -470,22 +580,31 @@
             transform: scale(0.9);
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 768px) {
+            .shop-panel {
+                max-width: 220px;
+                max-height: 400px;
+                padding: 14px;
+            }
+
+            .skins-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
             .joystick-container {
-                width: 100px;
-                height: 100px;
+                width: 120px;
+                height: 120px;
             }
 
             .joystick-inner {
-                width: 40px;
-                height: 40px;
+                width: 50px;
+                height: 50px;
+                border: 2px solid #ffd700;
             }
+        }
 
-            .hud, .score-board {
-                font-size: 9px;
-                padding: 8px 10px;
-            }
-
+        @media (max-width: 480px) {
             .shop-panel {
                 max-width: 200px;
             }
@@ -493,12 +612,21 @@
             .skins-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
+
+            .boosters-display {
+                font-size: 10px;
+                right: 5px;
+                top: 160px;
+            }
         }
     </style>
 </head>
 <body>
     <div id="gameContainer">
         <canvas id="gameCanvas"></canvas>
+
+        <!-- ПРОГРЕСС И ВОЛНЫ -->
+        <div class="progress-info" id="progressInfo">📊 Волна: <span id="waveCounter">1</span> | 🎯 Прогресс: <span id="milestone">0/5</span></div>
 
         <!-- HUD -->
         <div class="hud">
@@ -516,10 +644,6 @@
                 <span class="hud-label">💥 Урон:</span>
                 <span class="hud-value" id="damage">10</span>
             </div>
-            <div class="hud-item">
-                <span class="hud-label">📊 Волна:</span>
-                <span class="hud-value" id="level">1</span>
-            </div>
         </div>
 
         <div class="fps-counter" id="fpsCounter">FPS: 60</div>
@@ -535,56 +659,100 @@
             </div>
         </div>
 
-        <!-- MOBILE CONTROLS -->
+        <!-- АКТИВНЫЕ БУСТЕРЫ -->
+        <div class="boosters-display" id="boostersDisplay" style="display: none;"></div>
+
+        <!-- МОБИЛЬНЫЕ ЭЛЕМЕНТЫ УПРАВЛЕНИЯ -->
         <div class="mobile-controls">
             <div class="joystick-container" id="joystick">
                 <div class="joystick-inner"></div>
             </div>
         </div>
 
-        <!-- SHOP -->
+        <!-- МАГАЗИН -->
         <div class="shop-toggle" id="shopToggle" onclick="toggleShop()">🛍️</div>
 
         <div class="shop-panel" id="shopPanel">
             <div class="shop-title">🛍️ МАГАЗИН</div>
-            
-            <button class="shop-item" id="damageBtn" onclick="upgradeDamage()">
-                <span class="item-name">💥 Урон</span>
-                <span class="item-desc">Больше урона по врагам</span>
-                <span class="item-cost" id="damageCost">50🥛</span>
-            </button>
 
-            <button class="shop-item" id="fireRateBtn" onclick="upgradeFireRate()">
-                <span class="item-name">🔥 Скорость</span>
-                <span class="item-desc">Быстрее стрелять</span>
-                <span class="item-cost" id="fireRateCost">75🥛</span>
-            </button>
+            <!-- ПОСТОЯННЫЕ УЛУЧШЕНИЯ -->
+            <div class="shop-section">
+                <div class="shop-section-title">⭐ ПОСТОЯННЫЕ УЛУЧШЕНИЯ</div>
+                
+                <button class="shop-item" id="damageBtn" onclick="upgradeDamage()">
+                    <span class="item-name">💥 Урон</span>
+                    <span class="item-desc">Больше урона по врагам</span>
+                    <span class="item-cost" id="damageCost">35🥛</span>
+                </button>
 
-            <button class="shop-item" id="bulletBtn" onclick="upgradeBulletSize()">
-                <span class="item-name">◯ Размер пули</span>
-                <span class="item-desc">Большие снаряды</span>
-                <span class="item-cost" id="bulletCost">60🥛</span>
-            </button>
+                <button class="shop-item" id="fireRateBtn" onclick="upgradeFireRate()">
+                    <span class="item-name">🔥 Скорость</span>
+                    <span class="item-desc">Быстрее стрелять</span>
+                    <span class="item-cost" id="fireRateCost">50🥛</span>
+                </button>
 
-            <button class="shop-item" id="healthBtn" onclick="upgradeHealth()">
-                <span class="item-name">❤️ Здоровье</span>
-                <span class="item-desc">Больше HP</span>
-                <span class="item-cost" id="healthCost">100🥛</span>
-            </button>
+                <button class="shop-item" id="bulletBtn" onclick="upgradeBulletSize()">
+                    <span class="item-name">◯ Размер пули</span>
+                    <span class="item-desc">Большие снаряды</span>
+                    <span class="item-cost" id="bulletCost">40🥛</span>
+                </button>
 
-            <button class="shop-item" id="skinsBtn" onclick="showSkinsPanel()">
-                <span class="item-name">🎨 Скины</span>
-                <span class="item-desc">Новые костюмы</span>
-            </button>
+                <button class="shop-item" id="healthBtn" onclick="upgradeHealth()">
+                    <span class="item-name">❤️ Здоровье</span>
+                    <span class="item-desc">Больше HP</span>
+                    <span class="item-cost" id="healthCost">70🥛</span>
+                </button>
+            </div>
+
+            <!-- ВРЕМЕННЫЕ БУСТЕРЫ -->
+            <div class="shop-section">
+                <div class="shop-section-title">⚡ ВРЕМЕННЫЕ БУСТЕРЫ (15-30 сек)</div>
+                
+                <button class="shop-item booster" id="quickDrawBtn" onclick="activateBooster('quickDraw')">
+                    <span class="item-name">⚡ Быстрая стрельба</span>
+                    <span class="item-desc">3x скорость стрельки</span>
+                    <span class="item-meta">⏱️ 15 сек</span>
+                    <span class="item-cost">30🥛</span>
+                </button>
+
+                <button class="shop-item booster" id="powerStrikeBtn" onclick="activateBooster('powerStrike')">
+                    <span class="item-name">💪 Мощный удар</span>
+                    <span class="item-desc">2x урон по врагам</span>
+                    <span class="item-meta">⏱️ 20 сек</span>
+                    <span class="item-cost">40🥛</span>
+                </button>
+
+                <button class="shop-item booster" id="shieldBtn" onclick="activateBooster('shield')">
+                    <span class="item-name">🛡️ Щит</span>
+                    <span class="item-desc">-50% получаемый урон</span>
+                    <span class="item-meta">⏱️ 30 сек</span>
+                    <span class="item-cost">50🥛</span>
+                </button>
+
+                <button class="shop-item booster" id="speedBoostBtn" onclick="activateBooster('speedBoost')">
+                    <span class="item-name">🚀 Ускорение</span>
+                    <span class="item-desc">1.5x скорость движения</span>
+                    <span class="item-meta">⏱️ 20 сек</span>
+                    <span class="item-cost">25🥛</span>
+                </button>
+            </div>
+
+            <!-- СКИНЫ -->
+            <div class="shop-section">
+                <button class="shop-item" id="skinsBtn" onclick="showSkinsPanel()" style="border-color: #00ffff;">
+                    <span class="item-name" style="color: #00ffff;">🎨 Скины</span>
+                    <span class="item-desc">Новые костюмы и бонусы</span>
+                </button>
+            </div>
         </div>
 
-        <!-- LEVEL INFO -->
+        <!-- ИНФОРМАЦИЯ О ВОЛНЕ -->
         <div id="levelInfo" class="level-info">
             <h2 id="levelTitle">Волна 1</h2>
             <p id="levelDesc">Начните игру!</p>
         </div>
 
-        <!-- GAME OVER -->
+        <!-- КОНЕЦ ИГРЫ -->
         <div id="gameOver" class="game-over">
             <h1>💀 ИГРА ОКОНЧЕНА 💀</h1>
             <p id="gameOverScore">Очки: 0</p>
@@ -595,7 +763,7 @@
             </div>
         </div>
 
-        <!-- SKINS PANEL -->
+        <!-- ПАНЕЛЬ СКИНОВ -->
         <div id="skinsPanel" class="skins-panel">
             <button class="close-btn" onclick="hideSkinsPanel()">✕</button>
             <h1>🎨 СКИНЫ КОТИКА</h1>
@@ -606,7 +774,7 @@
     <script>
         'use strict';
 
-        // ============ CORE SETUP ============
+        // ============ БАЗОВАЯ НАСТРОЙКА ============
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
@@ -619,7 +787,7 @@
             isMobile = window.innerWidth <= 768;
         });
 
-        // ============ FPS COUNTER ============
+        // ============ СЧЕТЧИК FPS ============
         let lastTime = performance.now();
         let frameCount = 0;
         let fps = 0;
@@ -635,7 +803,7 @@
             }
         }
 
-        // ============ MOBILE JOYSTICK SYSTEM ============
+        // ============ СИСТЕМА ДЖОЙСТИКА ДЛЯ МОБИЛЬНЫХ ============
         const joystickContainer = document.getElementById('joystick');
         const joystickInner = joystickContainer.querySelector('.joystick-inner');
         const keys = { a: false, d: false, w: false, s: false };
@@ -676,7 +844,7 @@
             joystickY = touch.clientY - centerY;
 
             const distance = Math.hypot(joystickX, joystickY);
-            const maxDistance = Math.min(rect.width, rect.height) / 2 - 25;
+            const maxDistance = Math.min(rect.width, rect.height) / 2 - 30;
 
             if (distance > maxDistance) {
                 const angle = Math.atan2(joystickY, joystickX);
@@ -692,7 +860,7 @@
             joystickInner.style.transform = `translate(calc(-50% + ${joystickX}px), calc(-50% + ${joystickY}px))`;
         }
 
-        // ============ KEYBOARD & MOUSE ============
+        // ============ КЛАВИАТУРА И МЫШЬ ============
         window.addEventListener('keydown', (e) => {
             const key = e.key.toLowerCase();
             if (key === 'a' || key === 'arrowleft') keys.a = true;
@@ -709,7 +877,7 @@
             if (key === 's' || key === 'arrowdown') keys.s = false;
         });
 
-        // ============ SHOOTING ============
+        // ============ СТРЕЛЬБА ============
         canvas.addEventListener('click', (e) => {
             const rect = canvas.getBoundingClientRect();
             const x = e.clientX - rect.left;
@@ -727,14 +895,16 @@
             }
         }, { passive: true });
 
-        // ============ IMAGES ============
+        // ============ ИЗОБРАЖЕНИЯ ============
         const images = {
             cat: new Image(),
             mouse1: new Image(),
             mouse2: new Image(),
             mouse3: new Image(),
             mouse4: new Image(),
-            mouse5: new Image()
+            mouse5: new Image(),
+            boss: new Image(),
+            background: new Image()
         };
 
         images.cat.src = 'cat.png';
@@ -743,8 +913,9 @@
         images.mouse3.src = 'mouse3.png';
         images.mouse4.src = 'mouse4.png';
         images.mouse5.src = 'mouse5.png';
+        images.boss.src = 'boss.png';
 
-        // ============ SOUND ============
+        // ============ ЗВУКИ ============
         function playSound(type) {
             try {
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -780,11 +951,22 @@
                     gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
                     osc.start(audioContext.currentTime);
                     osc.stop(audioContext.currentTime + 0.3);
+                } else if (type === 'booster') {
+                    const osc = audioContext.createOscillator();
+                    const gain = audioContext.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioContext.destination);
+                    osc.frequency.setValueAtTime(1200, audioContext.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(1600, audioContext.currentTime + 0.2);
+                    gain.gain.setValueAtTime(0.2, audioContext.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                    osc.start(audioContext.currentTime);
+                    osc.stop(audioContext.currentTime + 0.2);
                 }
             } catch (e) {}
         }
 
-        // ============ GAME STATE ============
+        // ============ СОСТОЯНИЕ ИГРЫ ============
         const gameState = {
             currentWave: 1,
             score: 0,
@@ -792,29 +974,33 @@
             milk: 0,
             isGameOver: false,
             isPaused: false,
+            waveBonus: 50,
+            milestoneBonus: 200,
             
             upgrades: {
-                damage: { level: 1, cost: 50 },
-                fireRate: { level: 1, cost: 75 },
-                bulletSize: { level: 1, cost: 60 },
-                health: { level: 1, cost: 100 }
+                damage: { level: 1, baseCost: 35 },
+                fireRate: { level: 1, baseCost: 50 },
+                bulletSize: { level: 1, baseCost: 40 },
+                health: { level: 1, baseCost: 70 }
             },
+
+            activeBoosters: [],
 
             activeSkin: 'tabby',
             ownedSkins: ['tabby']
         };
 
-        // ============ SKINS ============
+        // ============ СКИНЫ ============
         const SKINS = {
             tabby: { name: 'Табби', emoji: '🐱', bonus: 'Обычный котик', bonusType: 'none', cost: 0 },
-            warrior: { name: 'Боевой', emoji: '😾', bonus: '+25% урона', bonusType: 'damage', value: 1.25, cost: 200 },
-            sniper: { name: 'Снайпер', emoji: '🐯', bonus: '+50% размер', bonusType: 'bulletSize', value: 1.5, cost: 250 },
-            doctor: { name: 'Доктор', emoji: '🐱‍⚕️', bonus: '+30% HP', bonusType: 'health', value: 1.3, cost: 300 },
-            gunner: { name: 'Пулемётчик', emoji: '🐱‍🐉', bonus: '+50% скорость', bonusType: 'fireRate', value: 1.5, cost: 350 },
-            ninja: { name: 'Ниндзя', emoji: '🐱‍👓', bonus: '+20% всё', bonusType: 'all', value: 1.2, cost: 500 }
+            warrior: { name: 'Боевой', emoji: '😾', bonus: '+25% урона', bonusType: 'damage', value: 1.25, cost: 150 },
+            sniper: { name: 'Снайпер', emoji: '🐯', bonus: '+50% размер', bonusType: 'bulletSize', value: 1.5, cost: 180 },
+            doctor: { name: 'Доктор', emoji: '🐱‍⚕️', bonus: '+30% HP', bonusType: 'health', value: 1.3, cost: 200 },
+            gunner: { name: 'Пулемётчик', emoji: '🐱‍🐉', bonus: '+50% скорость', bonusType: 'fireRate', value: 1.5, cost: 220 },
+            ninja: { name: 'Ниндзя', emoji: '🐱‍👓', bonus: '+20% всё', bonusType: 'all', value: 1.2, cost: 350 }
         };
 
-        // ============ PLAYER ============
+        // ============ ИГРОК ============
         const player = {
             x: canvas.width / 2,
             y: canvas.height - 120,
@@ -829,8 +1015,14 @@
             
             getDamage() {
                 let dmg = 10 + (gameState.upgrades.damage.level - 1) * 5;
+                
+                // Боевой скин
                 const skin = SKINS[gameState.activeSkin];
                 if (skin.bonusType === 'damage' || skin.bonusType === 'all') dmg *= skin.value;
+                
+                // Бустер Мощный удар
+                if (gameState.activeBoosters.some(b => b.type === 'powerStrike')) dmg *= 2;
+                
                 return dmg;
             },
 
@@ -838,6 +1030,10 @@
                 let rate = Math.max(3, 10 - (gameState.upgrades.fireRate.level - 1) * 1.5);
                 const skin = SKINS[gameState.activeSkin];
                 if (skin.bonusType === 'fireRate' || skin.bonusType === 'all') rate /= skin.value;
+                
+                // Бустер Быстрая стрельба
+                if (gameState.activeBoosters.some(b => b.type === 'quickDraw')) rate /= 3;
+                
                 return rate;
             },
 
@@ -855,8 +1051,14 @@
                 return hp;
             },
 
+            getMaxSpeed() {
+                let speed = 6;
+                if (gameState.activeBoosters.some(b => b.type === 'speedBoost')) speed *= 1.5;
+                return speed;
+            },
+
             update() {
-                const maxSpeed = 6;
+                const maxSpeed = this.getMaxSpeed();
                 if (keys.a) this.velocityX = -maxSpeed;
                 else if (keys.d) this.velocityX = maxSpeed;
                 else this.velocityX *= 0.85;
@@ -877,6 +1079,11 @@
             },
 
             takeDamage(amount) {
+                // Щит уменьшает урон на 50%
+                if (gameState.activeBoosters.some(b => b.type === 'shield')) {
+                    amount *= 0.5;
+                }
+                
                 this.health -= amount;
                 if (this.health < 0) this.health = 0;
                 playSound('hit');
@@ -921,12 +1128,31 @@
                 }
 
                 ctx.restore();
+                
+                // Рисуем щит если активен
+                if (gameState.activeBoosters.some(b => b.type === 'shield')) {
+                    ctx.strokeStyle = 'rgba(0, 255, 255, 0.6)';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, 50, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
             }
         };
 
-        // ============ ENEMIES ============
+        // ============ ВРАГИ ============
         let enemies = [];
         let bossActive = false;
+
+        function getBackgroundImage() {
+            if (gameState.currentWave <= 2) {
+                images.background.src = 'house.jpg';
+            } else if (gameState.currentWave <= 4) {
+                images.background.src = 'garden.jpg';
+            } else {
+                images.background.src = 'room.jpg';
+            }
+        }
 
         function createEnemy(type) {
             const baseX = Math.random() * (canvas.width - 60) + 30;
@@ -1041,7 +1267,7 @@
                         if (this.health <= 0) {
                             this.alive = false;
                             gameState.score += 1000;
-                            gameState.milk += 200 + gameState.currentWave * 100;
+                            gameState.milk += 200 + gameState.currentWave * 100 + gameState.milestoneBonus;
                             gameState.kills++;
                             playSound('enemy-death');
                             bossActive = false;
@@ -1049,8 +1275,15 @@
                     },
 
                     draw() {
-                        if (images.mouse5.complete && images.mouse5.naturalHeight !== 0) {
-                            ctx.drawImage(images.mouse5, this.x - 70, this.y - 70, this.width, this.height);
+                        if (images.boss.complete && images.boss.naturalHeight !== 0) {
+                            ctx.drawImage(images.boss, this.x - 70, this.y - 70, this.width, this.height);
+                        } else {
+                            // Fallback если изображение не загрузилось
+                            ctx.fillStyle = '#8B4513';
+                            ctx.fillRect(this.x - 70, this.y - 70, this.width, this.height);
+                            ctx.fillStyle = '#000';
+                            ctx.fillRect(this.x - 20, this.y - 30, 10, 10);
+                            ctx.fillRect(this.x + 10, this.y - 30, 10, 10);
                         }
 
                         ctx.fillStyle = '#333';
@@ -1067,7 +1300,7 @@
             }
         }
 
-        // ============ BULLETS ============
+        // ============ ПУЛИ ============
         let bullets = [];
         let enemyBullets = [];
 
@@ -1081,13 +1314,15 @@
             player.velocityX = 0;
             player.velocityY = 0;
 
+            getBackgroundImage();
+
             if (waveNum % 5 === 0) {
-                // BOSS WAVE
+                // ВОЛНА БОССА
                 enemies.push(createEnemy('boss'));
                 bossActive = true;
                 showLevelInfo(`👹 ВОЛНА БОССА ${waveNum}`, 'Королева Крыс с УСИЛЕННЫМИ АТАКАМИ!');
             } else {
-                // NORMAL WAVE - Создаем врагов волнами
+                // ОБЫЧНАЯ ВОЛНА
                 const baseEnemyCount = 4 + Math.floor(waveNum / 2);
                 const enemyCount = baseEnemyCount + gameState.currentWave;
                 
@@ -1117,14 +1352,14 @@
             }, 3000);
         }
 
-        // ============ SHOP ============
+        // ============ МАГАЗИН ============
         function toggleShop() {
             const panel = document.getElementById('shopPanel');
             panel.classList.toggle('open');
         }
 
         function upgradeDamage() {
-            const cost = gameState.upgrades.damage.cost * gameState.upgrades.damage.level;
+            const cost = gameState.upgrades.damage.baseCost * gameState.upgrades.damage.level;
             if (gameState.milk >= cost) {
                 gameState.milk -= cost;
                 gameState.upgrades.damage.level++;
@@ -1133,7 +1368,7 @@
         }
 
         function upgradeFireRate() {
-            const cost = gameState.upgrades.fireRate.cost * gameState.upgrades.fireRate.level;
+            const cost = gameState.upgrades.fireRate.baseCost * gameState.upgrades.fireRate.level;
             if (gameState.milk >= cost) {
                 gameState.milk -= cost;
                 gameState.upgrades.fireRate.level++;
@@ -1142,7 +1377,7 @@
         }
 
         function upgradeBulletSize() {
-            const cost = gameState.upgrades.bulletSize.cost * gameState.upgrades.bulletSize.level;
+            const cost = gameState.upgrades.bulletSize.baseCost * gameState.upgrades.bulletSize.level;
             if (gameState.milk >= cost) {
                 gameState.milk -= cost;
                 gameState.upgrades.bulletSize.level++;
@@ -1151,7 +1386,7 @@
         }
 
         function upgradeHealth() {
-            const cost = gameState.upgrades.health.cost * gameState.upgrades.health.level;
+            const cost = gameState.upgrades.health.baseCost * gameState.upgrades.health.level;
             if (gameState.milk >= cost) {
                 gameState.milk -= cost;
                 gameState.upgrades.health.level++;
@@ -1161,14 +1396,73 @@
             }
         }
 
+        // ============ БУСТЕРЫ ============
+        function activateBooster(type) {
+            let cost = 0;
+            let duration = 0;
+
+            switch(type) {
+                case 'quickDraw': cost = 30; duration = 15000; break;
+                case 'powerStrike': cost = 40; duration = 20000; break;
+                case 'shield': cost = 50; duration = 30000; break;
+                case 'speedBoost': cost = 25; duration = 20000; break;
+            }
+
+            if (gameState.milk >= cost) {
+                gameState.milk -= cost;
+                gameState.activeBoosters.push({
+                    type: type,
+                    endTime: Date.now() + duration,
+                    duration: duration
+                });
+                playSound('booster');
+                updateUI();
+            }
+        }
+
+        function updateBoosters() {
+            const now = Date.now();
+            gameState.activeBoosters = gameState.activeBoosters.filter(b => b.endTime > now);
+            updateBoostersDisplay();
+        }
+
+        function updateBoostersDisplay() {
+            const display = document.getElementById('boostersDisplay');
+            
+            if (gameState.activeBoosters.length === 0) {
+                display.style.display = 'none';
+                return;
+            }
+
+            display.style.display = 'block';
+            display.innerHTML = '<div style="color: #ff00ff; font-weight: bold; margin-bottom: 4px;">⚡ Активные:</div>';
+
+            const now = Date.now();
+            gameState.activeBoosters.forEach(booster => {
+                const remaining = Math.ceil((booster.endTime - now) / 1000);
+                const emoji = {
+                    quickDraw: '⚡',
+                    powerStrike: '💪',
+                    shield: '🛡️',
+                    speedBoost: '🚀'
+                }[booster.type];
+
+                display.innerHTML += `<div class="booster-item"><span class="booster-name">${emoji}</span> <span class="booster-timer">${remaining}s</span></div>`;
+            });
+        }
+
         function updateUI() {
             document.getElementById('milk').textContent = gameState.milk;
             document.getElementById('damage').textContent = Math.round(player.getDamage());
+            document.getElementById('waveCounter').textContent = gameState.currentWave;
             
-            const damageCost = gameState.upgrades.damage.cost * gameState.upgrades.damage.level;
-            const fireRateCost = gameState.upgrades.fireRate.cost * gameState.upgrades.fireRate.level;
-            const bulletCost = gameState.upgrades.bulletSize.cost * gameState.upgrades.bulletSize.level;
-            const healthCost = gameState.upgrades.health.cost * gameState.upgrades.health.level;
+            const milestone = gameState.currentWave % 5;
+            document.getElementById('milestone').textContent = `${milestone}/5`;
+            
+            const damageCost = gameState.upgrades.damage.baseCost * gameState.upgrades.damage.level;
+            const fireRateCost = gameState.upgrades.fireRate.baseCost * gameState.upgrades.fireRate.level;
+            const bulletCost = gameState.upgrades.bulletSize.baseCost * gameState.upgrades.bulletSize.level;
+            const healthCost = gameState.upgrades.health.baseCost * gameState.upgrades.health.level;
 
             document.getElementById('damageCost').textContent = damageCost + '🥛';
             document.getElementById('fireRateCost').textContent = fireRateCost + '🥛';
@@ -1181,7 +1475,7 @@
             document.getElementById('healthBtn').disabled = gameState.milk < healthCost;
         }
 
-        // ============ SKINS ============
+        // ============ СКИНЫ ============
         function showSkinsPanel() {
             const grid = document.getElementById('skinsGrid');
             grid.innerHTML = '';
@@ -1230,14 +1524,18 @@
             document.getElementById('skinsPanel').style.display = 'none';
         }
 
-        // ============ MAIN LOOP ============
+        // ============ ОСНОВНОЙ ИГРОВОЙ ЦИКЛ ============
         function gameLoop() {
-            // Draw background
-            ctx.fillStyle = '#87ceeb';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            // Рисуем фон
+            if (images.background.complete && images.background.naturalHeight !== 0) {
+                ctx.drawImage(images.background, 0, 0, canvas.width, canvas.height);
+            } else {
+                ctx.fillStyle = '#87ceeb';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
 
-            // Draw clouds
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            // Облака
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
             for (let i = 0; i < 5; i++) {
                 const x = (Date.now() / 80 + i * 250) % (canvas.width + 100);
                 ctx.beginPath();
@@ -1249,13 +1547,14 @@
             }
 
             if (!gameState.isGameOver) {
+                updateBoosters();
                 player.update();
                 
                 for (let enemy of enemies) {
                     if (enemy.alive) enemy.update();
                 }
 
-                // Update bullets
+                // Обновляем пули
                 for (let i = bullets.length - 1; i >= 0; i--) {
                     const bullet = bullets[i];
                     bullet.x += bullet.vx;
@@ -1280,7 +1579,7 @@
                     }
                 }
 
-                // Enemy shooting
+                // Враги стреляют
                 for (let enemy of enemies) {
                     if (enemy.alive && Math.random() < 0.008) {
                         if (Math.hypot(enemy.x - player.x, enemy.y - player.y) < 400) {
@@ -1297,7 +1596,7 @@
                     }
                 }
 
-                // Update enemy bullets
+                // Обновляем пули врагов
                 for (let i = enemyBullets.length - 1; i >= 0; i--) {
                     const bullet = enemyBullets[i];
                     bullet.x += bullet.vx;
@@ -1317,14 +1616,14 @@
                     }
                 }
 
-                // Check wave completion
+                // Проверяем завершение волны
                 const allEnemiesDead = enemies.every(e => !e.alive);
                 if (allEnemiesDead && enemies.length > 0) {
                     gameState.currentWave++;
                     createWave(gameState.currentWave);
                 }
 
-                // Game over check
+                // Проверяем конец игры
                 if (player.health <= 0) {
                     gameState.isGameOver = true;
                     document.getElementById('gameOverScore').textContent = `Очки: ${gameState.score}`;
@@ -1339,7 +1638,7 @@
                     if (enemy.alive) enemy.draw();
                 }
 
-                // Draw player bullets
+                // Рисуем пули игрока
                 for (let bullet of bullets) {
                     ctx.fillStyle = '#ffff00';
                     ctx.beginPath();
@@ -1352,7 +1651,7 @@
                     ctx.stroke();
                 }
 
-                // Draw enemy bullets
+                // Рисуем пули врагов
                 for (let bullet of enemyBullets) {
                     ctx.fillStyle = '#ff6b9d';
                     ctx.beginPath();
@@ -1366,9 +1665,8 @@
                 }
             }
 
-            // Update HUD
+            // Обновляем HUD
             document.getElementById('healthFill').style.width = (player.health / player.maxHealth * 100) + '%';
-            document.getElementById('level').textContent = gameState.currentWave;
             document.getElementById('score').textContent = gameState.score;
             document.getElementById('kills').textContent = gameState.kills;
 
@@ -1378,7 +1676,7 @@
             requestAnimationFrame(gameLoop);
         }
 
-        // Start game
+        // Начинаем игру
         createWave(1);
         updateUI();
         gameLoop();
