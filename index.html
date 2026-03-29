@@ -240,6 +240,7 @@
             justify-content: center;
             align-items: center;
             flex-shrink: 0;
+            touch-action: none;
         }
 
         .scene-background {
@@ -519,6 +520,35 @@
             backdrop-filter: blur(5px);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             touch-action: manipulation;
+            position: relative;
+        }
+
+        .item.upgrade-locked {
+            opacity: 0.45;
+            cursor: not-allowed;
+            pointer-events: none;
+            filter: grayscale(60%);
+        }
+
+        .unlock-notice {
+            font-size: 10px;
+            color: #fbbf24;
+            font-weight: 700;
+            text-align: center;
+            min-height: 14px;
+        }
+
+        .booster-active-badge {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+            padding: 2px 7px;
+            border-radius: 8px;
+            font-size: 9px;
+            font-weight: 800;
+            color: white;
+            animation: questPulse 1s infinite;
         }
 
         .item:active {
@@ -1037,6 +1067,14 @@
             <div class="rank-display" id="rankDisplay">Ранг: Бронза 🥉</div>
         </div>
 
+        <div id="questContainer" style="margin: 0; flex-shrink: 0;"></div>
+
+        <div class="button-group">
+            <button class="btn" id="shopBtn" onclick="toggleSection('shop')">🛒 Магазин</button>
+            <button class="btn" id="skinsBtn" onclick="toggleSection('skins')">🎭 Скины</button>
+            <button class="btn" id="achievementsBtn" onclick="toggleSection('achievements')">🏆 Достижения</button>
+        </div>
+
         <div class="cat-scene">
             <div class="scene-background"></div>
             <img src="bed.png" id="bedItem" class="bed-item" alt="Bed">
@@ -1047,24 +1085,16 @@
             <div id="comboDisplay" class="combo-display" style="display: none;"></div>
         </div>
 
-        <div id="questContainer" style="margin: 0; flex-shrink: 0;"></div>
-
-        <div class="button-group">
-            <button class="btn" id="shopBtn" onclick="toggleSection('shop')">🛒 Магазин</button>
-            <button class="btn" id="skinsBtn" onclick="toggleSection('skins')">🎭 Скины</button>
-            <button class="btn" id="achievementsBtn" onclick="toggleSection('achievements')">🏆 Достижения</button>
-        </div>
-
         <div class="scroll-content">
             <div id="shop" class="section active">
                 <div class="tabs">
-                    <button class="tab-btn active" onclick="switchTab('tap-upgrades')">⚡ Клик</button>
-                    <button class="tab-btn" onclick="switchTab('passive-upgrades')">🤖 Пассив</button>
-                    <button class="tab-btn" onclick="switchTab('boosters')">🚀 Бустеры</button>
+                    <button class="tab-btn active" onclick="switchTab('tap-upgrades', event)">⚡ Клик</button>
+                    <button class="tab-btn" onclick="switchTab('passive-upgrades', event)">🤖 Пассив</button>
+                    <button class="tab-btn" onclick="switchTab('boosters', event)">🚀 Бустеры</button>
                 </div>
 
                 <div id="tap-upgrades">
-                    <div class="item" onclick="buyUpgrade('tap')">
+                    <div class="item" data-upgrade="tap" onclick="buyUpgrade('tap')">
                         <div class="item-header">
                             <div class="item-info">
                                 <div class="item-name">⬆️ Мощный клик</div>
@@ -1076,15 +1106,16 @@
                             <div class="booster-progress-fill" id="tapProgress" style="width: 0%"></div>
                         </div>
                         <div class="booster-progress-text" id="tapProgressText">+1 за клик</div>
+                        <div class="unlock-notice"></div>
                     </div>
                 </div>
 
                 <div id="passive-upgrades" style="display: none;">
-                    <div class="item" onclick="buyUpgrade('auto')">
+                    <div class="item" data-upgrade="auto" onclick="buyUpgrade('auto')">
                         <div class="item-header">
                             <div class="item-info">
                                 <div class="item-name">🤖 Генератор</div>
-                                <div class="item-desc">Энергетическое устройство</div>
+                                <div class="item-desc">Энергетическое устройство | Ур. 1</div>
                             </div>
                             <div class="item-cost" id="autoCostDisplay">50</div>
                         </div>
@@ -1092,12 +1123,13 @@
                             <div class="booster-progress-fill" id="autoProgress" style="width: 0%"></div>
                         </div>
                         <div class="booster-progress-text" id="autoProgressText">+1/сек</div>
+                        <div class="unlock-notice"></div>
                     </div>
-                    <div class="item" onclick="buyUpgrade('factory')">
+                    <div class="item" data-upgrade="factory" onclick="buyUpgrade('factory')">
                         <div class="item-header">
                             <div class="item-info">
                                 <div class="item-name">🏭 Фабрика</div>
-                                <div class="item-desc">Промышленное производство</div>
+                                <div class="item-desc">Промышленное производство | Ур. 2</div>
                             </div>
                             <div class="item-cost" id="factoryCostDisplay">200</div>
                         </div>
@@ -1105,12 +1137,13 @@
                             <div class="booster-progress-fill" id="factoryProgress" style="width: 0%"></div>
                         </div>
                         <div class="booster-progress-text" id="factoryProgressText">+5/сек</div>
+                        <div class="unlock-notice"></div>
                     </div>
-                    <div class="item" onclick="buyUpgrade('farm')">
+                    <div class="item" data-upgrade="farm" onclick="buyUpgrade('farm')">
                         <div class="item-header">
                             <div class="item-info">
                                 <div class="item-name">🌾 Ферма</div>
-                                <div class="item-desc">Сельскохозяйственное предприятие</div>
+                                <div class="item-desc">Сельскохозяйственное предприятие | Ур. 4</div>
                             </div>
                             <div class="item-cost" id="farmCostDisplay">800</div>
                         </div>
@@ -1118,12 +1151,13 @@
                             <div class="booster-progress-fill" id="farmProgress" style="width: 0%"></div>
                         </div>
                         <div class="booster-progress-text" id="farmProgressText">+10/сек</div>
+                        <div class="unlock-notice"></div>
                     </div>
-                    <div class="item" onclick="buyUpgrade('heaven')">
+                    <div class="item" data-upgrade="heaven" onclick="buyUpgrade('heaven')">
                         <div class="item-header">
                             <div class="item-info">
                                 <div class="item-name">☁️ Небесная ферма</div>
-                                <div class="item-desc">Волшебное производство</div>
+                                <div class="item-desc">Волшебное производство | Ур. 6</div>
                             </div>
                             <div class="item-cost" id="heavenCostDisplay">3000</div>
                         </div>
@@ -1131,48 +1165,52 @@
                             <div class="booster-progress-fill" id="heavenProgress" style="width: 0%"></div>
                         </div>
                         <div class="booster-progress-text" id="heavenProgressText">+25/сек</div>
+                        <div class="unlock-notice"></div>
                     </div>
                 </div>
 
                 <div id="boosters" style="display: none;">
-                    <div class="item" onclick="buyUpgrade('boost1')">
+                    <div class="item" data-booster="boost1" onclick="buyBooster('boost1')">
                         <div class="item-header">
                             <div class="item-info">
-                                <div class="item-name">⚡ Генератор</div>
-                                <div class="item-desc">Ядерный реактор на молочной энергии</div>
+                                <div class="item-name">⚡ Энерджайзер</div>
+                                <div class="item-desc">x2 ко всему молоку на 60 сек | Ур. 3</div>
                             </div>
-                            <div class="item-cost" id="boost1CostDisplay">3000</div>
+                            <div class="item-cost" id="boost1CostDisplay">5000</div>
                         </div>
                         <div class="booster-progress">
                             <div class="booster-progress-fill" id="boost1Progress" style="width: 0%"></div>
                         </div>
-                        <div class="booster-progress-text" id="boost1ProgressText">+5/сек</div>
+                        <div class="booster-progress-text" id="boost1ProgressText">x2 на 60с</div>
+                        <div class="unlock-notice"></div>
                     </div>
-                    <div class="item" onclick="buyUpgrade('boost2')">
+                    <div class="item" data-booster="boost2" onclick="buyBooster('boost2')">
                         <div class="item-header">
                             <div class="item-info">
                                 <div class="item-name">💥 Реактор</div>
-                                <div class="item-desc">Экстремальное ускорение</div>
+                                <div class="item-desc">x4 ко всему молоку на 90 сек | Ур. 6</div>
                             </div>
-                            <div class="item-cost" id="boost2CostDisplay">10000</div>
+                            <div class="item-cost" id="boost2CostDisplay">20000</div>
                         </div>
                         <div class="booster-progress">
                             <div class="booster-progress-fill" id="boost2Progress" style="width: 0%"></div>
                         </div>
-                        <div class="booster-progress-text" id="boost2ProgressText">+15/сек</div>
+                        <div class="booster-progress-text" id="boost2ProgressText">x4 на 90с</div>
+                        <div class="unlock-notice"></div>
                     </div>
-                    <div class="item" onclick="buyUpgrade('boost3')">
+                    <div class="item" data-booster="boost3" onclick="buyBooster('boost3')">
                         <div class="item-header">
                             <div class="item-info">
                                 <div class="item-name">🌟 Антиматерия</div>
-                                <div class="item-desc">Легендарное устройство космоса</div>
+                                <div class="item-desc">x8 ко всему молоку на 120 сек | Ур. 10</div>
                             </div>
-                            <div class="item-cost" id="boost3CostDisplay">50000</div>
+                            <div class="item-cost" id="boost3CostDisplay">75000</div>
                         </div>
                         <div class="booster-progress">
                             <div class="booster-progress-fill" id="boost3Progress" style="width: 0%"></div>
                         </div>
-                        <div class="booster-progress-text" id="boost3ProgressText">+50/сек</div>
+                        <div class="booster-progress-text" id="boost3ProgressText">x8 на 120с</div>
+                        <div class="unlock-notice"></div>
                     </div>
                 </div>
             </div>
@@ -1316,7 +1354,7 @@
     <script>
         // Disable zoom
         document.addEventListener('gesturestart', (e) => { e.preventDefault(); }, false);
-        
+
         let lastTouchEnd = 0;
         document.addEventListener('touchend', (e) => {
             const now = Date.now();
@@ -1338,12 +1376,14 @@
             passive: 0,
             level: 1,
             purchases: {
-                tap: 0, auto: 0, factory: 0, farm: 0, heaven: 0,
-                boost1: 0, boost2: 0, boost3: 0
+                tap: 0, auto: 0, factory: 0, farm: 0, heaven: 0
             },
             skin: 'default',
             multiplier: 1,
             multiplierEndTime: 0,
+            boosterMultiplier: 1,
+            boosterEndTime: 0,
+            boosterType: null,
             stats: {
                 totalClicks: 0,
                 totalMilkEarned: 0,
@@ -1359,14 +1399,21 @@
         };
 
         const upgrades = {
-            tap: { baseCost: 10, increase: 1.15, income: 0 },
-            auto: { baseCost: 50, increase: 1.15, income: 1 },
-            factory: { baseCost: 200, increase: 1.15, income: 5 },
-            farm: { baseCost: 800, increase: 1.15, income: 10 },
-            heaven: { baseCost: 3000, increase: 1.15, income: 25 },
-            boost1: { baseCost: 3000, increase: 1.15, income: 5 },
-            boost2: { baseCost: 10000, increase: 1.15, income: 15 },
-            boost3: { baseCost: 50000, increase: 1.15, income: 50 }
+            tap:     { baseCost: 10,   increase: 1.15, income: 0  },
+            auto:    { baseCost: 50,   increase: 1.15, income: 1  },
+            factory: { baseCost: 200,  increase: 1.15, income: 5  },
+            farm:    { baseCost: 800,  increase: 1.15, income: 10 },
+            heaven:  { baseCost: 3000, increase: 1.15, income: 25 }
+        };
+
+        const boosters = {
+            boost1: { name: '⚡ Энерджайзер', desc: 'x2 ко всему молоку', cost: 5000,  duration: 60,  multiplier: 2, levelRequired: 3  },
+            boost2: { name: '💥 Реактор',      desc: 'x4 ко всему молоку', cost: 20000, duration: 90,  multiplier: 4, levelRequired: 6  },
+            boost3: { name: '🌟 Антиматерия',  desc: 'x8 ко всему молоку', cost: 75000, duration: 120, multiplier: 8, levelRequired: 10 }
+        };
+
+        const upgradeUnlocks = {
+            tap: 1, auto: 1, factory: 2, farm: 4, heaven: 6
         };
 
         const progressionMilestones = {
@@ -1386,6 +1433,7 @@
             tapDisplay: document.getElementById('tapDisplay'),
             passiveDisplay: document.getElementById('passiveDisplay'),
             catImage: document.getElementById('catImage'),
+            catScene: document.querySelector('.cat-scene'),
             notification: document.getElementById('notification'),
             clickSound: document.getElementById('clickSound'),
             progressionFill: document.getElementById('progressionFill'),
@@ -1404,34 +1452,33 @@
             giftModal: document.getElementById('giftModal')
         };
 
-        function getRankInfo(milk) {
-            if (milk < 100000) return { name: 'Бронза', emoji: '🥉' };
-            if (milk < 1000000) return { name: 'Серебро', emoji: '🥈' };
-            if (milk < 10000000) return { name: 'Золото', emoji: '🥇' };
+        function getRankInfo(totalEarned) {
+            if (totalEarned < 100000) return { name: 'Бронза', emoji: '🥉' };
+            if (totalEarned < 1000000) return { name: 'Серебро', emoji: '🥈' };
+            if (totalEarned < 10000000) return { name: 'Золото', emoji: '🥇' };
             return { name: 'Алмаз', emoji: '💎' };
         }
 
         function getCritChance() {
-            let chance = 10;
-            if (gameState.skin === 'gold') chance = 25;
-            if (gameState.skin === 'devil') chance = 35;
-            return chance;
+            if (gameState.skin === 'devil') return 35;
+            if (gameState.skin === 'gold') return 25;
+            return 10;
         }
 
         function checkCrit() {
             return Math.random() * 100 < getCritChance();
         }
 
+        // Harder progression: base 1000, factor 1.5 (previously 500 * 1.35)
         function getMilkForLevel(level) {
-            return Math.floor(500 * Math.pow(1.35, level - 1));
+            if (level <= 0) return 0;
+            return Math.floor(1000 * Math.pow(1.5, level - 1));
         }
 
-        function getCurrentLevelProgress() {
-            const currentLevelMilk = getMilkForLevel(gameState.level - 1);
-            const nextLevelMilk = getMilkForLevel(gameState.level);
-            const progress = gameState.milk - currentLevelMilk;
-            const needed = nextLevelMilk - currentLevelMilk;
-            return { progress, needed, currentLevelMilk, nextLevelMilk };
+        function getEffectiveMultiplier() {
+            const boosterMult = (gameState.boosterEndTime && Date.now() < gameState.boosterEndTime)
+                ? gameState.boosterMultiplier : 1;
+            return gameState.multiplier * boosterMult;
         }
 
         function playSound() {
@@ -1442,11 +1489,36 @@
         }
 
         function loadGame() {
-            const saved = localStorage.getItem('milkTycoonState');
-            if (saved) gameState = JSON.parse(saved);
+            try {
+                const saved = localStorage.getItem('milkTycoonState');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    gameState = { ...gameState, ...parsed };
+                    // Ensure purchases object has all required keys and no stale boost keys
+                    const defaultPurchases = { tap: 0, auto: 0, factory: 0, farm: 0, heaven: 0 };
+                    gameState.purchases = { ...defaultPurchases, ...gameState.purchases };
+                    delete gameState.purchases.boost1;
+                    delete gameState.purchases.boost2;
+                    delete gameState.purchases.boost3;
+                    // Ensure stats object has all required keys
+                    const defaultStats = {
+                        totalClicks: 0, totalMilkEarned: 0, currentCombo: 0,
+                        bestCombo: 0, starsCount: 0, critCount: 0, critsInRow: 0,
+                        maxCritsInRow: 0, achievements: {}, skinsUnlocked: {}
+                    };
+                    gameState.stats = { ...defaultStats, ...gameState.stats };
+                    // Ensure booster fields exist
+                    if (!gameState.boosterMultiplier) gameState.boosterMultiplier = 1;
+                    if (!gameState.boosterEndTime) gameState.boosterEndTime = 0;
+                    if (!gameState.boosterType) gameState.boosterType = null;
+                }
+            } catch(e) {
+                console.error('Failed to load game state:', e);
+            }
             updateUI();
             updateSkinDisplay();
             checkProgression();
+            updateUpgradeAvailability();
             scheduleEvents();
         }
 
@@ -1456,65 +1528,48 @@
 
         function resetGameConfirm() {
             gameState = {
-                milk: 0,
-                perTap: 1,
-                passive: 0,
-                level: 1,
-                purchases: {
-                    tap: 0, auto: 0, factory: 0, farm: 0, heaven: 0,
-                    boost1: 0, boost2: 0, boost3: 0
-                },
-                skin: 'default',
-                multiplier: 1,
-                multiplierEndTime: 0,
+                milk: 0, perTap: 1, passive: 0, level: 1,
+                purchases: { tap: 0, auto: 0, factory: 0, farm: 0, heaven: 0 },
+                skin: 'default', multiplier: 1, multiplierEndTime: 0,
+                boosterMultiplier: 1, boosterEndTime: 0, boosterType: null,
                 stats: {
-                    totalClicks: 0,
-                    totalMilkEarned: 0,
-                    currentCombo: 0,
-                    bestCombo: 0,
-                    starsCount: 0,
-                    critCount: 0,
-                    critsInRow: 0,
-                    maxCritsInRow: 0,
-                    achievements: {},
-                    skinsUnlocked: {}
+                    totalClicks: 0, totalMilkEarned: 0, currentCombo: 0,
+                    bestCombo: 0, starsCount: 0, critCount: 0, critsInRow: 0,
+                    maxCritsInRow: 0, achievements: {}, skinsUnlocked: {}
                 }
             };
-            
             localStorage.removeItem('milkTycoonState');
             closeResetModal();
             updateUI();
             updateSkinDisplay();
+            updateUpgradeAvailability();
             showNotification('🔄 Прогресс сброшен!', 'success');
         }
 
-        function showResetModal() {
-            DOM.resetModal.classList.add('show');
-        }
-
-        function closeResetModal() {
-            DOM.resetModal.classList.remove('show');
-        }
+        function showResetModal() { DOM.resetModal.classList.add('show'); }
+        function closeResetModal() { DOM.resetModal.classList.remove('show'); }
 
         function updateUI() {
             DOM.milkDisplay.textContent = formatNumber(gameState.milk);
             DOM.tapDisplay.textContent = gameState.perTap;
             DOM.passiveDisplay.textContent = gameState.passive;
             DOM.levelDisplay.textContent = `Уровень: ${gameState.level}`;
-            
-            const rankInfo = getRankInfo(gameState.milk);
+
+            const rankInfo = getRankInfo(gameState.stats.totalMilkEarned);
             DOM.rankDisplay.textContent = `Ранг: ${rankInfo.name} ${rankInfo.emoji}`;
-            
-            if (gameState.multiplier > 1) {
+
+            const effMult = getEffectiveMultiplier();
+            if (effMult > 1) {
                 DOM.multiplierBadge.style.display = 'block';
-                DOM.multiplierBadge.textContent = gameState.multiplier + 'x';
+                DOM.multiplierBadge.textContent = effMult + 'x';
             } else {
                 DOM.multiplierBadge.style.display = 'none';
             }
-            
+
             updateCostDisplays();
             updateProgressionBar();
             updateStats();
+            updateBoosterTimers();
         }
 
         function updateStats() {
@@ -1538,96 +1593,154 @@
             return Math.ceil(upgrade.baseCost * Math.pow(upgrade.increase, count));
         }
 
-        function updateCostDisplays() {
-            Object.keys(upgrades).forEach(type => {
-                const costId = type + 'CostDisplay';
-                const progressId = type + 'Progress';
-                const progressTextId = type + 'ProgressText';
-                
-                const costElement = document.getElementById(costId);
-                const progressElement = document.getElementById(progressId);
-                const progressTextElement = document.getElementById(progressTextId);
-                
-                if (!costElement) return;
-                
-                const cost = getCurrentCost(type);
-                costElement.textContent = formatNumber(cost);
-                
-                if (gameState.milk >= cost) {
-                    costElement.classList.add('affordable');
-                    costElement.classList.remove('expensive');
-                } else {
-                    costElement.classList.add('expensive');
-                    costElement.classList.remove('affordable');
-                }
-                
-                if (progressElement && progressTextElement) {
-                    const count = gameState.purchases[type];
-                    const income = upgrades[type].income;
-                    const totalIncome = (type === 'tap') ? 1 : income;
-                    const displayIncome = totalIncome * (count + 1);
-                    
-                    const progress = (count % 5) / 5 * 100;
-                    progressElement.style.width = progress + '%';
-                    
-                    if (type === 'tap') {
-                        progressTextElement.textContent = `+${displayIncome} за клик`;
-                    } else {
-                        progressTextElement.textContent = `+${displayIncome}/сек`;
+        function isUpgradeUnlocked(type) {
+            return gameState.level >= (upgradeUnlocks[type] || 1);
+        }
+
+        function isBoosterUnlocked(type) {
+            return gameState.level >= (boosters[type].levelRequired || 1);
+        }
+
+        function updateUpgradeAvailability() {
+            Object.keys(upgradeUnlocks).forEach(type => {
+                const item = document.querySelector(`[data-upgrade="${type}"]`);
+                if (!item) return;
+                const unlockLvl = upgradeUnlocks[type];
+                const locked = gameState.level < unlockLvl;
+                item.classList.toggle('upgrade-locked', locked);
+                const notice = item.querySelector('.unlock-notice');
+                if (notice) notice.textContent = locked ? `🔒 Нужен уровень ${unlockLvl}` : '';
+            });
+
+            Object.keys(boosters).forEach(type => {
+                const item = document.querySelector(`[data-booster="${type}"]`);
+                if (!item) return;
+                const unlockLvl = boosters[type].levelRequired;
+                const locked = gameState.level < unlockLvl;
+                item.classList.toggle('upgrade-locked', locked);
+                const notice = item.querySelector('.unlock-notice');
+                if (notice) notice.textContent = locked ? `🔒 Нужен уровень ${unlockLvl}` : '';
+            });
+        }
+
+        function updateBoosterTimers() {
+            const now = Date.now();
+            const activeBType = gameState.boosterType;
+            const isActive = activeBType && gameState.boosterEndTime && now < gameState.boosterEndTime;
+
+            Object.keys(boosters).forEach(type => {
+                const progressEl = document.getElementById(`${type}Progress`);
+                const progressTextEl = document.getElementById(`${type}ProgressText`);
+                const item = document.querySelector(`[data-booster="${type}"]`);
+                const existingBadge = item ? item.querySelector('.booster-active-badge') : null;
+
+                if (isActive && activeBType === type) {
+                    const remaining = Math.max(0, (gameState.boosterEndTime - now) / 1000);
+                    const totalDuration = boosters[type].duration;
+                    const pct = (remaining / totalDuration) * 100;
+                    if (progressEl) progressEl.style.width = pct + '%';
+                    if (progressTextEl) {
+                        const mins = Math.floor(remaining / 60);
+                        const secs = Math.floor(remaining % 60);
+                        progressTextEl.textContent = `⏱ Активен: ${mins > 0 ? mins + 'м ' : ''}${secs}с`;
                     }
+                    if (item && !existingBadge) {
+                        const badge = document.createElement('div');
+                        badge.className = 'booster-active-badge';
+                        badge.textContent = 'АКТИВЕН';
+                        item.appendChild(badge);
+                    }
+                } else {
+                    if (progressEl) progressEl.style.width = '0%';
+                    if (progressTextEl) progressTextEl.textContent = `x${boosters[type].multiplier} на ${boosters[type].duration}с`;
+                    if (existingBadge) existingBadge.remove();
                 }
             });
         }
 
-        function switchTab(tabId) {
-            const allTabs = document.querySelectorAll('[id$="-upgrades"]');
-            allTabs.forEach(tab => tab.style.display = 'none');
-            
+        function updateCostDisplays() {
+            Object.keys(upgrades).forEach(type => {
+                const costEl = document.getElementById(type + 'CostDisplay');
+                const progressEl = document.getElementById(type + 'Progress');
+                const progressTextEl = document.getElementById(type + 'ProgressText');
+                if (!costEl) return;
+
+                const cost = getCurrentCost(type);
+                costEl.textContent = formatNumber(cost);
+                costEl.classList.toggle('affordable', gameState.milk >= cost);
+                costEl.classList.toggle('expensive', gameState.milk < cost);
+
+                if (progressEl && progressTextEl) {
+                    const count = gameState.purchases[type];
+                    const displayIncome = (type === 'tap') ? (count + 1) : upgrades[type].income * (count + 1);
+                    progressEl.style.width = ((count % 5) / 5 * 100) + '%';
+                    progressTextEl.textContent = (type === 'tap') ? `+${displayIncome} за клик` : `+${displayIncome}/сек`;
+                }
+            });
+
+            Object.keys(boosters).forEach(type => {
+                const costEl = document.getElementById(type + 'CostDisplay');
+                if (!costEl) return;
+                const now = Date.now();
+                const isActive = gameState.boosterType === type && gameState.boosterEndTime && now < gameState.boosterEndTime;
+                if (isActive) {
+                    costEl.textContent = 'АКТИВЕН';
+                    costEl.classList.remove('expensive');
+                    costEl.classList.add('affordable');
+                } else {
+                    const cost = boosters[type].cost;
+                    costEl.textContent = formatNumber(cost);
+                    costEl.classList.toggle('affordable', gameState.milk >= cost);
+                    costEl.classList.toggle('expensive', gameState.milk < cost);
+                }
+            });
+        }
+
+        function switchTab(tabId, e) {
+            document.querySelectorAll('#tap-upgrades, #passive-upgrades, #boosters').forEach(el => {
+                el.style.display = 'none';
+            });
             const selectedTab = document.getElementById(tabId);
             if (selectedTab) selectedTab.style.display = 'block';
-            
-            const buttons = document.querySelectorAll('.tab-btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            if (e && e.target) e.target.classList.add('active');
         }
 
         function toggleSection(sectionId) {
             const section = document.getElementById(sectionId);
             const allSections = document.querySelectorAll('.section');
-            
             const isActive = section.classList.contains('active');
             allSections.forEach(s => s.classList.remove('active'));
-            
-            if (!isActive) {
-                section.classList.add('active');
-            }
+            if (!isActive) section.classList.add('active');
         }
 
-        DOM.catImage.addEventListener('click', function(e) {
-            let gain = Math.floor(gameState.perTap * gameState.multiplier);
+        // ── Click / Multi-touch handling ──────────────────────────────────────
+        let isTouchDevice = false;
+
+        function processClick(x, y) {
+            let gain = Math.floor(gameState.perTap * getEffectiveMultiplier());
             let isCrit = false;
-            
+
             if (checkCrit()) {
                 isCrit = true;
                 gain *= 2;
                 gameState.stats.critCount++;
                 gameState.stats.critsInRow++;
-                
                 if (gameState.stats.critsInRow > gameState.stats.maxCritsInRow) {
                     gameState.stats.maxCritsInRow = gameState.stats.critsInRow;
                 }
-                
-                createCritEffect(e.clientX, e.clientY);
-                showCritIndicator(e.clientX, e.clientY);
-                createParticles(e.clientX, e.clientY);
+                createCritEffect(x, y);
+                showCritIndicator(x, y);
+                createParticles(x, y);
             } else {
                 gameState.stats.critsInRow = 0;
             }
-            
+
             gameState.milk += gain;
             gameState.stats.totalClicks++;
             gameState.stats.totalMilkEarned += gain;
-            
+
             const now = Date.now();
             if (gameState.lastClickTime && now - gameState.lastClickTime < 1000) {
                 gameState.stats.currentCombo++;
@@ -1638,25 +1751,40 @@
                 gameState.stats.currentCombo = 1;
             }
             gameState.lastClickTime = now;
-            
-            if (gameState.stats.currentCombo > 1) {
-                showCombo(gameState.stats.currentCombo);
-            }
-            
-            playSound();
-            
+
+            if (gameState.stats.currentCombo > 1) showCombo(gameState.stats.currentCombo);
+
             DOM.catImage.style.filter = 'drop-shadow(0 5px 15px rgba(100, 200, 255, 0.3))';
-            setTimeout(() => { 
-                DOM.catImage.style.filter = 'drop-shadow(0 15px 40px rgba(100, 200, 255, 0.4))'; 
+            setTimeout(() => {
+                DOM.catImage.style.filter = 'drop-shadow(0 15px 40px rgba(100, 200, 255, 0.4))';
             }, 100);
-            
-            createFloatText('+' + formatNumber(gain), e.clientX, e.clientY, isCrit);
+
+            createFloatText('+' + formatNumber(gain), x, y, isCrit);
             updateUI();
             saveGame();
             checkProgression();
             checkAchievements();
+        }
+
+        // Multi-touch: each simultaneous finger counts as its own click
+        DOM.catScene.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            isTouchDevice = true;
+            if (e.changedTouches.length > 0) playSound();
+            for (let i = 0; i < e.changedTouches.length; i++) {
+                const t = e.changedTouches[i];
+                processClick(t.clientX, t.clientY);
+            }
         }, { passive: false });
 
+        // Desktop click fallback (skip if touch already handled)
+        DOM.catImage.addEventListener('click', function(e) {
+            if (isTouchDevice) return;
+            playSound();
+            processClick(e.clientX, e.clientY);
+        });
+
+        // ── Visual effects ────────────────────────────────────────────────────
         function createCritEffect(x, y) {
             const shine = document.createElement('div');
             shine.className = 'crit-shine';
@@ -1683,15 +1811,10 @@
                 particle.style.left = x + 'px';
                 particle.style.top = y + 'px';
                 particle.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
-                
                 const angle = (i / 8) * Math.PI * 2;
-                const distance = 80;
-                const tx = Math.cos(angle) * distance;
-                const ty = Math.sin(angle) * distance;
-                
-                particle.style.setProperty('--tx', tx + 'px');
-                particle.style.setProperty('--ty', ty + 'px');
-                
+                const d = 80;
+                particle.style.setProperty('--tx', Math.cos(angle) * d + 'px');
+                particle.style.setProperty('--ty', Math.sin(angle) * d + 'px');
                 document.body.appendChild(particle);
                 setTimeout(() => particle.remove(), 1000);
             }
@@ -1701,22 +1824,22 @@
             DOM.comboDisplay.textContent = combo + ' 🔥';
             DOM.comboDisplay.style.display = 'block';
             DOM.comboDisplay.style.opacity = '1';
-            setTimeout(() => {
-                DOM.comboDisplay.style.display = 'none';
-            }, 500);
+            setTimeout(() => { DOM.comboDisplay.style.display = 'none'; }, 500);
         }
 
+        // ── Shop: upgrades ────────────────────────────────────────────────────
         function buyUpgrade(upgradeType) {
+            if (!isUpgradeUnlocked(upgradeType)) {
+                showNotification(`🔒 Нужен уровень ${upgradeUnlocks[upgradeType]}!`, 'error');
+                return;
+            }
             const cost = getCurrentCost(upgradeType);
-            
             if (gameState.milk < cost) {
                 showNotification('Недостаточно молока! ❌', 'error');
                 return;
             }
-            
             gameState.milk -= cost;
             gameState.purchases[upgradeType]++;
-            
             if (upgradeType === 'tap') {
                 gameState.perTap++;
                 showNotification('Клик усилен! ⚡', 'success');
@@ -1725,32 +1848,56 @@
                 gameState.passive += income;
                 showNotification(`+${income} молока в сек! 🚀`, 'success');
             }
-            
             updateUI();
             saveGame();
             checkProgression();
             checkAchievements();
         }
 
+        // ── Shop: boosters ────────────────────────────────────────────────────
+        function buyBooster(boosterType) {
+            const booster = boosters[boosterType];
+            if (!isBoosterUnlocked(boosterType)) {
+                showNotification(`🔒 Нужен уровень ${booster.levelRequired}!`, 'error');
+                return;
+            }
+            if (gameState.boosterEndTime && Date.now() < gameState.boosterEndTime) {
+                showNotification('Бустер уже активен! ⏱', 'error');
+                return;
+            }
+            if (gameState.milk < booster.cost) {
+                showNotification('Недостаточно молока! ❌', 'error');
+                return;
+            }
+            gameState.milk -= booster.cost;
+            gameState.boosterMultiplier = booster.multiplier;
+            gameState.boosterEndTime = Date.now() + booster.duration * 1000;
+            gameState.boosterType = boosterType;
+            showNotification(`🚀 ${booster.name} активирован! x${booster.multiplier} на ${booster.duration}с!`, 'success');
+            updateUI();
+            saveGame();
+        }
+
+        // ── Skins ─────────────────────────────────────────────────────────────
         function buySkin(skinType) {
             const costs = { default: 0, gold: 5000, devil: 15000 };
             const cost = costs[skinType];
-            
+            // If already purchased, just select it without charging
+            if (skinType !== 'default' && gameState.stats.skinsUnlocked[skinType]) {
+                gameState.skin = skinType;
+                showNotification('Скин выбран! ✨', 'success');
+                updateSkinDisplay();
+                saveGame();
+                return;
+            }
             if (gameState.milk < cost) {
                 showNotification('Недостаточно молока! ❌', 'error');
                 return;
             }
-            
             gameState.milk -= cost;
             gameState.skin = skinType;
             gameState.stats.skinsUnlocked[skinType] = true;
-            
-            const skinNames = {
-                default: 'обычный кот',
-                gold: 'золотой кот',
-                devil: 'дьявольский кот'
-            };
-            
+            const skinNames = { default: 'обычный кот', gold: 'золотой кот', devil: 'дьявольский кот' };
             showNotification(`Выбран ${skinNames[skinType]}! ✨`, 'success');
             updateSkinDisplay();
             updateUI();
@@ -1759,20 +1906,15 @@
         }
 
         function updateSkinDisplay() {
-            const skinMap = {
-                default: 'cat.png',
-                gold: 'gold_cat.png',
-                devil: 'devil_cat.png'
-            };
-            
+            const skinMap = { default: 'cat.png', gold: 'gold_cat.png', devil: 'devil_cat.png' };
             DOM.catImage.src = skinMap[gameState.skin];
-            
-            document.getElementById('skinDefault').classList.remove('selected');
-            document.getElementById('skinGold').classList.remove('selected');
-            document.getElementById('skinDevil').classList.remove('selected');
+            ['skinDefault', 'skinGold', 'skinDevil'].forEach(id => {
+                document.getElementById(id).classList.remove('selected');
+            });
             document.getElementById('skin' + gameState.skin.charAt(0).toUpperCase() + gameState.skin.slice(1)).classList.add('selected');
         }
 
+        // ── Notifications ─────────────────────────────────────────────────────
         function showNotification(message, type = '') {
             DOM.notification.textContent = message;
             DOM.notification.className = 'notification show ' + type;
@@ -1790,89 +1932,78 @@
             setTimeout(() => floatEl.remove(), 1800);
         }
 
+        // ── Level / Progression ───────────────────────────────────────────────
         function updateProgressionBar() {
-            const { progress, needed } = getCurrentLevelProgress();
-            const progressPercent = Math.min((progress / needed) * 100, 100);
-            DOM.progressionFill.style.width = progressPercent + '%';
-            DOM.progressionText.textContent = `Уровень ${gameState.level}: ${formatNumber(progress)} / ${formatNumber(needed)}`;
+            const totalEarned = gameState.stats.totalMilkEarned;
+            const lvl = gameState.level;
+            const from = getMilkForLevel(lvl - 1);   // 0 when lvl=1
+            const to   = getMilkForLevel(lvl);
+            const progress = Math.max(0, totalEarned - from);
+            const needed   = to - from;
+            DOM.progressionFill.style.width = Math.min((progress / needed) * 100, 100) + '%';
+            DOM.progressionText.textContent = `Уровень ${lvl}: ${formatNumber(progress)} / ${formatNumber(needed)}`;
         }
 
         function checkProgression() {
+            const totalEarned = gameState.stats.totalMilkEarned;
             let newLevel = 1;
-            let currentMilk = gameState.milk;
-            
-            while (getMilkForLevel(newLevel) <= currentMilk) {
-                newLevel++;
-            }
-            
+            while (getMilkForLevel(newLevel) <= totalEarned) newLevel++;
+
+            // Unlock scene decorations
             const milestones = Object.keys(progressionMilestones).map(Number).sort((a, b) => a - b);
-            
             milestones.forEach(milestone => {
                 if (newLevel >= milestone) {
                     const data = progressionMilestones[milestone];
-                    
-                    if (data.type === 'bed') {
-                        DOM.bedItem.classList.add('visible');
-                    } else if (data.type === 'bowl') {
-                        DOM.bowlItem.classList.add('visible');
-                    } else if (data.type === 'toy') {
-                        DOM.toyItem.classList.add('visible');
-                    }
+                    if (data.type === 'bed')  DOM.bedItem.classList.add('visible');
+                    if (data.type === 'bowl') DOM.bowlItem.classList.add('visible');
+                    if (data.type === 'toy')  DOM.toyItem.classList.add('visible');
                 }
             });
-            
+
             if (newLevel > gameState.level) {
                 gameState.level = newLevel;
                 showNotification(`🎉 Достигнут уровень ${gameState.level}! 🎉`, 'success');
-                
+                updateUpgradeAvailability();
                 const milestone = progressionMilestones[gameState.level];
-                if (milestone) {
-                    showNotification(`Разблокирован: ${milestone.name}! 🎁`, 'success');
-                }
-                
+                if (milestone) showNotification(`Разблокирован: ${milestone.name}! 🎁`, 'success');
                 saveGame();
             }
         }
 
+        // ── Achievements ──────────────────────────────────────────────────────
         function checkAchievements() {
-            if (gameState.stats.totalClicks >= 1) unlockAchievement('ach1');
-            if (gameState.stats.totalMilkEarned >= 10000) unlockAchievement('ach2');
-            if (gameState.stats.totalClicks >= 250) unlockAchievement('ach3');
+            if (gameState.stats.totalClicks >= 1)           unlockAchievement('ach1');
+            if (gameState.stats.totalMilkEarned >= 10000)   unlockAchievement('ach2');
+            if (gameState.stats.totalClicks >= 250)          unlockAchievement('ach3');
             if (gameState.stats.totalMilkEarned >= 1000000) unlockAchievement('ach4');
-            if (gameState.stats.critCount >= 50) unlockAchievement('ach5');
-            
-            const skinsUnlockedCount = Object.keys(gameState.stats.skinsUnlocked).length;
-            if (skinsUnlockedCount >= 2) unlockAchievement('ach6');
-            
-            if (gameState.stats.starsCount >= 20) unlockAchievement('ach7');
+            if (gameState.stats.critCount >= 50)             unlockAchievement('ach5');
+            if (Object.keys(gameState.stats.skinsUnlocked).length >= 2) unlockAchievement('ach6');
+            if (gameState.stats.starsCount >= 20)            unlockAchievement('ach7');
             if (gameState.stats.totalMilkEarned >= 100000000) unlockAchievement('ach8');
-            if (gameState.stats.maxCritsInRow >= 200) unlockAchievement('ach9');
-            if (gameState.level >= 50) unlockAchievement('ach10');
+            if (gameState.stats.maxCritsInRow >= 200)        unlockAchievement('ach9');
+            if (gameState.level >= 50)                       unlockAchievement('ach10');
         }
 
         function unlockAchievement(achId) {
             if (!gameState.stats.achievements[achId]) {
                 gameState.stats.achievements[achId] = true;
-                const element = document.getElementById(achId);
-                element.classList.remove('locked');
+                const el = document.getElementById(achId);
+                if (el) el.classList.remove('locked');
                 showNotification('🏆 Достижение разблокировано!', 'success');
                 saveGame();
             }
         }
 
+        // ── Random events ─────────────────────────────────────────────────────
         function activateRandomMultiplier() {
             if (gameState.multiplier > 1) return;
-            
             const multipliers = [2, 3, 5];
             const randomMult = multipliers[Math.floor(Math.random() * multipliers.length)];
             const duration = 30 + Math.random() * 30;
-            
             gameState.multiplier = randomMult;
             gameState.multiplierEndTime = Date.now() + duration * 1000;
-            
             showNotification(`🌟 Активирован множитель x${randomMult}! 🌟`, 'success');
             updateUI();
-            
             setTimeout(() => {
                 gameState.multiplier = 1;
                 gameState.multiplierEndTime = 0;
@@ -1888,28 +2019,23 @@
             star.textContent = '⭐';
             star.style.left = Math.random() * (window.innerWidth - 50) + 'px';
             document.body.appendChild(star);
-            
             let caught = false;
             star.addEventListener('click', (e) => {
                 e.stopPropagation();
                 if (caught) return;
                 caught = true;
-                
                 gameState.milk += 500;
                 gameState.stats.starsCount++;
                 gameState.stats.totalMilkEarned += 500;
                 showNotification('Ты поймал звезду! +500 молока! 🌟', 'success');
-                createFloatText('+500', star.style.left, star.style.top);
+                createFloatText('+500', e.clientX, e.clientY);
                 updateUI();
                 checkProgression();
                 checkAchievements();
                 saveGame();
                 star.remove();
             }, { passive: false });
-            
-            setTimeout(() => {
-                if (!caught) star.remove();
-            }, 8000);
+            setTimeout(() => { if (!caught) star.remove(); }, 8000);
         }
 
         function spawnSnack() {
@@ -1918,28 +2044,22 @@
             snack.textContent = '🍖';
             snack.style.left = Math.random() * (window.innerWidth - 50) + 'px';
             document.body.appendChild(snack);
-            
             let caught = false;
             snack.addEventListener('click', (e) => {
                 e.stopPropagation();
                 if (caught) return;
                 caught = true;
-                
                 gameState.multiplier = 3;
                 setTimeout(() => {
                     gameState.multiplier = 1;
                     updateUI();
                     saveGame();
                 }, 10000);
-                
-                showNotification('Лакомство! +50% доход на 10 сек! 🍖', 'success');
+                showNotification('Лакомство! x3 доход на 10 сек! 🍖', 'success');
                 updateUI();
                 snack.remove();
             }, { passive: false });
-            
-            setTimeout(() => {
-                if (!caught) snack.remove();
-            }, 8000);
+            setTimeout(() => { if (!caught) snack.remove(); }, 8000);
         }
 
         function scheduleEvents() {
@@ -1951,43 +2071,21 @@
         }
 
         function scheduleQuest() {
-            const delay = Math.random() * 60 * 60 * 1000;
-            setTimeout(() => {
-                if (Math.random() < 0.5) spawnFallingStar();
-                scheduleQuest();
-            }, delay);
+            setTimeout(() => { if (Math.random() < 0.5) spawnFallingStar(); scheduleQuest(); },
+                Math.random() * 60 * 60 * 1000);
         }
-
         function scheduleSnack() {
-            const delay = 5 * 60 * 1000 + Math.random() * 5 * 60 * 1000;
-            setTimeout(() => {
-                if (Math.random() < 0.3) spawnSnack();
-                scheduleSnack();
-            }, delay);
+            setTimeout(() => { if (Math.random() < 0.3) spawnSnack(); scheduleSnack(); },
+                5 * 60 * 1000 + Math.random() * 5 * 60 * 1000);
         }
-
         function scheduleRisk() {
-            const delay = 15 * 60 * 1000;
-            setTimeout(() => {
-                DOM.riskModal.classList.add('show');
-                scheduleRisk();
-            }, delay);
+            setTimeout(() => { DOM.riskModal.classList.add('show'); scheduleRisk(); }, 15 * 60 * 1000);
         }
-
         function scheduleDaily() {
-            const delay = 24 * 60 * 60 * 1000;
-            setTimeout(() => {
-                showDailyMission();
-                scheduleDaily();
-            }, delay);
+            setTimeout(() => { showDailyMission(); scheduleDaily(); }, 24 * 60 * 60 * 1000);
         }
-
         function scheduleGift() {
-            const delay = 60 * 60 * 1000;
-            setTimeout(() => {
-                showGift();
-                scheduleGift();
-            }, delay);
+            setTimeout(() => { showGift(); scheduleGift(); }, 60 * 60 * 1000);
         }
 
         function takeRisk(accept) {
@@ -2010,7 +2108,6 @@
             document.getElementById('dailyMissionText').textContent = mission.text + '\nНаграда: 5000 молока!';
             DOM.dailyModal.classList.add('show');
         }
-
         function closeDailyModal() {
             DOM.dailyModal.classList.remove('show');
             gameState.milk += 5000;
@@ -2025,25 +2122,35 @@
             DOM.giftModal.classList.add('show');
             gameState.milk += amount;
         }
-
         function closeGiftModal() {
             DOM.giftModal.classList.remove('show');
             updateUI();
             saveGame();
         }
 
+        // ── Main loop ─────────────────────────────────────────────────────────
         setInterval(() => {
             if (gameState.passive > 0) {
-                let gain = Math.floor(gameState.passive * gameState.multiplier);
+                const gain = Math.floor(gameState.passive * getEffectiveMultiplier());
                 gameState.milk += gain;
                 gameState.stats.totalMilkEarned += gain;
                 updateUI();
                 checkProgression();
                 saveGame();
             }
-            
+
             if (Math.random() < 0.05 && gameState.multiplier === 1) {
                 activateRandomMultiplier();
+            }
+
+            // Expire booster
+            if (gameState.boosterEndTime && Date.now() >= gameState.boosterEndTime) {
+                gameState.boosterMultiplier = 1;
+                gameState.boosterEndTime = 0;
+                gameState.boosterType = null;
+                showNotification('⏰ Бустер истёк!', 'error');
+                updateUI();
+                saveGame();
             }
         }, 1000);
 
