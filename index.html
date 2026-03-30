@@ -1100,34 +1100,35 @@
                 fn: () => {},
                 fnEnd: () => {}
             },
-            {
-                id: 'shield_plus',
-                name: '🛡️+ Mega Shield',
-                desc: 'Temporary shield for 15s',
-                cost: 180,
-                duration: 15000,
-                fn: () => {
-                    game.shielded = true;
-                    game.shieldHealth = game.shieldMaxHealth * 2;
-                },
-                
-        id: 'hppotion',
-        name: '🍎 HP Potion',
-        desc: 'Restore 50 health instantly',
-        cost: 25,           // ДЕШЕВуЮ! Вдвое дешевле других
-        duration: 0,        // БЕЗ ДЛИТЕЛЬНОСТИ - срабатывает мгновенно
-        fn: () => {
-            const healAmount = 50;
-            game.health = Math.min(game.maxHealth, game.health + healAmount);
-            updateHUD();
-            // Визуальный эффект - зелено
-            createParticles(game.playerX, game.playerY, '#06FFA5');
-        },
-                fnEnd: () => {
-                    game.shielded = false;
-                    game.shieldHealth = 0;
-                }
-            }
+           {
+    id: 'shield_plus',
+    name: '🛡️+ Mega Shield',
+    desc: 'Temporary shield for 15s',
+    cost: 180,
+    duration: 15000,
+    fn: () => {
+        game.shielded = true;
+        game.shieldHealth = game.shieldMaxHealth * 2;
+    },
+    fnEnd: () => {
+        game.shielded = false;
+        game.shieldHealth = 0;
+    }
+},
+{
+    id: 'hppotion',
+    name: '🍎 HP Potion',
+    desc: 'Restore 50 health instantly',
+    cost: 25,
+    duration: 0,
+    fn: () => {
+        const healAmount = 50;
+        game.health = Math.min(game.maxHealth, game.health + healAmount);
+        updateHUD();
+        createParticles(game.playerX, game.playerY, '#06FFA5');
+    },
+    fnEnd: () => {}
+}
         ];
 
         // ==================== HELPER FUNCTIONS ====================
@@ -1558,28 +1559,23 @@
                     const stats = getEnemyStats(game.wave, isStrong);
 
                     game.enemies.push({
-                        x: Math.random() * (game.width - 60) + 30,
-                        y: spawnY,
-                        vx: (Math.random() - 0.5) * 2,
-                        vy: (Math.random() - 0.5) * 2,
-                        speed: stats.speed,
-                        radius: isStrong ? 18 : 12,
-                        health: stats.health,
-                        maxHealth: stats.health,
-                        color: colors[Math.floor(Math.random() * colors.length)],
-                        isStrong: isStrong,
-                        model: modelName,
-                        shootTimer: 0,
-                        shootInterval: stats.shootInterval,
-                        damage: stats.damage,
-                        isBoss: false
-                        spawnDelay: Math.floor(i / spawnBatch) * 120  // Задержка 120 фреймов между батчами
-    };
-    
-    game.enemies.push(enemy);
-}
-                    });
-                }
+    x: Math.random() * (game.width - 60) + 30,
+    y: spawnY,
+    vx: (Math.random() - 0.5) * 2,
+    vy: (Math.random() - 0.5) * 2,
+    speed: stats.speed,
+    radius: isStrong ? 18 : 12,
+    health: stats.health,
+    maxHealth: stats.health,
+    color: colors[Math.floor(Math.random() * colors.length)],
+    isStrong: isStrong,
+    model: modelName,
+    shootTimer: 0,
+    shootInterval: stats.shootInterval,
+    damage: stats.damage,
+    isBoss: false,
+    spawnDelay: Math.floor(i / 3) * 120  // ✅ ДОБАВЛЕНА ЗАПЯТАЯ, spawnBatch заменён на 3
+});
             }
 
             document.getElementById('waveValue').textContent = game.wave;
@@ -1670,18 +1666,19 @@
                     enemy.vx += (Math.random() - 0.5) * 1;
                     enemy.vy += (Math.random() - 0.5) * 1;
                     
-                    enemy.vx = Math.max(-3, Math.min(3, enemy.vx));
-                    enemy.vy = Math.max(-3, Math.min(3, enemy.vy));
-                } else {
-                    // Boss movement
-                    if (Math.random() < 0.1) {
-                        enemy.vx = (Math.random() - 0.5) * enemy.speed * 15;
-                        enemy.vy = (Math.random() - 0.5) * enemy.speed * 15;
-                    }
-                }
-
-                enemy.x += enemy.vx * slowMultiplier;
-                enemy.y += enemy.vy * slowMultiplier;
+       if (!enemy.isBoss) {
+    enemy.vx += (Math.random() - 0.5) * 1;
+    enemy.vy += (Math.random() - 0.5) * 1;
+    
+    enemy.vx = Math.max(-3, Math.min(3, enemy.vx));
+    enemy.vy = Math.max(-3, Math.min(3, enemy.vy));
+} else {
+    // Boss movement
+    if (Math.random() < 0.1) {
+        enemy.vx = (Math.random() - 0.5) * enemy.speed * 15;
+        enemy.vy = (Math.random() - 0.5) * enemy.speed * 15;
+    }
+}
 
                 const maxY = game.height * ENEMY_SPAWN_MAX_Y_RATIO;
                 if (enemy.x < enemy.radius) enemy.x = enemy.radius;
