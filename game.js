@@ -333,7 +333,7 @@ function preloadImages(onProgress, onComplete) {
         };
         img.onload = finish;
         img.onerror = () => {
-            console.warn('Could not load image: ' + imageSources[key]);
+            console.warn('Could not load image "' + key + '": ' + imageSources[key]);
             finish();
         };
         img.src = imageSources[key];
@@ -1032,10 +1032,11 @@ function createWave(waveNum) {
     showWaveTitleDisplay(`ВОЛНА ${waveNum}`);
 
     if (waveNum % 5 === 0) {
-        enemies.push(createEnemy('boss'));
+        const boss = createEnemy('boss');
+        enemies.push(boss);
         bossActive = true;
-        waveEnemySpawnCount = 1;
         waveEnemyTotal = 1;
+        waveEnemySpawnCount = 1;
     } else {
         const baseEnemyCount = 4 + Math.floor(waveNum / 2);
         const enemyCount = baseEnemyCount + waveNum;
