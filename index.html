@@ -1110,6 +1110,19 @@
                     game.shielded = true;
                     game.shieldHealth = game.shieldMaxHealth * 2;
                 },
+                
+        id: 'hppotion',
+        name: '🍎 HP Potion',
+        desc: 'Restore 50 health instantly',
+        cost: 25,           // ДЕШЕВуЮ! Вдвое дешевле других
+        duration: 0,        // БЕЗ ДЛИТЕЛЬНОСТИ - срабатывает мгновенно
+        fn: () => {
+            const healAmount = 50;
+            game.health = Math.min(game.maxHealth, game.health + healAmount);
+            updateHUD();
+            // Визуальный эффект - зелено
+            createParticles(game.playerX, game.playerY, '#06FFA5');
+        },
                 fnEnd: () => {
                     game.shielded = false;
                     game.shieldHealth = 0;
