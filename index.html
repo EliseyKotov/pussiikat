@@ -756,13 +756,15 @@
          * ========================================
          * ARC RAIDER - BATTLE DRONES GAME
          * ========================================
-         * Complete game implementation with:
-         * - Token-based currency system
-         * - Restricted enemy movement (2/3 upper screen)
-         * - Minimal visual effects (5 particles per hit)
-         * - No trail effects on projectiles
-         * - Advanced game state management
-         * - Comprehensive statistics tracking
+         * FINAL VERSION WITH ALL UPDATES:
+         * - NO TRAIL EFFECTS (completely removed)
+         * - Projectile speed starts at 5 (can be upgraded)
+         * - New upgrades: Max Health, Projectile Damage, Projectile Speed
+         * - Removed: Health Pack, Projectile Speed (+20%), Fire Rate, Shield Restore
+         * - Shield: One-time purchase for 100 tokens (adds 50 HP)
+         * - Wave scaling: Progressive enemy difficulty
+         * - Enemy damage scales with waves
+         * - Strong enemies scale with wave
          * ========================================
          */
 
@@ -771,14 +773,10 @@
         const PLAYER_MODEL = 'arcraider';
         
         // Enemy spawn boundary constants
-        const ENEMY_SPAWN_MAX_Y_RATIO = 0.66; // Enemies spawn in upper 2/3 of screen
-        const SAFE_ZONE_RATIO = 0.85; // Player safe zone starts at 85% of screen height
+        const ENEMY_SPAWN_MAX_Y_RATIO = 0.66;
+        const SAFE_ZONE_RATIO = 0.85;
 
         // ==================== GAME STATE OBJECT ====================
-        /**
-         * Main game state object containing all game data
-         * Tracks game status, entities, and statistics
-         */
         const game = {
             // Canvas and rendering
             canvas: null,
@@ -804,7 +802,8 @@
             combo: 0,
             comboTimer: 0,
             comboTimeout: 3000,
-            projectileSpeed: 7,
+            projectileSpeed: 5,
+            projectileDamage: 10,
             fireRate: 10,
             fireCounter: 0,
 
@@ -850,76 +849,48 @@
         };
 
         // ==================== UPGRADES CONFIGURATION ====================
-        /**
-         * Array of available upgrades that player can purchase with tokens
-         * Each upgrade has cost, description, and activation function
-         */
         const upgrades = [
             {
-                id: 'health',
-                name: '❤️ Health Pack',
-                desc: 'Restore 50 HP',
-                cost: 100,
-                fn: () => {
-                    game.health = Math.min(game.health + 50, game.maxHealth);
-                }
-            },
-            {
-                id: 'damage',
-                name: '💥 Projectile Speed',
-                desc: 'Increase projectile speed +20%',
-                cost: 200,
-                fn: () => {
-                    game.projectileSpeed *= 1.2;
-                }
-            },
-            {
-                id: 'shield',
-                name: '🛡️ Shield',
-                desc: 'Gain 50 shield HP',
-                cost: 150,
-                fn: () => {
-                    game.shielded = true;
-                    game.shieldHealth = game.shieldMaxHealth;
-                }
-            },
-            {
-                id: 'firerate',
-                name: '⚡ Fire Rate',
-                desc: 'Increase fire rate',
-                cost: 250,
-                fn: () => {
-                    game.fireRate = Math.max(game.fireRate - 2, 2);
-                }
-            },
-            {
                 id: 'maxhealth',
-                name: '💪 Max Health+',
+                name: '❤️ Max Health+',
                 desc: 'Increase max health by 25',
-                cost: 180,
+                cost: 120,
                 fn: () => {
                     game.maxHealth += 25;
                     game.health = game.maxHealth;
                 }
             },
             {
-                id: 'shield_regen',
-                name: '🔄 Shield Restore',
-                desc: 'Restore shield to full',
-                cost: 120,
+                id: 'shield',
+                name: '🛡️ Shield',
+                desc: 'Gain 50 shield HP',
+                cost: 100,
                 fn: () => {
-                    if (game.shielded) {
-                        game.shieldHealth = game.shieldMaxHealth;
-                    }
+                    game.shielded = true;
+                    game.shieldHealth = game.shieldMaxHealth;
+                }
+            },
+            {
+                id: 'damage',
+                name: '💥 Projectile Damage',
+                desc: 'Increase projectile damage +5',
+                cost: 150,
+                fn: () => {
+                    game.projectileDamage += 5;
+                }
+            },
+            {
+                id: 'speed',
+                name: '⚡ Projectile Speed',
+                desc: 'Increase projectile speed +2',
+                cost: 100,
+                fn: () => {
+                    game.projectileSpeed += 2;
                 }
             }
         ];
 
         // ==================== BOOSTERS CONFIGURATION ====================
-        /**
-         * Array of temporary power-ups that can be activated during gameplay
-         * Boosters have duration and activation/deactivation functions
-         */
         const boosters = [
             {
                 id: 'rapid',
@@ -969,11 +940,41 @@
             }
         ];
 
+        // ==================== HELPER FUNCTIONS ====================
+        function getEnemyStats(wave, isStrong) {
+            let speed, shootInterval, health, damage;
+
+            if (wave <= 5) {
+                // Waves 1-5: медленные враги, редко стреляют
+                speed = 0.5 + wave * 0.15;
+                shootInterval = 100 + Math.random() * 50;
+                health = isStrong ? 30 : 15;
+                damage = 5;
+            } else if (wave <= 10) {
+                // Waves 5-10: враги быстрее, стреляют часто
+                speed = 1.2 + wave * 0.2;
+                shootInterval = 60 + Math.random() * 30;
+                health = isStrong ? 40 + (wave - 5) * 5 : 20 + (wave - 5) * 3;
+                damage = 7;
+            } else {
+                // Waves 10-15+: сложный уровень
+                speed = 2.2 + wave * 0.3;
+                shootInterval = 40 + Math.random() * 20;
+                health = isStrong ? 50 + (wave - 10) * 8 : 30 + (wave - 10) * 5;
+                damage = 10 + Math.floor((wave - 10) / 5) * 5;
+            }
+
+            return { speed, shootInterval, health, damage };
+        }
+
+        function getEnemyDamage(wave) {
+            if (wave <= 5) return 5;
+            if (wave <= 10) return 7;
+            if (wave <= 15) return 10;
+            return 10 + Math.floor((wave - 15) / 5) * 5;
+        }
+
         // ==================== IMAGE LOADING ====================
-        /**
-         * Load all game images from assets directory
-         * Images include player sprite and all enemy sprite variations
-         */
         function loadImages() {
             const images = ['arcraider', 'arc1', 'arc3', 'arc4', 'arc5'];
             images.forEach(name => {
@@ -990,10 +991,6 @@
         }
 
         // ==================== GAME INITIALIZATION ====================
-        /**
-         * Initialize game on page load
-         * Setup canvas, load resources, attach event listeners
-         */
         function init() {
             game.canvas = document.getElementById('gameCanvas');
             game.ctx = game.canvas.getContext('2d');
@@ -1008,11 +1005,6 @@
             gameLoop();
         }
 
-        // ==================== CANVAS MANAGEMENT ====================
-        /**
-         * Resize canvas to fit window size
-         * Called on window resize and initialization
-         */
         function resizeCanvas() {
             game.width = window.innerWidth;
             game.height = window.innerHeight;
@@ -1021,20 +1013,14 @@
         }
 
         // ==================== EVENT LISTENERS ====================
-        /**
-         * Setup all keyboard and touch event listeners
-         * Handles player input for movement, shooting, and menu navigation
-         */
         function setupEventListeners() {
             window.addEventListener('resize', resizeCanvas);
             document.addEventListener('keydown', handleKeyDown);
             document.addEventListener('keyup', handleKeyUp);
             
-            // Canvas shooting events
             game.canvas.addEventListener('click', handleCanvasClick);
             game.canvas.addEventListener('touchend', handleCanvasTouch);
 
-            // Movement button events
             const leftBtn = document.getElementById('leftBtn');
             const rightBtn = document.getElementById('rightBtn');
 
@@ -1050,11 +1036,9 @@
             rightBtn.addEventListener('touchend', (e) => { e.preventDefault(); game.playerSpeed = 0; });
             rightBtn.addEventListener('mouseleave', () => { game.playerSpeed = 0; });
 
-            // Pause menu events
             document.getElementById('pauseBtn').addEventListener('click', togglePause);
             document.getElementById('pauseCloseBtn').addEventListener('click', togglePause);
 
-            // Tab switching in pause menu
             const tabs = document.querySelectorAll('.pause-menu-tab');
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
@@ -1071,10 +1055,6 @@
         }
 
         // ==================== INPUT HANDLING ====================
-        /**
-         * Handle canvas click for shooting
-         * Convert mouse position to world coordinates and fire projectile
-         */
         function handleCanvasClick(e) {
             if (game.isPaused || !game.isRunning) return;
             const rect = game.canvas.getBoundingClientRect();
@@ -1083,10 +1063,6 @@
             fireProjectileTowards(x, y);
         }
 
-        /**
-         * Handle touch input for mobile devices
-         * Convert touch position to world coordinates and fire projectile
-         */
         function handleCanvasTouch(e) {
             if (game.isPaused || !game.isRunning) return;
             const rect = game.canvas.getBoundingClientRect();
@@ -1096,10 +1072,6 @@
             fireProjectileTowards(x, y);
         }
 
-        /**
-         * Create and fire projectile towards target coordinates
-         * Projectile travels in straight line at constant speed
-         */
         function fireProjectileTowards(targetX, targetY) {
             const angle = Math.atan2(targetY - game.playerY, targetX - game.playerX);
             const speed = game.projectileSpeed;
@@ -1113,10 +1085,6 @@
             });
         }
 
-        /**
-         * Handle keyboard key press
-         * Arrow keys and WASD for movement, ESC for pause
-         */
         function handleKeyDown(e) {
             if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
                 game.playerSpeed = -5;
@@ -1127,10 +1095,6 @@
             }
         }
 
-        /**
-         * Handle keyboard key release
-         * Stop player movement when key is released
-         */
         function handleKeyUp(e) {
             if ((e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') && game.playerSpeed === -5) {
                 game.playerSpeed = 0;
@@ -1140,10 +1104,6 @@
         }
 
         // ==================== PAUSE MENU ====================
-        /**
-         * Toggle pause state on/off
-         * Show/hide pause menu and overlay
-         */
         function togglePause() {
             if (!game.isRunning) return;
             game.isPaused = !game.isPaused;
@@ -1155,10 +1115,6 @@
             }
         }
 
-        /**
-         * Update pause menu statistics display
-         * Show current game stats, wave info, and challenges
-         */
         function updatePauseMenu() {
             document.getElementById('pauseTokens').textContent = game.tokens;
             document.getElementById('pauseWave').textContent = game.wave;
@@ -1169,7 +1125,7 @@
             waveInfo += `Total Enemies: ${game.totalEnemiesInWave}<br>`;
             waveInfo += `Defeated: ${game.enemiesDefeated}<br>`;
             waveInfo += `Remaining: ${game.enemies.length}<br>`;
-            const difficulty = game.wave <= 3 ? 'EASY 🟢' : game.wave <= 6 ? 'MEDIUM 🟡' : 'HARD 🔴';
+            const difficulty = game.wave <= 5 ? 'EASY 🟢' : game.wave <= 10 ? 'MEDIUM 🟡' : 'HARD 🔴';
             waveInfo += `<br>Difficulty: ${difficulty}`;
             document.getElementById('waveInfo').innerHTML = waveInfo;
 
@@ -1179,17 +1135,12 @@
             document.getElementById('challengeInfo').innerHTML = challengeInfo;
         }
 
-        /**
-         * Update and render store in pause menu
-         * Display available upgrades and boosters with costs
-         */
         function updatePauseStore() {
             const upgradesContainer = document.getElementById('pauseStoreUpgrades');
             const boostersContainer = document.getElementById('pauseStoreBoosters');
             upgradesContainer.innerHTML = '';
             boostersContainer.innerHTML = '';
 
-            // Render upgrade items
             upgrades.forEach(upgrade => {
                 const btn = document.createElement('div');
                 btn.className = 'pause-store-item';
@@ -1213,7 +1164,6 @@
                 upgradesContainer.appendChild(btn);
             });
 
-            // Render booster items
             boosters.forEach(booster => {
                 const btn = document.createElement('div');
                 btn.className = 'pause-store-item booster';
@@ -1237,20 +1187,12 @@
             });
         }
 
-        /**
-         * Activate a booster and schedule its deactivation
-         * Apply activation function and set expiration timer
-         */
         function activateBooster(booster) {
             if (booster.fn) booster.fn();
             game.activeBoosters[booster.id] = Date.now() + booster.duration;
         }
 
         // ==================== LEVEL MANAGEMENT ====================
-        /**
-         * Display level intro screen
-         * Shows game instructions and starts first wave after delay
-         */
         function showLevelInfo() {
             const levelInfo = document.getElementById('levelInfo');
             levelInfo.style.display = 'block';
@@ -1260,10 +1202,6 @@
             }, 3000);
         }
 
-        /**
-         * Initialize new wave
-         * Spawn enemies with increasing difficulty
-         */
         function startWave() {
             game.wave++;
             game.waveStarted = true;
@@ -1271,7 +1209,6 @@
             game.enemies = [];
             game.shelters = [];
 
-            // Display wave title
             const waveTitleDisplay = document.getElementById('waveTitleDisplay');
             waveTitleDisplay.textContent = `WAVE ${game.wave}`;
             waveTitleDisplay.style.display = 'block';
@@ -1279,7 +1216,6 @@
                 waveTitleDisplay.style.display = 'none';
             }, 1000);
 
-            // Add shelter for later waves
             if (game.wave >= 6) {
                 game.shelters.push({
                     x: game.width / 2 - 40,
@@ -1289,34 +1225,33 @@
                 });
             }
 
-            // Calculate enemy spawn count
             const baseEnemies = 3 + game.wave * 2;
             game.totalEnemiesInWave = baseEnemies;
             const colors = ['#FF1493', '#00CED1', '#32CD32', '#FFD700'];
 
-            // Spawn enemies in upper 2/3 of screen
             for (let i = 0; i < baseEnemies; i++) {
                 const isStrong = game.wave >= 3 && Math.random() < (0.2 + game.wave * 0.05);
                 const modelName = ENEMY_MODELS[Math.floor(Math.random() * ENEMY_MODELS.length)];
-                
-                // CRITICAL: Enemies spawn only in upper 2/3 of screen
                 const maxSpawnY = game.height * ENEMY_SPAWN_MAX_Y_RATIO;
                 const spawnY = Math.random() * (maxSpawnY - 200) + 100;
                 
+                const stats = getEnemyStats(game.wave, isStrong);
+
                 game.enemies.push({
                     x: Math.random() * (game.width - 60) + 30,
                     y: spawnY,
-                    vx: (Math.random() - 0.5) * 3,
-                    vy: (Math.random() - 0.5) * 3,
-                    speed: 1.5 + game.wave * 0.3,
+                    vx: (Math.random() - 0.5) * 2,
+                    vy: (Math.random() - 0.5) * 2,
+                    speed: stats.speed,
                     radius: isStrong ? 18 : 12,
-                    health: isStrong ? 30 : 15,
-                    maxHealth: isStrong ? 30 : 15,
+                    health: stats.health,
+                    maxHealth: stats.health,
                     color: colors[Math.floor(Math.random() * colors.length)],
                     isStrong: isStrong,
                     model: modelName,
                     shootTimer: 0,
-                    shootInterval: 60 + Math.random() * 40
+                    shootInterval: stats.shootInterval,
+                    damage: stats.damage
                 });
             }
 
@@ -1328,13 +1263,7 @@
         }
 
         // ==================== PARTICLE SYSTEM ====================
-        /**
-         * Create particle effect at specified location
-         * REDUCED to 5 particles per hit for cleaner visuals
-         * No trail effects on projectiles
-         */
         function createParticles(x, y, color) {
-            // OPTIMIZED: Only 5 particles per hit (down from 12)
             for (let i = 0; i < 5; i++) {
                 const angle = (Math.PI * 2 * i) / 5;
                 const speed = 2 + Math.random() * 2;
@@ -1343,16 +1272,13 @@
                     y: y,
                     vx: Math.cos(angle) * speed,
                     vy: Math.sin(angle) * speed,
-                    life: 20, // Reduced life for faster fade
+                    life: 20,
                     color: color,
-                    radius: 3 // Smaller particles
+                    radius: 3
                 });
             }
         }
 
-        /**
-         * Display combo counter when player reaches 3+ combos
-         */
         function showCombo() {
             if (game.combo >= 3) {
                 const comboDisplay = document.getElementById('comboDisplay');
@@ -1369,10 +1295,6 @@
         }
 
         // ==================== HUD UPDATE ====================
-        /**
-         * Update all on-screen display elements
-         * Shows current tokens, wave, enemies remaining, health
-         */
         function updateHUD() {
             document.getElementById('tokensValue').textContent = game.tokens;
             document.getElementById('waveValue').textContent = game.wave;
@@ -1383,10 +1305,6 @@
         }
 
         // ==================== MAIN GAME LOOP ====================
-        /**
-         * Main game loop - runs every frame
-         * Updates game state then renders everything
-         */
         function gameLoop() {
             if (!game.isPaused) {
                 update();
@@ -1396,51 +1314,39 @@
         }
 
         // ==================== GAME UPDATE ====================
-        /**
-         * Update all game entities and logic
-         * Called every frame when game is not paused
-         */
         function update() {
             if (!game.isRunning) return;
 
-            // Update player position
             game.playerX += game.playerSpeed;
             game.playerX = Math.max(game.playerRadius, Math.min(game.playerX, game.width - game.playerRadius));
 
-            // Update combo timer
             if (game.comboTimer > 0) {
                 game.comboTimer--;
             } else {
                 game.combo = 0;
             }
 
-            // Get slow multiplier from booster
             const slowMultiplier = game.activeBoosters['slow'] ? 0.5 : 1;
 
-            // ========== UPDATE ENEMIES ==========
+            // UPDATE ENEMIES
             for (let i = game.enemies.length - 1; i >= 0; i--) {
                 const enemy = game.enemies[i];
                 
-                // Chaotic movement with randomness
                 enemy.vx += (Math.random() - 0.5) * 0.5;
                 enemy.vy += (Math.random() - 0.5) * 0.5;
                 
-                // Clamp velocity
                 enemy.vx = Math.max(-3, Math.min(3, enemy.vx));
                 enemy.vy = Math.max(-3, Math.min(3, enemy.vy));
 
-                // Apply movement
                 enemy.x += enemy.vx * slowMultiplier;
                 enemy.y += enemy.vy * slowMultiplier;
 
-                // CRITICAL: Keep enemies in upper 2/3 of screen
                 const maxY = game.height * ENEMY_SPAWN_MAX_Y_RATIO;
                 if (enemy.x < enemy.radius) enemy.x = enemy.radius;
                 if (enemy.x > game.width - enemy.radius) enemy.x = game.width - enemy.radius;
                 if (enemy.y < enemy.radius) enemy.y = enemy.radius;
                 if (enemy.y > maxY) enemy.y = maxY;
 
-                // Enemy shooting at player
                 enemy.shootTimer++;
                 if (enemy.shootTimer >= enemy.shootInterval) {
                     const angle = Math.atan2(game.playerY - enemy.y, game.playerX - enemy.x);
@@ -1450,64 +1356,57 @@
                         vx: Math.cos(angle) * 3,
                         vy: Math.sin(angle) * 3,
                         radius: 4,
-                        color: '#FF1493'
+                        color: '#FF1493',
+                        damage: enemy.damage
                     });
                     enemy.shootTimer = 0;
                 }
             }
 
-            // ========== UPDATE PLAYER PROJECTILES ==========
+            // UPDATE PLAYER PROJECTILES
             for (let i = game.projectiles.length - 1; i >= 0; i--) {
                 const proj = game.projectiles[i];
                 proj.x += proj.vx;
                 proj.y += proj.vy;
 
-                // Remove projectiles that leave screen
                 if (proj.x < 0 || proj.x > game.width || proj.y < 0 || proj.y > game.height) {
                     game.projectiles.splice(i, 1);
                     continue;
                 }
 
-                // Check collision with enemies
                 for (let j = game.enemies.length - 1; j >= 0; j--) {
                     const enemy = game.enemies[j];
                     const dist = Math.hypot(proj.x - enemy.x, proj.y - enemy.y);
                     const minDist = proj.radius + enemy.radius;
 
                     if (dist < minDist) {
-                        let damage = 10;
+                        let damage = game.projectileDamage;
                         if (game.activeBoosters['dmg']) damage *= 2;
 
                         enemy.health -= damage;
                         game.projectiles.splice(i, 1);
 
                         if (enemy.health <= 0) {
-                            // Enemy defeated
                             game.enemies.splice(j, 1);
                             game.combo++;
                             game.comboTimer = game.comboTimeout;
 
-                            // Calculate token reward
                             const baseReward = enemy.isStrong ? 50 : 25;
                             const reward = Math.floor(baseReward * (1 + game.combo * 0.1));
                             game.tokens += reward;
                             game.enemiesDefeated++;
                             game.challengeProgress++;
                             
-                            // Update statistics
                             game.statistics.totalTokensEarned += reward;
                             game.statistics.totalEnemiesDefeated++;
 
-                            // Visual feedback
                             createParticles(enemy.x, enemy.y, enemy.color);
                             showCombo();
                             
-                            // Check if wave complete
                             if (game.enemiesDefeated === game.totalEnemiesInWave) {
                                 startWave();
                             }
                         } else {
-                            // Hit but not killed - small particle effect
                             createParticles(proj.x, proj.y, '#FFB703');
                         }
                         break;
@@ -1515,19 +1414,17 @@
                 }
             }
 
-            // ========== UPDATE ENEMY PROJECTILES ==========
+            // UPDATE ENEMY PROJECTILES
             for (let i = game.enemyProjectiles.length - 1; i >= 0; i--) {
                 const proj = game.enemyProjectiles[i];
                 proj.x += proj.vx;
                 proj.y += proj.vy;
 
-                // Remove projectiles that leave screen
                 if (proj.x < 0 || proj.x > game.width || proj.y < 0 || proj.y > game.height) {
                     game.enemyProjectiles.splice(i, 1);
                     continue;
                 }
 
-                // Check collision with player
                 const dist = Math.hypot(proj.x - game.playerX, proj.y - game.playerY);
                 if (dist < proj.radius + game.playerRadius) {
                     if (game.shielded) {
@@ -1536,15 +1433,16 @@
                             game.shielded = false;
                         }
                     } else {
-                        game.health -= 5;
-                        game.statistics.totalDamageTaken += 5;
+                        const damage = proj.damage || 5;
+                        game.health -= damage;
+                        game.statistics.totalDamageTaken += damage;
                         if (game.health <= 0) endGame();
                     }
                     game.enemyProjectiles.splice(i, 1);
                 }
             }
 
-            // ========== UPDATE PARTICLES ==========
+            // UPDATE PARTICLES
             for (let i = game.particles.length - 1; i >= 0; i--) {
                 const p = game.particles[i];
                 p.x += p.vx;
@@ -1555,7 +1453,7 @@
                 }
             }
 
-            // ========== BOOSTER TIMERS ==========
+            // BOOSTER TIMERS
             for (const boosterId in game.activeBoosters) {
                 if (Date.now() > game.activeBoosters[boosterId]) {
                     const booster = boosters.find(b => b.id === boosterId);
@@ -1567,9 +1465,6 @@
             updateHUD();
         }
 
-        /**
-         * End game - show game over screen with statistics
-         */
         function endGame() {
             game.isRunning = false;
             document.getElementById('gameOverScreen').style.display = 'block';
@@ -1579,13 +1474,9 @@
         }
 
         // ==================== RENDERING ====================
-        /**
-         * Render all game elements to canvas
-         * Called every frame
-         */
         function draw() {
-            // Clear canvas with semi-transparent background
-            game.ctx.fillStyle = 'rgba(135, 206, 235, 0.1)';
+            // CLEAR CANVAS COMPLETELY - NO TRAIL EFFECTS
+            game.ctx.fillStyle = 'rgba(135, 206, 235, 1)';
             game.ctx.fillRect(0, 0, game.width, game.height);
 
             // Draw shelters
@@ -1610,7 +1501,6 @@
                     game.ctx.fill();
                 }
 
-                // Draw strong enemy indicator
                 if (enemy.isStrong) {
                     game.ctx.strokeStyle = '#FFFF00';
                     game.ctx.lineWidth = 3;
@@ -1619,7 +1509,6 @@
                     game.ctx.stroke();
                 }
 
-                // Draw enemy health bar
                 const healthPercent = enemy.health / enemy.maxHealth;
                 game.ctx.fillStyle = healthPercent > 0.5 ? '#06FFA5' : '#FB5607';
                 game.ctx.fillRect(enemy.x - 15, enemy.y - 30, 30 * healthPercent, 4);
@@ -1681,8 +1570,8 @@
                 game.ctx.stroke();
             }
 
-            // Draw enemy zone boundary (visual indicator)
-            if (game.wave <= 3) { // Only show in early waves
+            // Draw enemy zone boundary
+            if (game.wave <= 5) {
                 const maxY = game.height * ENEMY_SPAWN_MAX_Y_RATIO;
                 game.ctx.strokeStyle = 'rgba(0, 217, 255, 0.1)';
                 game.ctx.lineWidth = 1;
