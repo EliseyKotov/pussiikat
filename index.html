@@ -395,6 +395,12 @@
             color: #fff;
             font-weight: bold;
             font-size: 14px;
+            animation: milkPulse 0.3s ease-out;
+        }
+
+        @keyframes milkPulse {
+            0% { transform: scale(1.1); color: #00FF00; }
+            100% { transform: scale(1); color: #fff; }
         }
 
         .health-bar {
@@ -477,7 +483,47 @@
             font-weight: bold;
         }
 
-        /* ============ БУСТЕРЫ ИНДИКАТОР ============ */
+        /* ============ БОКОВАЯ ПАНЕЛЬ (МОБИЛЬНАЯ) ============ */
+        .side-panel {
+            position: fixed;
+            right: 10px;
+            top: 150px;
+            background: rgba(0, 0, 0, 0.85);
+            border: 2px solid #00FFFF;
+            border-radius: 10px;
+            padding: 10px;
+            width: 120px;
+            z-index: 100;
+            pointer-events: none;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .side-panel {
+                display: block;
+            }
+        }
+
+        .side-panel-item {
+            margin: 6px 0;
+            font-size: 10px;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+            padding-bottom: 6px;
+        }
+
+        .side-panel-label {
+            color: #00FFFF;
+            font-weight: bold;
+            font-size: 9px;
+        }
+
+        .side-panel-value {
+            color: #FFD700;
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        /* ============ ИНДИКАТОР БУСТЕРОВ ============ */
         .boosters-indicator {
             position: absolute;
             top: 100px;
@@ -909,13 +955,13 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 4em;
+            font-size: 3.5em;
             font-weight: bold;
             color: #FFD700;
             text-shadow: 0 0 20px #FF6B9D, 0 0 40px #FFD700;
             pointer-events: none;
             display: none;
-            animation: comboFloat 0.6s ease-out;
+            animation: comboFloat 0.8s ease-out;
             z-index: 50;
         }
 
@@ -926,7 +972,7 @@
             }
             100% {
                 opacity: 0;
-                transform: translate(-50%, -80%) scale(1.5);
+                transform: translate(-50%, -120%) scale(1.8);
             }
         }
 
@@ -977,6 +1023,18 @@
                 opacity: 0;
                 transform: translateY(-50px) scale(1.3);
             }
+        }
+
+        /* ============ КОМБО МУЛЬТИПЛИКАТОР ============ */
+        .combo-multiplier-text {
+            position: absolute;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #00FF00;
+            text-shadow: 0 0 10px #00FF00;
+            pointer-events: none;
+            animation: critFloat 0.8s ease-out forwards;
+            z-index: 40;
         }
 
         /* ============ СКИНЫ ============ */
@@ -1333,10 +1391,30 @@
                 </div>
             </div>
 
+            <!-- БОКОВАЯ ПАНЕЛЬ (МОБИЛЬНАЯ) -->
+            <div class="side-panel" id="sidePanel">
+                <div class="side-panel-item">
+                    <div class="side-panel-label">🎯 Точность</div>
+                    <div class="side-panel-value" id="sidePanelAccuracy">0%</div>
+                </div>
+                <div class="side-panel-item">
+                    <div class="side-panel-label">🔥 Комбо</div>
+                    <div class="side-panel-value" id="sidePanelCombo">0x</div>
+                </div>
+                <div class="side-panel-item">
+                    <div class="side-panel-label">✨ Мульт</div>
+                    <div class="side-panel-value" id="sidePanelMultiplier">x1.0</div>
+                </div>
+                <div class="side-panel-item" style="border-bottom: none;">
+                    <div class="side-panel-label">💰 Волна</div>
+                    <div class="side-panel-value" id="sidePanelWaveMilk">0</div>
+                </div>
+            </div>
+
             <!-- ИНДИКАТОР БУСТЕРОВ -->
             <div class="boosters-indicator" id="boostersIndicator"></div>
 
-            <!-- КНОПКИ УПРАВЛЕНИЯ (МОБИЛЬНЫЕ) -->
+            <!-- КНОП��И УПРАВЛЕНИЯ (МОБИЛЬНЫЕ) -->
             <div class="mobile-controls">
                 <button class="control-button" id="leftBtn">←</button>
                 <button class="control-button" id="rightBtn">→</button>
@@ -1359,10 +1437,10 @@
                         <span class="item-cost" id="damageCost">35🥛</span>
                     </button>
 
-                    <button class="shop-item" id="fireRateBtn" onclick="upgradeFireRate()">
-                        <span class="item-name">🔥 Скорость</span>
-                        <span class="item-desc">Быстрее стрелять</span>
-                        <span class="item-cost" id="fireRateCost">50🥛</span>
+                    <button class="shop-item" id="bulletCountBtn" onclick="upgradeBulletCount()">
+                        <span class="item-name">🔫 +1 Патрон</span>
+                        <span class="item-desc">+1 патрон за выстрел</span>
+                        <span class="item-cost" id="bulletCountCost">120🥛</span>
                     </button>
 
                     <button class="shop-item" id="bulletBtn" onclick="upgradeBulletSize()">
@@ -1426,6 +1504,10 @@
                     <span class="pause-info-value" id="totalMilk">0</span>
                 </div>
                 <div class="pause-info-row">
+                    <span class="pause-info-label">📈 Эта волна:</span>
+                    <span class="pause-info-value" id="waveMilk">0</span>
+                </div>
+                <div class="pause-info-row">
                     <span class="pause-info-label">⭐ Всего очков:</span>
                     <span class="pause-info-value" id="totalScore">0</span>
                 </div>
@@ -1441,6 +1523,14 @@
                     <span class="pause-info-label">🔥 Макс комбо:</span>
                     <span class="pause-info-value" id="maxComboInfo">0</span>
                 </div>
+                <div class="pause-info-row">
+                    <span class="pause-info-label">🎯 Точность:</span>
+                    <span class="pause-info-value" id="accuracyInfo">0%</span>
+                </div>
+                <div class="pause-info-row">
+                    <span class="pause-info-label">✨ Комбо x:</span>
+                    <span class="pause-info-value" id="comboMultiplierInfo">x1.0</span>
+                </div>
                 <div class="pause-menu-buttons">
                     <button class="pause-menu-btn" onclick="togglePause()">▶️ ПРОДОЛЖИТЬ</button>
                     <button class="pause-menu-btn" onclick="returnToMenu()">📋 МЕНЮ</button>
@@ -1451,6 +1541,7 @@
             <div class="wave-pause-screen" id="wavePauseScreen">
                 <h2>✅ ВОЛНА ЗАВЕРШЕНА!</h2>
                 <p id="wavePauseText">Волна 1 завершена!</p>
+                <p id="waveStats" style="color: #00FF00; font-size: 0.9em;"></p>
                 <button class="start-wave-btn" onclick="startNextWave()">▶️ НАЧАТЬ ВОЛНУ</button>
             </div>
 
@@ -1518,7 +1609,9 @@
                 maxWave: gameState.maxWave,
                 achievements: Array.from(gameState.achievements),
                 completedQuests: gameState.completedQuests,
-                totalKills: gameState.totalKills
+                totalKills: gameState.totalKills,
+                totalAccuracy: gameState.totalAccuracy,
+                totalShots: gameState.totalShots
             };
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
         }
@@ -1526,7 +1619,7 @@
         // ============ ВОЛНОВЫЕ БОНУСЫ ============
         const WAVE_BONUSES = [
             { name: '💰 +200 молока', type: 'milk', value: 200 },
-            { name: '❤️ +50 здоро��ья', type: 'health', value: 50 },
+            { name: '❤️ +50 здоровья', type: 'health', value: 50 },
             { name: '🔥 x1.5 мультипликатор', type: 'multiplier', value: 1.5 },
             { name: '⚡ Ускорение бесплатно', type: 'booster', value: 'speedBoost' },
             { name: '🛡️ Щит бесплатно', type: 'booster', value: 'shield' },
@@ -1624,6 +1717,12 @@
             lastKillTime: 0,
             screenShakeIntensity: 0,
             
+            // СИСТЕМА ТОЧНОСТИ
+            totalShots: 0,
+            totalAccuracy: 0,
+            waveShots: 0,
+            waveHits: 0,
+            
             waveStats: {
                 waveStartTime: 0,
                 damageReceivedThisWave: 0,
@@ -1632,7 +1731,7 @@
             
             upgrades: {
                 damage: { level: 1, baseCost: 35 },
-                fireRate: { level: 1, baseCost: 50 },
+                bulletCount: { level: 1, baseCost: 120 },
                 bulletSize: { level: 1, baseCost: 40 },
                 health: { level: 1, baseCost: 70 }
             },
@@ -1655,6 +1754,8 @@
             gameState.achievements = new Set(savedData.achievements || []);
             gameState.totalKills = savedData.totalKills || 0;
             gameState.completedQuests = savedData.completedQuests || {};
+            gameState.totalAccuracy = savedData.totalAccuracy || 0;
+            gameState.totalShots = savedData.totalShots || 0;
         }
 
         // ============ ФУНКЦИИ МЕНЮ ============
@@ -1839,14 +1940,18 @@
             player.shoot(x, y);
         }, { passive: true });
 
-        // ============ ИЗОБРАЖЕНИЯ ============
+        // ============ ИЗОБРАЖЕНИЯ И ФОНЫ ============
         const images = {
             cat: new Image(),
             mouse1: new Image(),
             mouse2: new Image(),
             mouse3: new Image(),
             mouse4: new Image(),
-            mouse5: new Image()
+            mouse5: new Image(),
+            boss: new Image(),
+            house: new Image(),
+            garden: new Image(),
+            room: new Image()
         };
 
         images.cat.src = 'cat.png';
@@ -1855,6 +1960,12 @@
         images.mouse3.src = 'mouse3.png';
         images.mouse4.src = 'mouse4.png';
         images.mouse5.src = 'mouse5.png';
+        images.boss.src = 'boss.png';
+        images.house.src = 'house.jpg';
+        images.garden.src = 'garden.jpg';
+        images.room.src = 'room.jpg';
+
+        let currentBgImage = images.house;
 
         // ============ ЗВУКИ ============
         function playSound(type) {
@@ -1919,6 +2030,7 @@
             maxHealth: 100,
             fireRate: 0,
             rotation: 0,
+            breathingPhase: 0,
             
             getDamage() {
                 let dmg = 10 + (gameState.upgrades.damage.level - 1) * 5;
@@ -1929,7 +2041,7 @@
             },
 
             getFireRate() {
-                let rate = Math.max(3, 10 - (gameState.upgrades.fireRate.level - 1) * 1.5);
+                let rate = Math.max(3, 10 - (gameState.upgrades.bulletCount.level - 1) * 0.5);
                 const skin = SKINS[gameState.activeSkin];
                 if (skin.bonusType === 'fireRate' || skin.bonusType === 'all') rate /= skin.value;
                 if (gameState.activeBoosters.some(b => b.type === 'quickDraw')) rate /= 3;
@@ -1941,6 +2053,10 @@
                 const skin = SKINS[gameState.activeSkin];
                 if (skin.bonusType === 'bulletSize' || skin.bonusType === 'all') size *= skin.value;
                 return size;
+            },
+
+            getBulletCount() {
+                return gameState.upgrades.bulletCount.level;
             },
 
             getMaxHealth() {
@@ -1968,6 +2084,8 @@
                 if (this.x + 40 > canvas.width) this.x = canvas.width - 40;
 
                 if (this.fireRate > 0) this.fireRate--;
+                
+                this.breathingPhase += 0.05;
             },
 
             takeDamage(amount) {
@@ -1986,16 +2104,25 @@
                     const angle = Math.atan2(targetY - (this.y + this.height / 2), targetX - (this.x + this.width / 2));
                     this.rotation = angle;
                     
-                    bullets.push({
-                        x: this.x + Math.cos(angle) * 45,
-                        y: this.y + Math.sin(angle) * 45,
-                        vx: Math.cos(angle) * 9,
-                        vy: Math.sin(angle) * 9,
-                        life: 120,
-                        damage: this.getDamage(),
-                        size: this.getBulletSize()
-                    });
+                    const bulletCount = this.getBulletCount();
+                    
+                    for (let i = 0; i < bulletCount; i++) {
+                        const spread = (bulletCount > 1) ? (i - (bulletCount - 1) / 2) * 0.15 : 0;
+                        const finalAngle = angle + spread;
+                        
+                        bullets.push({
+                            x: this.x + Math.cos(finalAngle) * 45,
+                            y: this.y + Math.sin(finalAngle) * 45,
+                            vx: Math.cos(finalAngle) * 9,
+                            vy: Math.sin(finalAngle) * 9,
+                            life: 120,
+                            damage: this.getDamage(),
+                            size: this.getBulletSize()
+                        });
+                    }
 
+                    gameState.totalShots++;
+                    gameState.waveShots++;
                     this.fireRate = this.getFireRate();
                     playSound('shoot');
                 }
@@ -2005,6 +2132,10 @@
                 ctx.save();
                 ctx.translate(this.x, this.y);
                 ctx.rotate(this.rotation);
+                
+                // Дыхание
+                const breathing = Math.sin(this.breathingPhase) * 0.05 + 0.95;
+                ctx.scale(breathing, breathing);
                 
                 if (images.cat.complete && images.cat.naturalHeight !== 0) {
                     ctx.drawImage(images.cat, -40, -40, 80, 80);
@@ -2106,8 +2237,20 @@
                     maxHealth: enemyHealth,
                     alive: true,
                     knockback: { x: 0, y: 0, duration: 0 },
+                    spawned: false,
+                    spawnProgress: 0,
+                    breathing: Math.random() * Math.PI * 2,
+                    isHit: false,
+                    hitDuration: 0,
 
                     update() {
+                        if (!this.spawned) {
+                            this.spawnProgress += 0.05;
+                            if (this.spawnProgress >= 1) {
+                                this.spawned = true;
+                            }
+                        }
+
                         this.x += this.velocityX + this.knockback.x;
                         this.y += this.velocityY + this.knockback.y;
 
@@ -2116,6 +2259,12 @@
                             this.knockback.y *= 0.9;
                             this.knockback.duration--;
                         }
+
+                        if (this.hitDuration > 0) {
+                            this.hitDuration--;
+                        }
+
+                        this.breathing += 0.05;
 
                         if (this.x < 0 || this.x > canvas.width) this.velocityX *= -1;
                         if (this.y < 0 || this.y > canvas.height / 1.5) this.velocityY *= -1;
@@ -2130,6 +2279,8 @@
                         }
 
                         this.health -= amount;
+                        this.isHit = true;
+                        this.hitDuration = 10;
 
                         // Knockback
                         const angle = Math.atan2(this.y - bulletY, this.x - bulletX);
@@ -2137,13 +2288,26 @@
                         this.knockback.y = Math.sin(angle) * 5;
                         this.knockback.duration = 5;
 
+                        gameState.totalAccuracy++;
+                        gameState.waveHits++;
+
                         if (this.health <= 0) {
                             this.alive = false;
                             gameState.score += 50;
-                            gameState.milk += 10 + gameState.currentWave * 2;
+                            
+                            // Комбо мультипликатор
+                            let baseMilk = 10 + gameState.currentWave * 2;
+                            let comboMultiplier = 1.0;
+                            
+                            if (gameState.combo >= 10) comboMultiplier = 2.0;
+                            else if (gameState.combo >= 5) comboMultiplier = 1.5;
+                            else if (gameState.combo >= 3) comboMultiplier = 1.25;
+                            
+                            const finalMilk = Math.floor(baseMilk * comboMultiplier);
+                            gameState.milk += finalMilk;
                             gameState.kills++;
                             gameState.totalKills++;
-                            gameState.waveStats.milkThisWave += 10 + gameState.currentWave * 2;
+                            gameState.waveStats.milkThisWave += finalMilk;
 
                             const now = Date.now();
                             if (now - gameState.lastKillTime < 2000) {
@@ -2158,6 +2322,10 @@
                             }
                             gameState.lastKillTime = now;
 
+                            if (comboMultiplier > 1.0) {
+                                showComboMultiplier(this.x, this.y, `x${comboMultiplier}`);
+                            }
+
                             WEEKLY_QUESTS.forEach(quest => {
                                 if (quest.type === 'totalKills') quest.current++;
                                 if (quest.type === 'combo' && gameState.combo >= quest.goal) quest.current = quest.goal;
@@ -2168,9 +2336,29 @@
                     },
 
                     draw() {
-                        if (mouseImg.complete && mouseImg.naturalHeight !== 0) {
-                            ctx.drawImage(mouseImg, this.x - 20, this.y - 20, this.width, this.height);
+                        if (!this.spawned) {
+                            ctx.globalAlpha = this.spawnProgress;
                         }
+
+                        ctx.save();
+                        
+                        if (this.isHit) {
+                            ctx.globalAlpha = 0.5;
+                            ctx.fillStyle = 'rgba(255, 0, 0, 0.3)';
+                            ctx.fillRect(this.x - 20, this.y - 20, 40, 40);
+                        }
+
+                        const breathing = Math.sin(this.breathing) * 0.05 + 0.95;
+                        ctx.translate(this.x, this.y);
+                        ctx.scale(breathing, breathing);
+
+                        if (mouseImg.complete && mouseImg.naturalHeight !== 0) {
+                            ctx.drawImage(mouseImg, -20, -20, 40, 40);
+                        }
+
+                        ctx.restore();
+
+                        ctx.globalAlpha = 1;
 
                         ctx.fillStyle = '#333';
                         ctx.fillRect(this.x - 20, this.y - 30, 40, 5);
@@ -2180,10 +2368,6 @@
                 };
             } else if (type === 'boss') {
                 const bossHealth = 200 + gameState.currentWave * 50;
-                
-                let bossImg = images.mouse5;
-                if (gameState.currentWave === 10) bossImg = images.mouse3;
-                else if (gameState.currentWave === 20) bossImg = images.mouse3;
 
                 return {
                     type: 'boss',
@@ -2198,10 +2382,22 @@
                     maxHealth: bossHealth,
                     shootTimer: 0,
                     alive: true,
-                    bossImg: bossImg,
+                    bossImg: images.boss,
                     knockback: { x: 0, y: 0, duration: 0 },
+                    spawned: false,
+                    spawnProgress: 0,
+                    breathing: Math.random() * Math.PI * 2,
+                    isHit: false,
+                    hitDuration: 0,
 
                     update() {
+                        if (!this.spawned) {
+                            this.spawnProgress += 0.05;
+                            if (this.spawnProgress >= 1) {
+                                this.spawned = true;
+                            }
+                        }
+
                         this.changeDirectionTimer++;
                         if (this.changeDirectionTimer > 60) {
                             this.velocityX = (Math.random() - 0.5) * 6;
@@ -2217,6 +2413,12 @@
                             this.knockback.y *= 0.9;
                             this.knockback.duration--;
                         }
+
+                        if (this.hitDuration > 0) {
+                            this.hitDuration--;
+                        }
+
+                        this.breathing += 0.05;
 
                         if (this.x < 70 || this.x > canvas.width - 70) {
                             this.velocityX *= -1;
@@ -2258,12 +2460,17 @@
                         }
 
                         this.health -= amount;
+                        this.isHit = true;
+                        this.hitDuration = 10;
 
                         // Knockback
                         const angle = Math.atan2(this.y - bulletY, this.x - bulletX);
                         this.knockback.x = Math.cos(angle) * 3;
                         this.knockback.y = Math.sin(angle) * 3;
                         this.knockback.duration = 5;
+
+                        gameState.totalAccuracy++;
+                        gameState.waveHits++;
 
                         if (this.health <= 0) {
                             this.alive = false;
@@ -2279,12 +2486,31 @@
                     },
 
                     draw() {
+                        if (!this.spawned) {
+                            ctx.globalAlpha = this.spawnProgress;
+                        }
+
+                        ctx.save();
+                        
+                        if (this.isHit) {
+                            ctx.globalAlpha = 0.5;
+                            ctx.fillStyle = 'rgba(255, 0, 0, 0.3)';
+                            ctx.fillRect(this.x - 70, this.y - 70, 140, 140);
+                        }
+
+                        const breathing = Math.sin(this.breathing) * 0.05 + 0.95;
+                        ctx.translate(this.x, this.y);
+                        ctx.scale(breathing, breathing);
+
                         if (this.bossImg.complete && this.bossImg.naturalHeight !== 0) {
-                            ctx.drawImage(this.bossImg, this.x - 70, this.y - 70, this.width, this.height);
+                            ctx.drawImage(this.bossImg, -70, -70, 140, 140);
                         } else {
                             ctx.fillStyle = '#8B4513';
-                            ctx.fillRect(this.x - 70, this.y - 70, this.width, this.height);
+                            ctx.fillRect(-70, -70, 140, 140);
                         }
+
+                        ctx.restore();
+                        ctx.globalAlpha = 1;
 
                         ctx.fillStyle = '#333';
                         ctx.fillRect(this.x - 70, this.y - 90, 140, 8);
@@ -2310,6 +2536,16 @@
             setTimeout(() => text.remove(), 800);
         }
 
+        function showComboMultiplier(x, y, text) {
+            const el = document.createElement('div');
+            el.className = 'combo-multiplier-text';
+            el.textContent = `✨ ${text} МОЛОКА!`;
+            el.style.left = (x - 40) + 'px';
+            el.style.top = (y - 70) + 'px';
+            document.getElementById('gameCanvas').parentElement.appendChild(el);
+            setTimeout(() => el.remove(), 800);
+        }
+
         // ============ ПУЛИ ============
         let bullets = [];
         let enemyBullets = [];
@@ -2333,16 +2569,36 @@
 
         function updatePauseInfoPanel() {
             document.getElementById('totalMilk').textContent = gameState.milk;
+            document.getElementById('waveMilk').textContent = gameState.waveStats.milkThisWave;
             document.getElementById('totalScore').textContent = gameState.score;
             document.getElementById('maxWaveInfo').textContent = gameState.maxWave;
             document.getElementById('killsInfo').textContent = gameState.kills;
             document.getElementById('maxComboInfo').textContent = gameState.maxCombo;
+            
+            const accuracy = gameState.waveShots > 0 ? Math.round((gameState.waveHits / gameState.waveShots) * 100) : 0;
+            document.getElementById('accuracyInfo').textContent = accuracy + '%';
+            
+            const comboMultiplier = getComboMultiplier(gameState.combo);
+            document.getElementById('comboMultiplierInfo').textContent = `x${comboMultiplier}`;
+        }
+
+        function getComboMultiplier(combo) {
+            if (combo >= 10) return '2.0';
+            if (combo >= 5) return '1.5';
+            if (combo >= 3) return '1.25';
+            return '1.0';
         }
 
         function showWavePause() {
             gameState.isPaused = true;
             document.getElementById('wavePauseScreen').style.display = 'block';
             document.getElementById('pauseOverlay').classList.add('active');
+            
+            const timeTaken = Math.round((Date.now() - gameState.waveStats.waveStartTime) / 1000);
+            const accuracy = gameState.waveShots > 0 ? Math.round((gameState.waveHits / gameState.waveShots) * 100) : 0;
+            
+            document.getElementById('wavePauseText').textContent = `Волна ${gameState.currentWave} завершена!`;
+            document.getElementById('waveStats').textContent = `⏱️ ${timeTaken}сек | 🎯 Точность: ${accuracy}% | 💰 Молока: ${gameState.waveStats.milkThisWave}`;
         }
 
         function startNextWave() {
@@ -2359,10 +2615,10 @@
             createWave(gameState.currentWave);
         }
 
-        function getBackgroundColor(wave) {
-            if (wave <= 5) return '#87CEEB';
-            if (wave <= 10) return '#90EE90';
-            return '#4A4A6A';
+        function getBackgroundImage(wave) {
+            if (wave <= 5) return images.house;
+            if (wave <= 10) return images.garden;
+            return images.room;
         }
 
         function createWave(waveNum) {
@@ -2373,6 +2629,8 @@
             bossActive = false;
             gameState.combo = 0;
             waveEnemySpawnCount = 0;
+            gameState.waveShots = 0;
+            gameState.waveHits = 0;
             gameState.waveStats = {
                 waveStartTime: Date.now(),
                 damageReceivedThisWave: 0,
@@ -2386,6 +2644,7 @@
             document.getElementById('bonusIndicator').textContent = gameState.waveBonus.name;
             document.getElementById('bonusIndicator').style.display = 'inline';
 
+            currentBgImage = getBackgroundImage(waveNum);
             showWaveTitleDisplay(`ВОЛНА ${waveNum}`);
 
             if (waveNum % 5 === 0) {
@@ -2444,7 +2703,7 @@
             display.style.display = 'block';
             setTimeout(() => {
                 display.style.display = 'none';
-            }, 600);
+            }, 800);
         }
 
         function updateBoostersIndicator() {
@@ -2475,6 +2734,18 @@
             });
         }
 
+        function updateSidePanel() {
+            if (!isMobile) return;
+
+            const accuracy = gameState.waveShots > 0 ? Math.round((gameState.waveHits / gameState.waveShots) * 100) : 0;
+            const multiplier = getComboMultiplier(gameState.combo);
+
+            document.getElementById('sidePanelAccuracy').textContent = accuracy + '%';
+            document.getElementById('sidePanelCombo').textContent = gameState.combo + 'x';
+            document.getElementById('sidePanelMultiplier').textContent = `x${multiplier}`;
+            document.getElementById('sidePanelWaveMilk').textContent = gameState.waveStats.milkThisWave;
+        }
+
         // ============ МАГАЗИН ============
         function toggleShop() {
             const panel = document.getElementById('shopPanel');
@@ -2498,11 +2769,11 @@
             }
         }
 
-        function upgradeFireRate() {
-            const cost = gameState.upgrades.fireRate.baseCost * gameState.upgrades.fireRate.level;
+        function upgradeBulletCount() {
+            const cost = gameState.upgrades.bulletCount.baseCost * gameState.upgrades.bulletCount.level;
             if (gameState.milk >= cost) {
                 gameState.milk -= cost;
-                gameState.upgrades.fireRate.level++;
+                gameState.upgrades.bulletCount.level++;
                 saveGameData();
                 updateUI();
             }
@@ -2564,20 +2835,21 @@
             document.getElementById('waveCounter').textContent = gameState.currentWave;
             
             const damageCost = gameState.upgrades.damage.baseCost * gameState.upgrades.damage.level;
-            const fireRateCost = gameState.upgrades.fireRate.baseCost * gameState.upgrades.fireRate.level;
+            const bulletCountCost = gameState.upgrades.bulletCount.baseCost * gameState.upgrades.bulletCount.level;
             const bulletCost = gameState.upgrades.bulletSize.baseCost * gameState.upgrades.bulletSize.level;
             const healthCost = gameState.upgrades.health.baseCost * gameState.upgrades.health.level;
 
             document.getElementById('damageCost').textContent = damageCost + '🥛';
-            document.getElementById('fireRateCost').textContent = fireRateCost + '🥛';
+            document.getElementById('bulletCountCost').textContent = bulletCountCost + '🥛';
             document.getElementById('bulletCost').textContent = bulletCost + '🥛';
             document.getElementById('healthCost').textContent = healthCost + '🥛';
 
             document.getElementById('damageBtn').disabled = gameState.milk < damageCost;
-            document.getElementById('fireRateBtn').disabled = gameState.milk < fireRateCost;
+            document.getElementById('bulletCountBtn').disabled = gameState.milk < bulletCountCost;
             document.getElementById('bulletBtn').disabled = gameState.milk < bulletCost;
             document.getElementById('healthBtn').disabled = gameState.milk < healthCost;
 
+            updateSidePanel();
             checkAchievements();
             checkQuests();
         }
@@ -2670,10 +2942,15 @@
 
         // ============ ОСНОВНОЙ ЦИКЛ ============
         function gameLoop() {
-            const bgColor = getBackgroundColor(gameState.currentWave);
-            ctx.fillStyle = bgColor;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            // Рисуем фон
+            if (currentBgImage.complete && currentBgImage.naturalHeight !== 0) {
+                ctx.drawImage(currentBgImage, 0, 0, canvas.width, canvas.height);
+            } else {
+                ctx.fillStyle = '#87CEEB';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
 
+            // Облака
             ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
             for (let i = 0; i < 5; i++) {
                 const x = (Date.now() / 80 + i * 250) % (canvas.width + 100);
@@ -2756,8 +3033,11 @@
                     }
                 }
 
+                // ПРОВЕРКА ЗАВЕРШЕНИЯ ВОЛНЫ - ИСПРАВЛЕНО!
                 const allEnemiesDead = enemies.every(e => !e.alive);
-                if (allEnemiesDead && enemies.length > 0) {
+                const allEnemiesSpawned = waveEnemySpawnCount > 0 || bossActive;
+                
+                if (allEnemiesDead && enemies.length > 0 && allEnemiesSpawned) {
                     const timeTaken = Math.round((Date.now() - gameState.waveStats.waveStartTime) / 1000);
                     
                     WEEKLY_QUESTS.forEach(quest => {
@@ -2787,46 +3067,4 @@
                 }
 
                 for (let bullet of bullets) {
-                    ctx.fillStyle = '#ffff00';
-                    ctx.beginPath();
-                    ctx.arc(bullet.x, bullet.y, bullet.size, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.strokeStyle = 'rgba(255, 255, 0, 0.6)';
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    ctx.arc(bullet.x, bullet.y, bullet.size + 2, 0, Math.PI * 2);
-                    ctx.stroke();
-                }
-
-                for (let bullet of enemyBullets) {
-                    ctx.fillStyle = '#ff6b9d';
-                    ctx.beginPath();
-                    ctx.arc(bullet.x, bullet.y, 3, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.strokeStyle = 'rgba(255, 107, 157, 0.6)';
-                    ctx.lineWidth = 1;
-                    ctx.beginPath();
-                    ctx.arc(bullet.x, bullet.y, 5, 0, Math.PI * 2);
-                    ctx.stroke();
-                }
-
-                drawParticles();
-            }
-
-            ctx.restore();
-
-            document.getElementById('healthFill').style.width = (player.health / player.maxHealth * 100) + '%';
-            document.getElementById('score').textContent = gameState.score;
-            document.getElementById('kills').textContent = gameState.kills;
-
-            updateUI();
-            updateFPS();
-
-            requestAnimationFrame(gameLoop);
-        }
-
-        // ============ ИНИЦИАЛИЗАЦИЯ ============
-        updateMenuStats();
-    </script>
-</body>
-</html>
+                    ctx.fillStyle = '#
