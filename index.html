@@ -1478,7 +1478,8 @@
             game.enemiesDefeated = 0;
             game.enemies = [];
             game.shelters = [];
-
+            game.health = game.maxHealth;
+            
             const waveTitleDisplay = document.getElementById('waveTitleDisplay');
             waveTitleDisplay.textContent = `WAVE ${game.wave}`;
             waveTitleDisplay.style.display = 'block';
