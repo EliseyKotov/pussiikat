@@ -1140,13 +1140,13 @@
         function getEnemyStats(wave, isStrong, isBoss = false) {
             if (isBoss) {
                 let speed;
-                if (wave === 5) speed = 0.5;
-                else if (wave === 10) speed = 1.0;
-                else speed = 1.5;
+                if (wave === 5) speed = 0.3;
+                else if (wave === 10) speed = 0.7;
+                else speed = 1.1;
 
                 return {
                     speed: speed,
-                    shootInterval: 50,
+                    shootInterval: 20,
                     health: 300,
                     damage: 15
                 };
