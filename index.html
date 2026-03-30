@@ -1637,16 +1637,16 @@
                 const enemy = game.enemies[i];
                 
                 if (!enemy.isBoss) {
-                    enemy.vx += (Math.random() - 0.5) * 0.5;
-                    enemy.vy += (Math.random() - 0.5) * 0.5;
+                    enemy.vx += (Math.random() - 0.5) * 0.7;
+                    enemy.vy += (Math.random() - 0.5) * 0.7;
                     
                     enemy.vx = Math.max(-3, Math.min(3, enemy.vx));
                     enemy.vy = Math.max(-3, Math.min(3, enemy.vy));
                 } else {
                     // Boss movement
-                    if (Math.random() < 0.02) {
-                        enemy.vx = (Math.random() - 0.5) * enemy.speed * 2;
-                        enemy.vy = (Math.random() - 0.5) * enemy.speed * 2;
+                    if (Math.random() < 0.1) {
+                        enemy.vx = (Math.random() - 0.5) * enemy.speed * 15;
+                        enemy.vy = (Math.random() - 0.5) * enemy.speed * 15;
                     }
                 }
 
