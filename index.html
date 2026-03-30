@@ -243,36 +243,49 @@
             transform: scale(0.9);
         }
 
+        /* ============ IMPROVED PAUSE MENU TABS ============ */
         .pause-menu-tabs {
             display: flex;
-            background: rgba(0, 0, 0, 0.3);
-            border-bottom: 2px solid var(--primary-arc);
+            background: linear-gradient(90deg, rgba(0, 0, 0, 0.5), rgba(0, 217, 255, 0.1));
+            border-bottom: 3px solid var(--primary-arc);
             overflow-x: auto;
+            padding: 0;
         }
 
         .pause-menu-tab {
             flex: 1;
             min-width: 100px;
-            padding: 12px 15px;
+            padding: 14px 16px;
             cursor: pointer;
-            color: var(--primary-arc);
-            border-bottom: 3px solid transparent;
+            color: rgba(0, 217, 255, 0.6);
+            border-bottom: 4px solid transparent;
             text-align: center;
             font-weight: bold;
             font-size: 13px;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             white-space: nowrap;
             touch-action: manipulation;
+            position: relative;
+            text-shadow: 0 0 5px rgba(0, 217, 255, 0.3);
+        }
+
+        .pause-menu-tab:hover {
+            color: var(--primary-arc);
+            text-shadow: 0 0 10px rgba(0, 217, 255, 0.6);
+            background: rgba(0, 217, 255, 0.1);
         }
 
         .pause-menu-tab:active {
             background: rgba(0, 217, 255, 0.2);
+            transform: scale(0.98);
         }
 
         .pause-menu-tab.active {
             color: var(--accent-token);
             border-bottom-color: var(--accent-token);
-            background: rgba(255, 183, 3, 0.1);
+            background: linear-gradient(180deg, rgba(255, 183, 3, 0.15), rgba(255, 183, 3, 0.05));
+            text-shadow: 0 0 15px rgba(255, 183, 3, 0.8);
+            box-shadow: inset 0 -4px 0 var(--accent-token);
         }
 
         .pause-menu-content {
@@ -280,10 +293,17 @@
             overflow-y: auto;
             padding: 20px;
             display: none;
+            background: rgba(0, 0, 0, 0.3);
         }
 
         .pause-menu-content.active {
             display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .pause-section {
@@ -297,6 +317,7 @@
             margin-bottom: 10px;
             border-left: 3px solid var(--primary-arc);
             padding-left: 10px;
+            text-shadow: 0 0 5px rgba(0, 217, 255, 0.4);
         }
 
         .pause-info-item {
@@ -333,10 +354,23 @@
             font-size: 11px;
             transition: all 0.2s;
             touch-action: manipulation;
-            min-height: 80px;
+            min-height: 100px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pause-store-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
+            pointer-events: none;
         }
 
         .pause-store-item.booster {
@@ -354,15 +388,35 @@
             cursor: not-allowed;
         }
 
+        .pause-store-item.purchased {
+            border-color: var(--success-color);
+            background: linear-gradient(135deg, rgba(6, 255, 165, 0.15), rgba(6, 255, 165, 0.05));
+        }
+
         .pause-store-name {
             color: var(--accent-token);
             font-weight: bold;
             margin-bottom: 4px;
             font-size: 12px;
+            position: relative;
+            z-index: 1;
         }
 
         .pause-store-item.booster .pause-store-name {
             color: var(--secondary-arc);
+        }
+
+        .pause-store-item.purchased .pause-store-name {
+            color: var(--success-color);
+        }
+
+        .pause-store-progress {
+            color: var(--success-color);
+            font-weight: bold;
+            font-size: 10px;
+            margin-bottom: 6px;
+            position: relative;
+            z-index: 1;
         }
 
         .pause-store-desc {
@@ -371,6 +425,8 @@
             margin-bottom: 6px;
             line-height: 1.2;
             flex-grow: 1;
+            position: relative;
+            z-index: 1;
         }
 
         .pause-store-cost {
@@ -378,6 +434,8 @@
             font-weight: bold;
             font-size: 11px;
             text-align: right;
+            position: relative;
+            z-index: 1;
         }
 
         /* ============ COMBO DISPLAY ============ */
@@ -756,40 +814,34 @@
          * ========================================
          * ARC RAIDER - BATTLE DRONES GAME
          * ========================================
-         * FINAL VERSION WITH ALL UPDATES:
-         * - NO TRAIL EFFECTS (completely removed)
-         * - Projectile speed starts at 5 (can be upgraded)
-         * - New upgrades: Max Health, Projectile Damage, Projectile Speed
-         * - Removed: Health Pack, Projectile Speed (+20%), Fire Rate, Shield Restore
-         * - Shield: One-time purchase for 100 tokens (adds 50 HP)
-         * - Wave scaling: Progressive enemy difficulty
-         * - Enemy damage scales with waves
-         * - Strong enemies scale with wave
+         * FINAL VERSION WITH:
+         * - Shelter mechanics (wave 5+)
+         * - Boss enemies on waves 5, 10, 15
+         * - Upgrade progress tracking
+         * - Improved pause menu navigation
+         * - No trail effects
          * ========================================
          */
 
         // ==================== GAME CONSTANTS ====================
         const ENEMY_MODELS = ['arc1', 'arc3', 'arc4', 'arc5'];
         const PLAYER_MODEL = 'arcraider';
+        const BOSS_MODEL = 'arcboss';
         
-        // Enemy spawn boundary constants
         const ENEMY_SPAWN_MAX_Y_RATIO = 0.66;
         const SAFE_ZONE_RATIO = 0.85;
 
         // ==================== GAME STATE OBJECT ====================
         const game = {
-            // Canvas and rendering
             canvas: null,
             ctx: null,
             width: 0,
             height: 0,
 
-            // Game flags
             isRunning: true,
             isPaused: false,
             waveStarted: false,
 
-            // Player stats
             maxHealth: 100,
             health: 100,
             tokens: 0,
@@ -798,7 +850,6 @@
             playerRadius: 20,
             playerSpeed: 0,
 
-            // Combat stats
             combo: 0,
             comboTimer: 0,
             comboTimeout: 3000,
@@ -807,34 +858,37 @@
             fireRate: 10,
             fireCounter: 0,
 
-            // Game progression
             wave: 1,
             totalEnemiesInWave: 0,
             enemiesDefeated: 0,
             challengeProgress: 0,
             challengeTarget: 10,
 
-            // Game entities
             enemies: [],
             projectiles: [],
             particles: [],
             shelters: [],
             enemyProjectiles: [],
 
-            // Visual elements
             images: {},
             imagesLoaded: 0,
-            totalImages: 5,
+            totalImages: 6,
 
-            // Protection
             shielded: false,
             shieldHealth: 0,
             shieldMaxHealth: 50,
+            shieldPurchased: false,
 
-            // Active boosters
             activeBoosters: {},
 
-            // Statistics tracking
+            // Upgrade tracking
+            upgradePurchases: {
+                maxhealth: 0,
+                shield: 0,
+                damage: 0,
+                speed: 0
+            },
+
             statistics: {
                 totalTokensEarned: 0,
                 totalEnemiesDefeated: 0,
@@ -858,6 +912,7 @@
                 fn: () => {
                     game.maxHealth += 25;
                     game.health = game.maxHealth;
+                    game.upgradePurchases.maxhealth++;
                 }
             },
             {
@@ -868,6 +923,8 @@
                 fn: () => {
                     game.shielded = true;
                     game.shieldHealth = game.shieldMaxHealth;
+                    game.shieldPurchased = true;
+                    game.upgradePurchases.shield++;
                 }
             },
             {
@@ -877,6 +934,7 @@
                 cost: 150,
                 fn: () => {
                     game.projectileDamage += 5;
+                    game.upgradePurchases.damage++;
                 }
             },
             {
@@ -886,6 +944,7 @@
                 cost: 100,
                 fn: () => {
                     game.projectileSpeed += 2;
+                    game.upgradePurchases.speed++;
                 }
             }
         ];
@@ -941,23 +1000,29 @@
         ];
 
         // ==================== HELPER FUNCTIONS ====================
-        function getEnemyStats(wave, isStrong) {
+        function getEnemyStats(wave, isStrong, isBoss = false) {
+            if (isBoss) {
+                return {
+                    speed: 0.8,
+                    shootInterval: 50,
+                    health: 300,
+                    damage: 15
+                };
+            }
+
             let speed, shootInterval, health, damage;
 
             if (wave <= 5) {
-                // Waves 1-5: медленные враги, редко стреляют
                 speed = 0.5 + wave * 0.15;
                 shootInterval = 100 + Math.random() * 50;
                 health = isStrong ? 30 : 15;
                 damage = 5;
             } else if (wave <= 10) {
-                // Waves 5-10: враги быстрее, стреляют часто
                 speed = 1.2 + wave * 0.2;
                 shootInterval = 60 + Math.random() * 30;
                 health = isStrong ? 40 + (wave - 5) * 5 : 20 + (wave - 5) * 3;
                 damage = 7;
             } else {
-                // Waves 10-15+: сложный уровень
                 speed = 2.2 + wave * 0.3;
                 shootInterval = 40 + Math.random() * 20;
                 health = isStrong ? 50 + (wave - 10) * 8 : 30 + (wave - 10) * 5;
@@ -967,16 +1032,20 @@
             return { speed, shootInterval, health, damage };
         }
 
-        function getEnemyDamage(wave) {
-            if (wave <= 5) return 5;
-            if (wave <= 10) return 7;
-            if (wave <= 15) return 10;
-            return 10 + Math.floor((wave - 15) / 5) * 5;
+        function checkShelterCollision(x, y, radius) {
+            for (const shelter of game.shelters) {
+                // Check if point is within shelter bounds
+                if (x > shelter.x - radius && x < shelter.x + shelter.width + radius &&
+                    y > shelter.y - radius && y < shelter.y + shelter.height + radius) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         // ==================== IMAGE LOADING ====================
         function loadImages() {
-            const images = ['arcraider', 'arc1', 'arc3', 'arc4', 'arc5'];
+            const images = ['arcraider', 'arc1', 'arc3', 'arc4', 'arc5', 'arcboss'];
             images.forEach(name => {
                 const img = new Image();
                 img.onload = () => {
@@ -1127,6 +1196,9 @@
             waveInfo += `Remaining: ${game.enemies.length}<br>`;
             const difficulty = game.wave <= 5 ? 'EASY 🟢' : game.wave <= 10 ? 'MEDIUM 🟡' : 'HARD 🔴';
             waveInfo += `<br>Difficulty: ${difficulty}`;
+            if (game.wave % 5 === 0) {
+                waveInfo += `<br><span style="color: #FF6B00; font-weight: bold;">👹 BOSS WAVE!</span>`;
+            }
             document.getElementById('waveInfo').innerHTML = waveInfo;
 
             let challengeInfo = `Progress: ${game.challengeProgress}/${game.challengeTarget}<br>`;
@@ -1144,16 +1216,37 @@
             upgrades.forEach(upgrade => {
                 const btn = document.createElement('div');
                 btn.className = 'pause-store-item';
+                
+                const totalUpgrade = game.upgradePurchases[upgrade.id] || 0;
+                let progressText = '';
+                
+                if (upgrade.id === 'maxhealth') {
+                    progressText = `✓ +${totalUpgrade * 25} Health`;
+                } else if (upgrade.id === 'shield') {
+                    if (game.shieldPurchased) {
+                        progressText = `✓ PURCHASED`;
+                        btn.classList.add('purchased');
+                    }
+                } else if (upgrade.id === 'damage') {
+                    progressText = `✓ +${totalUpgrade * 5} Damage`;
+                } else if (upgrade.id === 'speed') {
+                    progressText = `✓ +${totalUpgrade * 2} Speed`;
+                }
+
                 btn.innerHTML = `
                     <div class="pause-store-name">${upgrade.name}</div>
+                    ${progressText ? `<div class="pause-store-progress">${progressText}</div>` : ''}
                     <div class="pause-store-desc">${upgrade.desc}</div>
                     <div class="pause-store-cost">💰 ${upgrade.cost}</div>
                 `;
-                btn.disabled = game.tokens < upgrade.cost;
+
+                const isShieldAlreadyPurchased = upgrade.id === 'shield' && game.shieldPurchased;
+                btn.disabled = game.tokens < upgrade.cost || isShieldAlreadyPurchased;
+                
                 if (btn.disabled) btn.style.opacity = '0.5';
                 btn.style.cursor = btn.disabled ? 'not-allowed' : 'pointer';
                 btn.onclick = () => {
-                    if (game.tokens >= upgrade.cost) {
+                    if (game.tokens >= upgrade.cost && !isShieldAlreadyPurchased) {
                         game.tokens -= upgrade.cost;
                         upgrade.fn();
                         game.statistics.upgradePurchases++;
@@ -1216,19 +1309,33 @@
                 waveTitleDisplay.style.display = 'none';
             }, 1000);
 
-            if (game.wave >= 6) {
+            // Add shelter starting from wave 5
+            if (game.wave >= 5) {
+                const shelterWidth = game.width / 4;
+                const shelterX = Math.random() * (game.width - shelterWidth);
+                const shelterY = game.height * 0.5;
+
                 game.shelters.push({
-                    x: game.width / 2 - 40,
-                    y: game.height / 2 - 30,
-                    width: 80,
-                    height: 60
+                    x: shelterX,
+                    y: shelterY,
+                    width: shelterWidth,
+                    height: 15
                 });
             }
 
             const baseEnemies = 3 + game.wave * 2;
-            game.totalEnemiesInWave = baseEnemies;
+            let totalEnemies = baseEnemies;
+            
+            // Boss appears on waves 5, 10, 15
+            const isBossWave = game.wave % 5 === 0;
+            if (isBossWave) {
+                totalEnemies = baseEnemies + 1;
+            }
+
+            game.totalEnemiesInWave = totalEnemies;
             const colors = ['#FF1493', '#00CED1', '#32CD32', '#FFD700'];
 
+            // Spawn regular enemies
             for (let i = 0; i < baseEnemies; i++) {
                 const isStrong = game.wave >= 3 && Math.random() < (0.2 + game.wave * 0.05);
                 const modelName = ENEMY_MODELS[Math.floor(Math.random() * ENEMY_MODELS.length)];
@@ -1251,7 +1358,30 @@
                     model: modelName,
                     shootTimer: 0,
                     shootInterval: stats.shootInterval,
-                    damage: stats.damage
+                    damage: stats.damage,
+                    isBoss: false
+                });
+            }
+
+            // Spawn boss if boss wave
+            if (isBossWave) {
+                const stats = getEnemyStats(game.wave, false, true);
+                game.enemies.push({
+                    x: game.width / 2,
+                    y: game.height * 0.3,
+                    vx: 0,
+                    vy: 0,
+                    speed: stats.speed,
+                    radius: 25,
+                    health: stats.health,
+                    maxHealth: stats.health,
+                    color: '#FF6B00',
+                    isStrong: true,
+                    model: BOSS_MODEL,
+                    shootTimer: 0,
+                    shootInterval: stats.shootInterval,
+                    damage: stats.damage,
+                    isBoss: true
                 });
             }
 
@@ -1332,11 +1462,13 @@
             for (let i = game.enemies.length - 1; i >= 0; i--) {
                 const enemy = game.enemies[i];
                 
-                enemy.vx += (Math.random() - 0.5) * 0.5;
-                enemy.vy += (Math.random() - 0.5) * 0.5;
-                
-                enemy.vx = Math.max(-3, Math.min(3, enemy.vx));
-                enemy.vy = Math.max(-3, Math.min(3, enemy.vy));
+                if (!enemy.isBoss) {
+                    enemy.vx += (Math.random() - 0.5) * 0.5;
+                    enemy.vy += (Math.random() - 0.5) * 0.5;
+                    
+                    enemy.vx = Math.max(-3, Math.min(3, enemy.vx));
+                    enemy.vy = Math.max(-3, Math.min(3, enemy.vy));
+                }
 
                 enemy.x += enemy.vx * slowMultiplier;
                 enemy.y += enemy.vy * slowMultiplier;
@@ -1346,6 +1478,19 @@
                 if (enemy.x > game.width - enemy.radius) enemy.x = game.width - enemy.radius;
                 if (enemy.y < enemy.radius) enemy.y = enemy.radius;
                 if (enemy.y > maxY) enemy.y = maxY;
+
+                // Check shelter collision for enemies
+                for (const shelter of game.shelters) {
+                    if (enemy.x > shelter.x && enemy.x < shelter.x + shelter.width &&
+                        enemy.y > shelter.y - enemy.radius && enemy.y < shelter.y + shelter.height + enemy.radius) {
+                        // Bounce back from shelter
+                        enemy.vx = -enemy.vx;
+                        enemy.vy = -enemy.vy;
+                        enemy.x = enemy.x > shelter.x + shelter.width / 2 ? 
+                            shelter.x + shelter.width + enemy.radius : 
+                            shelter.x - enemy.radius;
+                    }
+                }
 
                 enemy.shootTimer++;
                 if (enemy.shootTimer >= enemy.shootInterval) {
@@ -1369,6 +1514,12 @@
                 proj.x += proj.vx;
                 proj.y += proj.vy;
 
+                // Check shelter collision for projectiles
+                if (checkShelterCollision(proj.x, proj.y, proj.radius)) {
+                    game.projectiles.splice(i, 1);
+                    continue;
+                }
+
                 if (proj.x < 0 || proj.x > game.width || proj.y < 0 || proj.y > game.height) {
                     game.projectiles.splice(i, 1);
                     continue;
@@ -1391,7 +1542,7 @@
                             game.combo++;
                             game.comboTimer = game.comboTimeout;
 
-                            const baseReward = enemy.isStrong ? 50 : 25;
+                            const baseReward = enemy.isBoss ? 500 : (enemy.isStrong ? 50 : 25);
                             const reward = Math.floor(baseReward * (1 + game.combo * 0.1));
                             game.tokens += reward;
                             game.enemiesDefeated++;
@@ -1419,6 +1570,12 @@
                 const proj = game.enemyProjectiles[i];
                 proj.x += proj.vx;
                 proj.y += proj.vy;
+
+                // Check shelter collision for enemy projectiles
+                if (checkShelterCollision(proj.x, proj.y, proj.radius)) {
+                    game.enemyProjectiles.splice(i, 1);
+                    continue;
+                }
 
                 if (proj.x < 0 || proj.x > game.width || proj.y < 0 || proj.y > game.height) {
                     game.enemyProjectiles.splice(i, 1);
@@ -1475,17 +1632,29 @@
 
         // ==================== RENDERING ====================
         function draw() {
-            // CLEAR CANVAS COMPLETELY - NO TRAIL EFFECTS
+            // CLEAR CANVAS COMPLETELY
             game.ctx.fillStyle = 'rgba(135, 206, 235, 1)';
             game.ctx.fillRect(0, 0, game.width, game.height);
 
             // Draw shelters
-            game.ctx.fillStyle = 'rgba(100, 100, 100, 0.5)';
-            game.ctx.strokeStyle = '#888888';
-            game.ctx.lineWidth = 3;
             for (const shelter of game.shelters) {
+                // Shelter glow
+                game.ctx.shadowColor = 'rgba(0, 217, 255, 0.6)';
+                game.ctx.shadowBlur = 15;
+                game.ctx.fillStyle = 'rgba(0, 217, 255, 0.3)';
                 game.ctx.fillRect(shelter.x, shelter.y, shelter.width, shelter.height);
+                
+                // Shelter border
+                game.ctx.shadowColor = 'transparent';
+                game.ctx.strokeStyle = '#00D9FF';
+                game.ctx.lineWidth = 3;
                 game.ctx.strokeRect(shelter.x, shelter.y, shelter.width, shelter.height);
+
+                // Shelter pattern
+                game.ctx.fillStyle = 'rgba(0, 217, 255, 0.2)';
+                for (let i = 0; i < shelter.width; i += 10) {
+                    game.ctx.fillRect(shelter.x + i, shelter.y, 5, shelter.height);
+                }
             }
 
             // Draw enemies
@@ -1501,9 +1670,10 @@
                     game.ctx.fill();
                 }
 
-                if (enemy.isStrong) {
-                    game.ctx.strokeStyle = '#FFFF00';
-                    game.ctx.lineWidth = 3;
+                if (enemy.isStrong || enemy.isBoss) {
+                    const glowColor = enemy.isBoss ? '#FF6B00' : '#FFFF00';
+                    game.ctx.strokeStyle = glowColor;
+                    game.ctx.lineWidth = enemy.isBoss ? 5 : 3;
                     game.ctx.beginPath();
                     game.ctx.arc(enemy.x, enemy.y, enemy.radius, 0, Math.PI * 2);
                     game.ctx.stroke();
@@ -1515,6 +1685,12 @@
                 game.ctx.strokeStyle = '#fff';
                 game.ctx.lineWidth = 1;
                 game.ctx.strokeRect(enemy.x - 15, enemy.y - 30, 30, 4);
+
+                if (enemy.isBoss) {
+                    game.ctx.fillStyle = '#FF6B00';
+                    game.ctx.font = 'bold 14px Arial';
+                    game.ctx.fillText('BOSS', enemy.x - 20, enemy.y - 40);
+                }
             }
 
             // Draw player projectiles
