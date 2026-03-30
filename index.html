@@ -73,34 +73,6 @@
             image-rendering: crisp-edges;
         }
 
-        /* ============ PAUSE BUTTON ============ */
-        .pause-btn {
-            position: absolute;
-            top: max(15px, var(--safe-top));
-            left: max(15px, var(--safe-left));
-            background: rgba(0, 217, 255, 0.3);
-            border: 3px solid var(--primary-arc);
-            padding: 10px 14px;
-            border-radius: 8px;
-            font-size: 24px;
-            cursor: pointer;
-            z-index: 104;
-            transition: all 0.2s;
-            touch-action: manipulation;
-            min-width: 48px;
-            min-height: 48px;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 15px rgba(0, 217, 255, 0.3);
-        }
-
-        .pause-btn:active {
-            background: rgba(0, 217, 255, 0.7);
-            transform: scale(0.95);
-        }
-
         /* ============ PAUSE OVERLAY ============ */
         .pause-overlay {
             position: absolute;
@@ -112,215 +84,6 @@
             display: none;
             z-index: 102;
             backdrop-filter: blur(5px);
-        }
-
-        /* ============ PAUSE MENU ============ */
-        .pause-menu {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: linear-gradient(135deg, rgba(10, 14, 39, 0.98), rgba(30, 20, 60, 0.98));
-            backdrop-filter: blur(10px);
-            border: 4px solid var(--accent-token);
-            border-radius: 15px;
-            z-index: 151;
-            display: none;
-            max-width: 90vw;
-            max-height: 90vh;
-            box-shadow: 0 0 40px rgba(255, 183, 3, 0.4);
-            animation: slideIn 0.3s ease-out;
-            overflow: hidden;
-            flex-direction: column;
-        }
-
-        .pause-menu {
-            display: flex !important;
-        }
-
-        .pause-menu.active {
-            display: flex !important;
-        }
-
-        .pause-menu-header {
-            background: rgba(255, 183, 3, 0.1);
-            border-bottom: 2px solid var(--accent-token);
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            min-height: 50px;
-        }
-
-        .pause-menu-title {
-            color: var(--accent-token);
-            font-size: 1.5em;
-            font-weight: bold;
-            text-shadow: 0 0 10px var(--accent-token);
-        }
-
-        .pause-close-btn {
-            background: var(--secondary-arc);
-            color: white;
-            border: 2px solid #ff0000;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 24px;
-            font-weight: bold;
-            transition: all 0.2s;
-            touch-action: manipulation;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 44px;
-            min-width: 44px;
-        }
-
-        .pause-close-btn:active {
-            transform: scale(0.9);
-        }
-
-        .pause-menu-tabs {
-            display: flex;
-            background: rgba(0, 0, 0, 0.3);
-            border-bottom: 2px solid var(--primary-arc);
-            overflow-x: auto;
-        }
-
-        .pause-menu-tab {
-            flex: 1;
-            min-width: 100px;
-            padding: 12px 15px;
-            cursor: pointer;
-            color: var(--primary-arc);
-            border-bottom: 3px solid transparent;
-            text-align: center;
-            font-weight: bold;
-            font-size: 13px;
-            transition: all 0.2s;
-            white-space: nowrap;
-            touch-action: manipulation;
-        }
-
-        .pause-menu-tab:active {
-            background: rgba(0, 217, 255, 0.2);
-        }
-
-        .pause-menu-tab.active {
-            color: var(--accent-token);
-            border-bottom-color: var(--accent-token);
-            background: rgba(255, 183, 3, 0.1);
-        }
-
-        .pause-menu-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            display: none;
-        }
-
-        .pause-menu-content.active {
-            display: block;
-        }
-
-        .pause-section {
-            margin-bottom: 20px;
-        }
-
-        .pause-section-title {
-            color: var(--primary-arc);
-            font-weight: bold;
-            font-size: 13px;
-            margin-bottom: 10px;
-            border-left: 3px solid var(--primary-arc);
-            padding-left: 10px;
-        }
-
-        .pause-info-item {
-            background: rgba(0, 217, 255, 0.1);
-            border-left: 3px solid var(--primary-arc);
-            padding: 10px;
-            margin-bottom: 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            color: #fff;
-        }
-
-        .pause-info-label {
-            color: var(--accent-token);
-            font-weight: bold;
-            display: inline-block;
-            min-width: 100px;
-        }
-
-        /* ============ STORE IN PAUSE MENU ============ */
-        .pause-store-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 12px;
-        }
-
-        .pause-store-item {
-            background: linear-gradient(135deg, rgba(255, 183, 3, 0.15), rgba(255, 183, 3, 0.05));
-            border: 2px solid var(--accent-token);
-            color: #fff;
-            padding: 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 11px;
-            transition: all 0.2s;
-            touch-action: manipulation;
-            min-height: 80px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .pause-store-item.booster {
-            border-color: var(--secondary-arc);
-            background: linear-gradient(135deg, rgba(255, 0, 110, 0.15), rgba(255, 0, 110, 0.05));
-        }
-
-        .pause-store-item:active:not(:disabled) {
-            background: linear-gradient(135deg, rgba(255, 183, 3, 0.4), rgba(255, 183, 3, 0.2));
-            transform: scale(0.98);
-        }
-
-        .pause-store-item.booster:active:not(:disabled) {
-            background: linear-gradient(135deg, rgba(255, 0, 110, 0.4), rgba(255, 0, 110, 0.2));
-        }
-
-        .pause-store-item:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        .pause-store-name {
-            color: var(--accent-token);
-            font-weight: bold;
-            margin-bottom: 4px;
-            font-size: 12px;
-        }
-
-        .pause-store-item.booster .pause-store-name {
-            color: var(--secondary-arc);
-        }
-
-        .pause-store-desc {
-            color: #aaa;
-            font-size: 10px;
-            margin-bottom: 6px;
-            line-height: 1.2;
-            flex-grow: 1;
-        }
-
-        .pause-store-cost {
-            color: var(--accent-token);
-            font-weight: bold;
-            font-size: 11px;
-            text-align: right;
         }
 
         /* ============ TOP ACHIEVEMENTS PANEL ============ */
@@ -724,47 +487,10 @@
             50% { transform: translateX(20px); }
         }
 
-        /* ============ BOTTOM CONTROLS ============ */
-        .bottom-controls {
-            position: absolute;
-            bottom: max(10px, var(--safe-bottom));
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
-            z-index: 100;
-            pointer-events: auto;
-        }
-
-        .control-btn {
-            background: rgba(0, 217, 255, 0.3);
-            border: 3px solid var(--primary-arc);
-            color: var(--primary-arc);
-            padding: 12px 18px;
-            border-radius: 8px;
-            font-size: 13px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.2s;
-            touch-action: manipulation;
-            min-width: 50px;
-            min-height: 48px;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 10px rgba(0, 217, 255, 0.2);
-        }
-
-        .control-btn:active {
-            background: rgba(0, 217, 255, 0.7);
-            transform: scale(0.95);
-        }
-
         /* ============ SHOP ============ */
         .shop-toggle {
             position: absolute;
-            bottom: max(70px, calc(70px + var(--safe-bottom)));
+            bottom: max(15px, calc(15px + var(--safe-bottom)));
             right: max(15px, var(--safe-right));
             background: rgba(255, 183, 3, 0.3);
             border: 3px solid var(--accent-token);
@@ -1118,10 +844,6 @@
             animation: slideIn 0.3s ease-out;
         }
 
-        .skins-panel.open {
-            display: block;
-        }
-
         .skins-panel h1 {
             color: var(--accent-token);
             text-align: center;
@@ -1277,25 +999,6 @@
             .swipe-hint {
                 display: flex;
             }
-
-            .bottom-controls {
-                gap: 8px;
-            }
-
-            .control-btn {
-                padding: 10px 14px;
-                font-size: 12px;
-                min-width: 45px;
-            }
-
-            .pause-menu {
-                max-width: 95vw;
-                max-height: 85vh;
-            }
-
-            .pause-store-grid {
-                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            }
         }
     </style>
 </head>
@@ -1303,226 +1006,121 @@
     <div id="gameContainer">
         <canvas id="gameCanvas"></canvas>
 
-        <!-- Pause Button -->
-        <button class="pause-btn" id="pauseBtn">⏸</button>
-
-        <!-- Pause Overlay -->
-        <div class="pause-overlay" id="pauseOverlay"></div>
-
-        <!-- Pause Menu -->
-        <div class="pause-menu" id="pauseMenu">
-            <div class="pause-menu-header">
-                <div class="pause-menu-title">PAUSED</div>
-                <button class="pause-close-btn" id="pauseCloseBtn">✕</button>
-            </div>
-            <div class="pause-menu-tabs">
-                <div class="pause-menu-tab active" data-tab="stats">📊 Stats</div>
-                <div class="pause-menu-tab" data-tab="waves">🌊 Waves</div>
-                <div class="pause-menu-tab" data-tab="challenges">⚡ Challenges</div>
-                <div class="pause-menu-tab" data-tab="store">🛒 Store</div>
-            </div>
-            <div class="pause-menu-content active" id="tab-stats">
-                <div class="pause-section">
-                    <div class="pause-section-title">GAME STATUS</div>
-                    <div class="pause-info-item">
-                        <span class="pause-info-label">Score:</span>
-                        <span id="pauseScore">0</span>
-                    </div>
-                    <div class="pause-info-item">
-                        <span class="pause-info-label">Wave:</span>
-                        <span id="pauseWave">1</span>
-                    </div>
-                    <div class="pause-info-item">
-                        <span class="pause-info-label">Health:</span>
-                        <span id="pauseHealth">100/100</span>
-                    </div>
-                    <div class="pause-info-item">
-                        <span class="pause-info-label">Tokens:</span>
-                        <span id="pauseTokens">0</span>
-                    </div>
-                </div>
-
-                <div class="pause-section">
-                    <div class="pause-section-title">ACHIEVEMENTS</div>
-                    <div id="pauseAchievements" style="color: #fff; font-size: 12px;">
-                        <em>No achievements yet</em>
-                    </div>
-                </div>
-            </div>
-
-            <div class="pause-menu-content" id="tab-waves">
-                <div class="pause-section">
-                    <div class="pause-section-title">WAVE INFORMATION</div>
-                    <div id="waveInfo" style="color: #fff; font-size: 12px; line-height: 1.6;">
-                        <em>Loading wave info...</em>
-                    </div>
-                </div>
-            </div>
-
-            <div class="pause-menu-content" id="tab-challenges">
-                <div class="pause-section">
-                    <div class="pause-section-title">ACTIVE CHALLENGES</div>
-                    <div id="challengeInfo" style="color: #fff; font-size: 12px; line-height: 1.6;">
-                        <em>No active challenges</em>
-                    </div>
-                </div>
-            </div>
-
-            <div class="pause-menu-content" id="tab-store">
-                <div class="pause-section">
-                    <div class="pause-section-title">UPGRADES</div>
-                    <div class="pause-store-grid" id="pauseStoreUpgrades"></div>
-                </div>
-                <div class="pause-section">
-                    <div class="pause-section-title">BOOSTERS</div>
-                    <div class="pause-store-grid" id="pauseStoreBoosters"></div>
-                </div>
-            </div>
+        <div class="wave-info-panel" id="waveInfoPanel">
+            Wave <span id="waveNumPanel">1</span>
+            <span class="wave-difficulty" id="waveDifficultyPanel">EASY</span>
+            <span class="threat-indicator">⚠️</span>
         </div>
 
-        <!-- Top Achievements Panel -->
+        <div class="record-panel">
+            <div class="record-item">🏆 Record: <span id="recordScore">0</span></div>
+            <div class="record-item">⭐ Wave: <span id="recordWave">1</span></div>
+        </div>
+
         <div class="achievements-panel" id="achievementsPanel"></div>
 
-        <!-- Combo Display -->
-        <div class="combo-display" id="comboDisplay"></div>
-
-        <!-- Wave Title Display -->
-        <div class="wave-title-display" id="waveTitleDisplay"></div>
-
-        <!-- Wave Info Panel -->
-        <div class="wave-info-panel" id="waveInfoPanel">
-            <div>Wave: <span id="waveNumber">1</span></div>
-            <div class="threat-indicator" id="threatIndicator"></div>
-        </div>
-
-        <!-- Record Panel -->
-        <div class="record-panel" id="recordPanel">
-            <div class="record-item">🏆 Best: <span id="recordScore">0</span></div>
-        </div>
-
-        <!-- HUD -->
         <div class="hud" id="hud">
             <div class="hud-item">
-                <span class="hud-label">Health:</span>
+                <span class="hud-label">❤️ Health</span>
                 <div class="health-bar">
                     <div class="health-fill" id="healthFill" style="width: 100%"></div>
                 </div>
             </div>
             <div class="hud-item">
-                <span class="hud-label">Combo:</span>
+                <span class="hud-label">⚔️ Combo</span>
                 <span class="hud-value" id="comboValue">0</span>
             </div>
+            <div class="hud-item">
+                <span class="hud-label">💰 Tokens</span>
+                <span class="hud-value" id="tokensValue">0</span>
+            </div>
         </div>
 
-        <!-- FPS Counter -->
-        <div class="fps-counter" id="fpsCounter">FPS: 60</div>
+        <div class="fps-counter" id="fpsCounter">60 FPS</div>
 
-        <!-- Score Board -->
         <div class="score-board" id="scoreBoard">
             <div class="score-item">
-                <span class="score-label">SCORE</span>
-                <span class="score-value" id="scoreValue">0</span>
+                <span class="score-label">📊 SCORE</span>
+                <div class="score-value" id="scoreValue">0</div>
             </div>
             <div class="score-item">
-                <span class="score-label">TOKENS</span>
-                <span class="score-value" id="tokenValue">0</span>
+                <span class="score-label">🌊 WAVE</span>
+                <div class="score-value" id="waveValue">1</div>
             </div>
         </div>
 
-        <!-- Challenge HUD -->
-        <div class="challenge-hud" id="challengeHud">
+        <div class="challenge-hud" id="challengeHud" style="display: none;">
             <div class="challenge-title">CHALLENGE</div>
             <div class="challenge-progress-bar">
                 <div class="challenge-progress-fill" id="challengeProgress" style="width: 0%"></div>
             </div>
-            <div class="challenge-text" id="challengeText">Kill 10 enemies</div>
+            <div class="challenge-text" id="challengeText">0/10</div>
         </div>
 
-        <!-- Boosters Display -->
         <div class="boosters-display" id="boostersDisplay"></div>
 
-        <!-- Swipe Hint -->
-        <div class="swipe-hint" id="swipeHint">
-            <span class="swipe-arrow left">◀</span>
-            <span class="swipe-arrow right">▶</span>
-        </div>
+        <div class="combo-display" id="comboDisplay"></div>
 
-        <!-- Bottom Controls -->
-        <div class="bottom-controls" id="bottomControls">
-            <button class="control-btn" id="leftBtn">◀ LEFT</button>
-            <button class="control-btn" id="rightBtn">RIGHT ▶</button>
-        </div>
+        <div class="wave-title-display" id="waveTitleDisplay"></div>
 
-        <!-- Shop Toggle -->
-        <button class="shop-toggle" id="shopToggle">🛍</button>
+        <div class="shop-toggle" id="shopToggle">🛒</div>
 
-        <!-- Shop Panel -->
         <div class="shop-panel" id="shopPanel">
-            <div class="shop-title">SHOP</div>
+            <div class="shop-title">STORE</div>
             <div class="shop-section">
-                <div class="shop-section-title">UPGRADES</div>
-                <div id="upgradesContainer"></div>
+                <div class="shop-section-title">⚡ UPGRADES</div>
+                <div id="upgrades-container"></div>
             </div>
             <div class="shop-section">
-                <div class="shop-section-title">BOOSTERS</div>
-                <div id="boostersContainer"></div>
+                <div class="shop-section-title">🚀 BOOSTERS</div>
+                <div id="boosters-container"></div>
             </div>
+            <div class="shop-section">
+                <div class="shop-section-title">🎨 SKINS</div>
+                <div id="skins-container"></div>
+            </div>
+            <button class="close-btn" id="closeShop">✕</button>
         </div>
 
-        <!-- Wave Pause Screen -->
-        <div class="wave-pause-screen" id="wavePauseScreen">
-            <h2 id="wavePauseTitle">Wave 1</h2>
-            <p>Prepare for battle!</p>
-            <button class="start-wave-btn" onclick="startWave()">START WAVE</button>
-        </div>
+        <div class="pause-overlay" id="pauseOverlay"></div>
 
-        <!-- Level Info -->
         <div class="level-info" id="levelInfo">
             <h2>Welcome to Arc Raider</h2>
-            <p>Defeat enemies and earn tokens!</p>
+            <p>🎮 Defend yourself from incoming drones!</p>
+            <p>💎 Collect tokens to buy upgrades</p>
+            <p style="margin-top: 20px; color: var(--primary-arc); font-size: 0.9em;">Get ready...</p>
         </div>
 
-        <!-- Minigame Screen -->
-        <div class="minigame-screen" id="minigameScreen">
-            <div class="minigame-title">Bonus Round!</div>
-            <div class="minigame-hint">Click rapidly!</div>
-            <canvas class="minigame-canvas" id="minigameCanvas" width="400" height="300"></canvas>
-            <div class="minigame-result" id="minigameResult"></div>
-        </div>
-
-        <!-- Skins Panel -->
-        <div class="skins-panel" id="skinsPanel">
-            <button class="close-btn" id="skinsCloseBtn">✕</button>
-            <h1>SELECT YOUR DRONE</h1>
-            <div class="skins-grid" id="skinsGrid"></div>
-        </div>
-
-        <!-- Game Over Screen -->
-        <div class="game-over" id="gameOverScreen">
+        <div class="game-over" id="gameOver">
             <h1>GAME OVER</h1>
             <p>Final Score: <span id="finalScore">0</span></p>
             <p>Waves Survived: <span id="wavesReached">1</span></p>
             <div class="game-over-buttons">
-                <button onclick="location.reload()">RESTART</button>
+                <button onclick="location.reload()">↻ RESTART</button>
             </div>
+        </div>
+
+        <div class="swipe-hint" id="swipeHint">
+            <span class="swipe-arrow left">◀</span>
+            <span class="swipe-arrow right">▶</span>
         </div>
     </div>
 
     <script>
-        // ==================== GAME STATE ====================
+        const ENEMY_MODELS = ['arc1', 'arc3', 'arc4', 'arc5'];
+        const PLAYER_MODEL = 'arcraider';
+
         const game = {
-            isRunning: true,
-            isPaused: false,
             canvas: null,
             ctx: null,
             width: 0,
             height: 0,
+            isRunning: true,
+            isPaused: false,
             score: 0,
             recordScore: 0,
             wave: 1,
             waveStarted: false,
-            totalEnemiesInWave: 0,
-            enemiesDefeated: 0,
             maxHealth: 100,
             health: 100,
             tokens: 0,
@@ -1531,103 +1129,157 @@
             comboTimeout: 3000,
             playerX: 0,
             playerY: 0,
-            playerRadius: 15,
+            playerRadius: 20,
             playerSpeed: 0,
-            playerHealth: 100,
-            playerMaxHealth: 100,
             projectileSpeed: 7,
             fireRate: 10,
             fireCounter: 0,
             activeBoosters: {},
-            boosterTimers: {},
             achievements: [],
-            currentSkin: 'default',
-            skinEmojis: {
-                default: '⭐',
-                fire: '🔥',
-                ice: '❄️',
-                electric: '⚡',
-                diamond: '💎',
-                gold: '👑'
-            },
-            skinStats: {
-                default: { damage: 1, health: 100, name: 'Classic' },
-                fire: { damage: 1.3, health: 85, name: 'Inferno' },
-                ice: { damage: 0.9, health: 120, name: 'Frostbite' },
-                electric: { damage: 1.2, health: 90, name: 'Spark' },
-                diamond: { damage: 1.1, health: 110, name: 'Diamond' },
-                gold: { damage: 1.15, health: 105, name: 'Sovereign' }
-            },
-            skinCosts: {
-                default: 0,
-                fire: 500,
-                ice: 500,
-                electric: 750,
-                diamond: 1000,
-                gold: 1500
-            },
-            ownedSkins: ['default'],
-            shielded: false,
-            shieldHealth: 0,
-            shieldMaxHealth: 50,
             enemies: [],
             projectiles: [],
             particles: [],
             shelters: [],
+            images: {},
+            imagesLoaded: 0,
+            totalImages: 5,
+            fps: 0,
+            frameCount: 0,
+            lastTime: Date.now(),
+            shielded: false,
+            shieldHealth: 0,
+            shieldMaxHealth: 50,
+            currentSkin: 'arcraider',
+            ownedSkins: ['arc', 'arcraider'],
+            skinEmojis: {
+                arc: '🔵',
+                arcraider: '⭐',
+                fire: '🔥',
+                ice: '❄️',
+                electric: '⚡'
+            },
+            skinStats: {
+                arc: { damage: 0.9, health: 90, name: 'Arc' },
+                arcraider: { damage: 1, health: 100, name: 'Arc Raider' },
+                fire: { damage: 1.3, health: 85, name: 'Inferno' },
+                ice: { damage: 0.9, health: 120, name: 'Frostbite' },
+                electric: { damage: 1.2, health: 90, name: 'Spark' }
+            },
+            skinCosts: {
+                arc: 0,
+                arcraider: 0,
+                fire: 500,
+                ice: 500,
+                electric: 750
+            },
             challengeProgress: 0,
             challengeTarget: 10,
-            fps: 60,
-            frameCount: 0,
-            lastTime: Date.now()
+            totalEnemiesInWave: 0,
+            enemiesDefeated: 0
         };
 
         const upgrades = [
-            { id: 'health', name: '❤️ Health Pack', desc: 'Restore 50 HP', cost: 100, fn: () => {
-                game.health = Math.min(game.health + 50, game.maxHealth);
-                showNotification('+50 HP');
-            }},
-            { id: 'damage', name: '💥 Projectile Speed', desc: 'Increase projectile speed by 20%', cost: 200, fn: () => {
-                game.projectileSpeed *= 1.2;
-                showNotification('+20% Speed');
-            }},
-            { id: 'shield', name: '🛡️ Shield', desc: 'Gain 50 shield HP', cost: 150, fn: () => {
-                game.shielded = true;
-                game.shieldHealth = game.shieldMaxHealth;
-                showNotification('+Shield');
-            }},
-            { id: 'firerate', name: '⚡ Fire Rate', desc: 'Increase fire rate', cost: 250, fn: () => {
-                game.fireRate = Math.max(game.fireRate - 2, 2);
-                showNotification('+Fire Rate');
-            }}
+            {
+                id: 'health',
+                name: '❤️ Health Pack',
+                desc: 'Restore 50 HP',
+                cost: 100,
+                fn: () => {
+                    game.health = Math.min(game.health + 50, game.maxHealth);
+                    showBonusNotification('+50 HP');
+                }
+            },
+            {
+                id: 'damage',
+                name: '💥 Projectile Speed',
+                desc: 'Increase projectile speed +20%',
+                cost: 200,
+                fn: () => {
+                    game.projectileSpeed *= 1.2;
+                    showBonusNotification('+Projectile Speed');
+                }
+            },
+            {
+                id: 'shield',
+                name: '🛡️ Shield',
+                desc: 'Gain 50 shield HP',
+                cost: 150,
+                fn: () => {
+                    game.shielded = true;
+                    game.shieldHealth = game.shieldMaxHealth;
+                    showBonusNotification('+Shield');
+                }
+            },
+            {
+                id: 'firerate',
+                name: '⚡ Fire Rate',
+                desc: 'Increase fire rate',
+                cost: 250,
+                fn: () => {
+                    game.fireRate = Math.max(game.fireRate - 2, 2);
+                    showBonusNotification('+Fire Rate');
+                }
+            }
         ];
 
         const boosters = [
-            { id: 'rapid', name: '🚀 Rapid Fire', desc: 'Triple fire rate for 10s', cost: 300, duration: 10000, fn: () => {
-                game.fireRate *= 3;
-            }, fnEnd: () => {
-                game.fireRate /= 3;
-            }},
-            { id: 'slow', name: '❄️ Time Slow', desc: 'Slow enemies for 8s', cost: 300, duration: 8000, fn: () => {
-                // Enemies slow multiplier handled in update
-            }, fnEnd: () => {
-                // Reset
-            }},
-            { id: 'dmg', name: '💣 Damage +', desc: 'Double projectile damage for 12s', cost: 350, duration: 12000, fn: () => {
-                // Damage multiplier applied on hit
-            }, fnEnd: () => {
-                // Reset
-            }}
+            {
+                id: 'rapid',
+                name: '🚀 Rapid Fire',
+                desc: 'Triple fire rate for 10s',
+                cost: 300,
+                duration: 10000,
+                fn: () => {
+                    game.fireRate *= 3;
+                },
+                fnEnd: () => {
+                    game.fireRate /= 3;
+                }
+            },
+            {
+                id: 'slow',
+                name: '❄️ Time Slow',
+                desc: 'Slow enemies for 8s',
+                cost: 300,
+                duration: 8000,
+                fn: () => {},
+                fnEnd: () => {}
+            },
+            {
+                id: 'dmg',
+                name: '💣 Damage +',
+                desc: 'Double projectile damage for 12s',
+                cost: 350,
+                duration: 12000,
+                fn: () => {},
+                fnEnd: () => {}
+            }
         ];
 
-        // ==================== INITIALIZATION ====================
+        function loadImages() {
+            const images = ['arcraider', 'arc1', 'arc3', 'arc4', 'arc5'];
+            images.forEach(name => {
+                const img = new Image();
+                img.onload = () => {
+                    game.imagesLoaded++;
+                };
+                img.onerror = () => {
+                    game.imagesLoaded++;
+                };
+                img.src = name + '.png';
+                game.images[name] = img;
+            });
+        }
+
         function init() {
             game.canvas = document.getElementById('gameCanvas');
             game.ctx = game.canvas.getContext('2d');
             resizeCanvas();
+            loadImages();
+
             game.playerX = game.width / 2;
             game.playerY = game.height * 0.85;
-            game.playerHealth = game.maxHealth;
-            initSkins();
+
             setupEventListeners();
             renderShop();
             showLevelInfo();
@@ -1645,47 +1297,46 @@
             window.addEventListener('resize', resizeCanvas);
             document.addEventListener('keydown', handleKeyDown);
             document.addEventListener('keyup', handleKeyUp);
+            
+            // CANVAS CLICK/TOUCH FOR SHOOTING
+            game.canvas.addEventListener('click', handleCanvasClick);
+            game.canvas.addEventListener('touchend', handleCanvasTouch);
 
-            // Touch/Mouse controls
-            const leftBtn = document.getElementById('leftBtn');
-            const rightBtn = document.getElementById('rightBtn');
-
-            leftBtn.addEventListener('mousedown', () => { game.playerSpeed = -5; });
-            leftBtn.addEventListener('touchstart', (e) => { e.preventDefault(); game.playerSpeed = -5; });
-            leftBtn.addEventListener('mouseup', () => { game.playerSpeed = 0; });
-            leftBtn.addEventListener('touchend', (e) => { e.preventDefault(); game.playerSpeed = 0; });
-            leftBtn.addEventListener('mouseleave', () => { game.playerSpeed = 0; });
-
-            rightBtn.addEventListener('mousedown', () => { game.playerSpeed = 5; });
-            rightBtn.addEventListener('touchstart', (e) => { e.preventDefault(); game.playerSpeed = 5; });
-            rightBtn.addEventListener('mouseup', () => { game.playerSpeed = 0; });
-            rightBtn.addEventListener('touchend', (e) => { e.preventDefault(); game.playerSpeed = 0; });
-            rightBtn.addEventListener('mouseleave', () => { game.playerSpeed = 0; });
-
-            // Pause button
-            document.getElementById('pauseBtn').addEventListener('click', togglePause);
-            document.getElementById('pauseCloseBtn').addEventListener('click', togglePause);
-
-            // Pause menu tabs
-            const tabs = document.querySelectorAll('.pause-menu-tab');
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    document.querySelectorAll('.pause-menu-tab').forEach(t => t.classList.remove('active'));
-                    document.querySelectorAll('.pause-menu-content').forEach(c => c.classList.remove('active'));
-                    tab.classList.add('active');
-                    const tabName = tab.getAttribute('data-tab');
-                    document.getElementById(`tab-${tabName}`).classList.add('active');
-                });
-            });
-
-            // Shop
             document.getElementById('shopToggle').addEventListener('click', () => {
-                document.getElementById('shopPanel').classList.add('open');
+                document.getElementById('shopPanel').classList.toggle('open');
             });
+            document.getElementById('closeShop').addEventListener('click', () => {
+                document.getElementById('shopPanel').classList.remove('open');
+            });
+        }
 
-            // Skins
-            document.getElementById('skinsCloseBtn').addEventListener('click', () => {
-                document.getElementById('skinsPanel').classList.remove('open');
+        function handleCanvasClick(e) {
+            if (game.isPaused || !game.isRunning) return;
+            const rect = game.canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            fireProjectileTowards(x, y);
+        }
+
+        function handleCanvasTouch(e) {
+            if (game.isPaused || !game.isRunning) return;
+            const rect = game.canvas.getBoundingClientRect();
+            const touch = e.changedTouches[0];
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            fireProjectileTowards(x, y);
+        }
+
+        function fireProjectileTowards(targetX, targetY) {
+            const angle = Math.atan2(targetY - game.playerY, targetX - game.playerX);
+            const speed = game.projectileSpeed;
+            game.projectiles.push({
+                x: game.playerX,
+                y: game.playerY,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                radius: 5,
+                color: '#00D9FF'
             });
         }
 
@@ -1696,9 +1347,7 @@
                 game.playerSpeed = 5;
             } else if (e.key === ' ') {
                 e.preventDefault();
-                fireProjectile();
-            } else if (e.key === 'Escape') {
-                togglePause();
+                game.isPaused = !game.isPaused;
             }
         }
 
@@ -1710,247 +1359,33 @@
             }
         }
 
-        function togglePause() {
-            if (!game.isRunning) return;
-            game.isPaused = !game.isPaused;
-            document.getElementById('pauseMenu').classList.toggle('active');
-            document.getElementById('pauseOverlay').style.display = game.isPaused ? 'block' : 'none';
-            
-            if (game.isPaused) {
-                updatePauseMenu();
-            }
-        }
-
-        function updatePauseMenu() {
-            document.getElementById('pauseScore').textContent = game.score;
-            document.getElementById('pauseWave').textContent = game.wave;
-            document.getElementById('pauseHealth').textContent = `${Math.max(0, game.health)}/${game.maxHealth}`;
-            document.getElementById('pauseTokens').textContent = game.tokens;
-
-            // Wave info
-            let waveInfo = `<strong>Wave ${game.wave}</strong><br>`;
-            waveInfo += `Enemies: ${game.totalEnemiesInWave}<br>`;
-            waveInfo += `Defeated: ${game.enemiesDefeated}<br>`;
-            waveInfo += `Remaining: ${game.enemies.length}<br>`;
-            const difficulty = game.wave <= 3 ? 'EASY' : game.wave <= 6 ? 'MEDIUM' : 'HARD';
-            waveInfo += `Difficulty: <span style="color: ${game.wave <= 3 ? '#06FFA5' : game.wave <= 6 ? '#FFB703' : '#FB5607'};">${difficulty}</span>`;
-            document.getElementById('waveInfo').innerHTML = waveInfo;
-
-            // Achievements
-            const achText = game.achievements.length > 0 ? 
-                game.achievements.map(a => `✓ ${a}`).join('<br>') : 
-                '<em>No achievements yet</em>';
-            document.getElementById('pauseAchievements').innerHTML = achText;
-
-            // Store
-            updatePauseStore();
-        }
-
-        function updatePauseStore() {
-            const upgradesContainer = document.getElementById('pauseStoreUpgrades');
-            const boostersContainer = document.getElementById('pauseStoreBoosters');
-            upgradesContainer.innerHTML = '';
-            boostersContainer.innerHTML = '';
-
-            upgrades.forEach(upgrade => {
-                const btn = document.createElement('div');
-                btn.className = 'pause-store-item';
-                btn.innerHTML = `
-                    <div class="pause-store-name">${upgrade.name}</div>
-                    <div class="pause-store-desc">${upgrade.desc}</div>
-                    <div class="pause-store-cost">💰 ${upgrade.cost}</div>
-                `;
-                btn.disabled = game.tokens < upgrade.cost;
-                if (btn.disabled) btn.style.opacity = '0.5';
-                btn.style.cursor = btn.disabled ? 'not-allowed' : 'pointer';
-                btn.onclick = () => {
-                    if (game.tokens >= upgrade.cost) {
-                        game.tokens -= upgrade.cost;
-                        upgrade.fn();
-                        updatePauseStore();
-                        updateHUD();
-                    }
-                };
-                upgradesContainer.appendChild(btn);
-            });
-
-            boosters.forEach(booster => {
-                const btn = document.createElement('div');
-                btn.className = 'pause-store-item booster';
-                btn.innerHTML = `
-                    <div class="pause-store-name">${booster.name}</div>
-                    <div class="pause-store-desc">${booster.desc}</div>
-                    <div class="pause-store-cost">💰 ${booster.cost}</div>
-                `;
-                btn.disabled = game.tokens < booster.cost || game.activeBoosters[booster.id];
-                if (btn.disabled) btn.style.opacity = '0.5';
-                btn.style.cursor = btn.disabled ? 'not-allowed' : 'pointer';
-                btn.onclick = () => {
-                    if (game.tokens >= booster.cost && !game.activeBoosters[booster.id]) {
-                        game.tokens -= booster.cost;
-                        activateBooster(booster);
-                        updatePauseStore();
-                    }
-                };
-                boostersContainer.appendChild(btn);
-            });
-        }
-
-        function initSkins() {
-            const grid = document.getElementById('skinsGrid');
-            grid.innerHTML = '';
-            
-            for (const [skinKey, emoji] of Object.entries(game.skinEmojis)) {
-                const skinData = game.skinStats[skinKey];
-                const cost = game.skinCosts[skinKey];
-                const isOwned = game.ownedSkins.includes(skinKey);
-                const isActive = game.currentSkin === skinKey;
-
-                const item = document.createElement('div');
-                item.className = 'skin-item';
-                if (isOwned) item.classList.add('owned');
-                if (isActive) item.classList.add('active');
-
-                item.innerHTML = `
-                    <div class="skin-emoji">${emoji}</div>
-                    <div class="skin-name">${skinData.name}</div>
-                    <div class="skin-bonus">DMG: ${skinData.damage}x | HP: ${skinData.health}</div>
-                    <div class="skin-cost">${isOwned ? (isActive ? '✓ ACTIVE' : 'OWNED') : '💰 ' + cost}</div>
-                `;
-
-                item.onclick = () => {
-                    if (isOwned || game.tokens >= cost) {
-                        if (!isOwned) {
-                            game.tokens -= cost;
-                            game.ownedSkins.push(skinKey);
-                        }
-                        selectSkin(skinKey);
-                    }
-                };
-
-                grid.appendChild(item);
-            }
-        }
-
-        function selectSkin(skinKey) {
-            game.currentSkin = skinKey;
-            const stats = game.skinStats[skinKey];
-            game.projectileSpeed = 7 * stats.damage;
-            game.maxHealth = stats.health;
-            game.health = stats.health;
-            game.playerHealth = stats.health;
-            initSkins();
-            document.getElementById('skinsPanel').classList.remove('open');
-            updateHUD();
-        }
-
-        function renderShop() {
-            const upgradesDiv = document.getElementById('upgradesContainer');
-            const boostersDiv = document.getElementById('boostersContainer');
-
-            upgradesDiv.innerHTML = '';
-            boostersDiv.innerHTML = '';
-
-            upgrades.forEach(upgrade => {
-                const item = document.createElement('div');
-                item.className = 'shop-item';
-                item.innerHTML = `
-                    <div class="item-name">${upgrade.name}</div>
-                    <div class="item-desc">${upgrade.desc}</div>
-                    <div class="item-cost">💰 ${upgrade.cost}</div>
-                `;
-                item.disabled = game.tokens < upgrade.cost;
-                item.onclick = () => {
-                    if (game.tokens >= upgrade.cost && !game.isPaused) {
-                        game.tokens -= upgrade.cost;
-                        upgrade.fn();
-                        renderShop();
-                        updateHUD();
-                    }
-                };
-                upgradesDiv.appendChild(item);
-            });
-
-            boosters.forEach(booster => {
-                const item = document.createElement('div');
-                item.className = 'shop-item booster';
-                item.innerHTML = `
-                    <div class="item-name">${booster.name}</div>
-                    <div class="item-desc">${booster.desc}</div>
-                    <div class="item-cost">💰 ${booster.cost}</div>
-                `;
-                item.disabled = game.tokens < booster.cost || game.activeBoosters[booster.id];
-                item.onclick = () => {
-                    if (game.tokens >= booster.cost && !game.activeBoosters[booster.id] && !game.isPaused) {
-                        game.tokens -= booster.cost;
-                        activateBooster(booster);
-                        renderShop();
-                    }
-                };
-                boostersDiv.appendChild(item);
-            });
-        }
-
-        function showLevelInfo() {
-            const levelInfo = document.getElementById('levelInfo');
-            levelInfo.style.display = 'block';
-            setTimeout(() => {
-                levelInfo.style.display = 'none';
-                startWave();
-            }, 3000);
-        }
-
-        // ==================== GAME LOOP ====================
-        function gameLoop() {
-            // FPS Counter
-            game.frameCount++;
-            const now = Date.now();
-            if (now - game.lastTime >= 1000) {
-                game.fps = game.frameCount;
-                document.getElementById('fpsCounter').textContent = `FPS: ${game.fps}`;
-                game.frameCount = 0;
-                game.lastTime = now;
-            }
-
-            if (!game.isPaused) {
-                update();
-            }
-            draw();
-            requestAnimationFrame(gameLoop);
-        }
-
         function update() {
             if (!game.isRunning) return;
 
-            // Update player
             game.playerX += game.playerSpeed;
             game.playerX = Math.max(game.playerRadius, Math.min(game.playerX, game.width - game.playerRadius));
 
-            // Update fire counter
             game.fireCounter++;
             if (game.fireCounter >= game.fireRate) {
-                fireProjectile();
                 game.fireCounter = 0;
             }
 
-            // Update combo
             if (game.comboTimer > 0) {
                 game.comboTimer--;
             } else {
                 game.combo = 0;
             }
 
-            // Update enemies
             const slowMultiplier = game.activeBoosters['slow'] ? 0.5 : 1;
+
             for (let i = game.enemies.length - 1; i >= 0; i--) {
                 const enemy = game.enemies[i];
                 enemy.y += enemy.speed * slowMultiplier;
 
-                // Collect boosters
                 if (enemy.boosterType) {
                     const dist = Math.hypot(enemy.x - game.playerX, enemy.y - game.playerY);
                     if (dist < game.playerRadius + 20) {
-                        collectBooster(enemy.boosterType);
+                        activateBoosterDropped(enemy.boosterType);
                         game.enemies.splice(i, 1);
                         continue;
                     }
@@ -1959,32 +1394,29 @@
                 if (enemy.y > game.height) {
                     game.health -= 10;
                     game.enemies.splice(i, 1);
-                    if (game.health <= 0) gameOver();
-                } else if (game.enemies[i]) {
-                    // Check collision with shelters
+                    if (game.health <= 0) endGame();
+                } else {
                     if (checkShelterCollision(enemy)) {
                         game.enemies.splice(i, 1);
                     }
                 }
             }
 
-            // Update projectiles
             for (let i = game.projectiles.length - 1; i >= 0; i--) {
                 const proj = game.projectiles[i];
-                proj.y -= proj.speed;
+                proj.x += proj.vx;
+                proj.y += proj.vy;
 
-                if (proj.y < 0) {
+                if (proj.x < 0 || proj.x > game.width || proj.y < 0 || proj.y > game.height) {
                     game.projectiles.splice(i, 1);
                     continue;
                 }
 
-                // Check shelter collision
                 if (checkProjectileShelterCollision(proj)) {
                     game.projectiles.splice(i, 1);
                     continue;
                 }
 
-                // Check enemy collision
                 for (let j = game.enemies.length - 1; j >= 0; j--) {
                     const enemy = game.enemies[j];
                     const dist = Math.hypot(proj.x - enemy.x, proj.y - enemy.y);
@@ -1993,7 +1425,7 @@
                     if (dist < minDist) {
                         let damage = 10;
                         if (game.activeBoosters['dmg']) damage *= 2;
-                        if (game.currentSkin !== 'default') {
+                        if (game.currentSkin && game.currentSkin !== 'arcraider') {
                             damage *= game.skinStats[game.currentSkin].damage;
                         }
 
@@ -2004,6 +1436,7 @@
                             game.enemies.splice(j, 1);
                             game.combo++;
                             game.comboTimer = game.comboTimeout;
+
                             const baseReward = enemy.isStrong ? 50 : 25;
                             const reward = Math.floor(baseReward * (1 + game.combo * 0.1));
                             game.tokens += reward;
@@ -2011,19 +1444,23 @@
                             game.enemiesDefeated++;
                             game.challengeProgress++;
 
-                            // Check achievements
+                            if (game.challengeProgress >= game.challengeTarget) {
+                                game.challengeProgress = 0;
+                                game.challengeTarget += 5;
+                            }
+
                             checkAchievements();
 
-                            // Spawn booster randomly
                             if (Math.random() < 0.2) {
                                 const boosterTypes = ['rapid', 'slow', 'dmg'];
-                                const randomBooster = boosterTypes[Math.floor(Math.random() * boosterTypes.length)];
-                                spawnBoosterDrop(enemy.x, enemy.y, randomBooster);
+                                spawnBoosterDrop(enemy.x, enemy.y, boosterTypes[Math.floor(Math.random() * boosterTypes.length)]);
                             }
 
                             createParticles(enemy.x, enemy.y, enemy.color);
-                            showCombo();
-                            
+                            if (game.combo >= 3) {
+                                showCombo();
+                            }
+
                             if (game.enemiesDefeated === game.totalEnemiesInWave) {
                                 startWave();
                             }
@@ -2035,7 +1472,6 @@
                 }
             }
 
-            // Update particles
             for (let i = game.particles.length - 1; i >= 0; i--) {
                 const p = game.particles[i];
                 p.x += p.vx;
@@ -2046,7 +1482,6 @@
                 }
             }
 
-            // Check player collision with enemies
             for (const enemy of game.enemies) {
                 const dist = Math.hypot(game.playerX - enemy.x, game.playerY - enemy.y);
                 if (dist < game.playerRadius + enemy.radius) {
@@ -2057,12 +1492,11 @@
                         }
                     } else {
                         game.health -= 5;
-                        if (game.health <= 0) gameOver();
+                        if (game.health <= 0) endGame();
                     }
                 }
             }
 
-            // Update boosters
             for (const boosterId in game.activeBoosters) {
                 if (Date.now() > game.activeBoosters[boosterId]) {
                     const booster = boosters.find(b => b.id === boosterId);
@@ -2099,7 +1533,7 @@
                 x: x,
                 y: y,
                 speed: 2,
-                radius: 10,
+                radius: 8,
                 health: 1,
                 boosterType: type,
                 color: '#FF006E',
@@ -2107,7 +1541,7 @@
             });
         }
 
-        function collectBooster(type) {
+        function activateBoosterDropped(type) {
             const booster = boosters.find(b => b.id === type);
             if (booster && !game.activeBoosters[type]) {
                 activateBooster(booster);
@@ -2117,18 +1551,22 @@
         function activateBooster(booster) {
             if (booster.fn) booster.fn();
             game.activeBoosters[booster.id] = Date.now() + booster.duration;
-            updateBoostersDisplay();
-            showNotification(`+${booster.name}`);
-        }
 
-        function fireProjectile() {
-            game.projectiles.push({
-                x: game.playerX,
-                y: game.playerY - game.playerRadius,
-                speed: game.projectileSpeed,
-                radius: 5,
-                color: '#00D9FF'
-            });
+            const display = document.getElementById('boostersDisplay');
+            const item = document.createElement('div');
+            item.className = 'booster-item';
+            item.innerHTML = `<span class="booster-name">${booster.name}</span><span class="booster-timer">${(booster.duration / 1000).toFixed(1)}s</span>`;
+            display.appendChild(item);
+
+            const updateTimer = setInterval(() => {
+                const remaining = game.activeBoosters[booster.id] - Date.now();
+                if (remaining <= 0) {
+                    item.remove();
+                    clearInterval(updateTimer);
+                } else {
+                    item.querySelector('.booster-timer').textContent = (remaining / 1000).toFixed(1) + 's';
+                }
+            }, 100);
         }
 
         function startWave() {
@@ -2138,7 +1576,6 @@
             game.enemies = [];
             game.shelters = [];
 
-            // Show wave title
             const waveTitleDisplay = document.getElementById('waveTitleDisplay');
             waveTitleDisplay.textContent = `WAVE ${game.wave}`;
             waveTitleDisplay.style.display = 'block';
@@ -2146,7 +1583,6 @@
                 waveTitleDisplay.style.display = 'none';
             }, 1000);
 
-            // Add shelters starting from wave 6
             if (game.wave >= 6) {
                 game.shelters.push({
                     x: game.width / 2 - 40,
@@ -2173,32 +1609,38 @@
             const baseEnemies = 3 + game.wave * 2;
             game.totalEnemiesInWave = baseEnemies;
 
-            const colors = ['#FF1493', '#00CED1', '#32CD32', '#FFD700'];
+            const colors = ['#FF1493', '#00CED1', '#32CD32', '#FFD700', '#FF69B4', '#87CEEB'];
 
             for (let i = 0; i < baseEnemies; i++) {
                 const isStrong = game.wave >= 3 && Math.random() < (0.2 + game.wave * 0.05);
-                const color = colors[Math.floor(Math.random() * colors.length)];
+                const modelName = ENEMY_MODELS[Math.floor(Math.random() * ENEMY_MODELS.length)];
                 
                 game.enemies.push({
-                    x: Math.random() * (game.width - 40) + 20,
-                    y: -40,
+                    x: Math.random() * (game.width - 60) + 30,
+                    y: -50,
                     speed: 1 + game.wave * 0.2,
-                    radius: isStrong ? 12 : 8,
+                    radius: isStrong ? 18 : 12,
                     health: isStrong ? 30 : 15,
                     maxHealth: isStrong ? 30 : 15,
-                    color: color,
-                    isStrong: isStrong
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    isStrong: isStrong,
+                    model: modelName
                 });
             }
 
-            document.getElementById('waveNumber').textContent = game.wave;
+            document.getElementById('waveNumPanel').textContent = game.wave;
+            document.getElementById('waveValue').textContent = game.wave;
+
+            const difficulty = game.wave <= 3 ? 'EASY' : game.wave <= 6 ? 'MEDIUM' : 'HARD';
+            document.getElementById('waveDifficultyPanel').textContent = difficulty;
+
             updateHUD();
         }
 
         function createParticles(x, y, color) {
-            for (let i = 0; i < 8; i++) {
-                const angle = (Math.PI * 2 * i) / 8;
-                const speed = 2 + Math.random();
+            for (let i = 0; i < 12; i++) {
+                const angle = (Math.PI * 2 * i) / 12;
+                const speed = 2 + Math.random() * 2;
                 game.particles.push({
                     x: x,
                     y: y,
@@ -2206,36 +1648,33 @@
                     vy: Math.sin(angle) * speed,
                     life: 30,
                     color: color,
-                    radius: 3
+                    radius: 4
                 });
             }
         }
 
         function showCombo() {
-            if (game.combo >= 3) {
-                const comboDisplay = document.getElementById('comboDisplay');
-                comboDisplay.textContent = `${game.combo}x COMBO!`;
-                comboDisplay.style.display = 'block';
-                setTimeout(() => {
-                    comboDisplay.style.display = 'none';
-                }, 600);
-            }
+            const comboDisplay = document.getElementById('comboDisplay');
+            comboDisplay.textContent = `${game.combo}x COMBO!`;
+            comboDisplay.style.display = 'block';
+            setTimeout(() => {
+                comboDisplay.style.display = 'none';
+            }, 600);
         }
 
-        function showNotification(text) {
+        function showBonusNotification(text) {
             const label = document.createElement('div');
             label.style.cssText = `
                 position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                font-size: 2.5em;
+                bottom: 120px;
+                left: 20px;
+                color: var(--success-color);
                 font-weight: bold;
-                color: #FFB703;
-                text-shadow: 0 0 20px rgba(255, 183, 3, 0.8);
+                font-size: 16px;
+                text-shadow: 0 0 10px var(--success-color);
                 pointer-events: none;
-                animation: floatAway 2s ease-out forwards;
-                z-index: 80;
+                animation: bonusFloat 2s ease-out forwards;
+                z-index: 50;
             `;
             label.textContent = text;
             document.getElementById('gameContainer').appendChild(label);
@@ -2243,74 +1682,72 @@
         }
 
         function checkAchievements() {
-            if (game.combo === 5 && !game.achievements.includes('5x Combo')) {
-                game.achievements.push('5x Combo');
+            if (game.combo === 5 && !game.achievements.includes('5x COMBO')) {
+                game.achievements.push('5x COMBO');
+                updateAchievements();
             }
-            if (game.wave === 10 && !game.achievements.includes('Wave 10')) {
-                game.achievements.push('Wave 10');
+            if (game.wave === 10 && !game.achievements.includes('WAVE 10')) {
+                game.achievements.push('WAVE 10');
+                updateAchievements();
             }
-            if (game.score >= 10000 && !game.achievements.includes('10k Score')) {
-                game.achievements.push('10k Score');
+            if (game.score >= 10000 && !game.achievements.includes('10K SCORE')) {
+                game.achievements.push('10K SCORE');
+                updateAchievements();
             }
+        }
+
+        function updateAchievements() {
+            const panel = document.getElementById('achievementsPanel');
+            panel.innerHTML = '';
+            game.achievements.forEach(ach => {
+                const badge = document.createElement('div');
+                badge.className = 'achievement-badge';
+                badge.textContent = '✓ ' + ach;
+                panel.appendChild(badge);
+            });
         }
 
         function updateHUD() {
             document.getElementById('scoreValue').textContent = game.score;
-            document.getElementById('tokenValue').textContent = game.tokens;
             document.getElementById('comboValue').textContent = game.combo;
-            
+            document.getElementById('tokensValue').textContent = game.tokens;
+
             const healthPercent = (game.health / game.maxHealth) * 100;
             document.getElementById('healthFill').style.width = healthPercent + '%';
 
-            const threatCount = game.enemies.length;
-            const threatText = threatCount > 0 ? `🚨 THREAT: ${threatCount}` : '';
-            document.getElementById('threatIndicator').textContent = threatText;
+            document.getElementById('recordScore').textContent = Math.max(game.recordScore, game.score);
+            document.getElementById('recordWave').textContent = Math.max(game.wave - 1, 1);
 
-            const challengePercent = (game.challengeProgress / game.challengeTarget) * 100;
-            document.getElementById('challengeProgress').style.width = Math.min(challengePercent, 100) + '%';
-            document.getElementById('challengeText').textContent = `Kill ${game.challengeTarget} - ${game.challengeProgress}/${game.challengeTarget}`;
+            const progress = Math.min(100, (game.challengeProgress / game.challengeTarget) * 100);
+            document.getElementById('challengeProgress').style.width = progress + '%';
+            document.getElementById('challengeText').textContent = `${game.challengeProgress}/${game.challengeTarget}`;
 
-            if (game.score > game.recordScore) {
-                game.recordScore = game.score;
-                document.getElementById('recordScore').textContent = game.recordScore;
-            }
-
-            updateBoostersDisplay();
-        }
-
-        function updateBoostersDisplay() {
-            const container = document.getElementById('boostersDisplay');
-            container.innerHTML = '';
-
-            for (const boosterId in game.activeBoosters) {
-                const booster = boosters.find(b => b.id === boosterId);
-                if (booster) {
-                    const timeLeft = Math.ceil((game.activeBoosters[boosterId] - Date.now()) / 1000);
-                    const item = document.createElement('div');
-                    item.className = 'booster-item';
-                    item.innerHTML = `
-                        <span class="booster-name">${booster.name}</span>
-                        <span class="booster-timer">${timeLeft}s</span>
-                    `;
-                    container.appendChild(item);
-                }
+            if (game.challengeProgress > 0) {
+                document.getElementById('challengeHud').style.display = 'block';
             }
         }
 
-        function gameOver() {
-            game.isRunning = false;
-            document.getElementById('gameOverScreen').style.display = 'block';
-            document.getElementById('finalScore').textContent = game.score;
-            document.getElementById('wavesReached').textContent = game.wave;
+        function gameLoop() {
+            game.frameCount++;
+            const now = Date.now();
+            if (now - game.lastTime >= 1000) {
+                game.fps = game.frameCount;
+                document.getElementById('fpsCounter').textContent = game.fps + ' FPS';
+                game.frameCount = 0;
+                game.lastTime = now;
+            }
+
+            if (!game.isPaused) {
+                update();
+            }
+            draw();
+            requestAnimationFrame(gameLoop);
         }
 
-        // ==================== RENDERING ====================
         function draw() {
-            // Clear canvas
             game.ctx.fillStyle = 'rgba(135, 206, 235, 0.1)';
             game.ctx.fillRect(0, 0, game.width, game.height);
 
-            // Draw shelters
             game.ctx.fillStyle = 'rgba(100, 100, 100, 0.5)';
             game.ctx.strokeStyle = '#888888';
             game.ctx.lineWidth = 3;
@@ -2319,10 +1756,8 @@
                 game.ctx.strokeRect(shelter.x, shelter.y, shelter.width, shelter.height);
             }
 
-            // Draw enemies
             for (const enemy of game.enemies) {
                 if (enemy.isBoosterDrop) {
-                    // Draw booster drop
                     game.ctx.fillStyle = enemy.color;
                     game.ctx.beginPath();
                     game.ctx.arc(enemy.x, enemy.y, enemy.radius, 0, Math.PI * 2);
@@ -2331,29 +1766,34 @@
                     game.ctx.lineWidth = 2;
                     game.ctx.stroke();
                 } else {
-                    // Draw enemy
-                    game.ctx.fillStyle = enemy.color;
-                    game.ctx.beginPath();
-                    game.ctx.arc(enemy.x, enemy.y, enemy.radius, 0, Math.PI * 2);
-                    game.ctx.fill();
+                    const img = game.images[enemy.model];
+                    if (img && img.complete && img.naturalWidth > 0) {
+                        const size = enemy.radius * 2.5;
+                        game.ctx.drawImage(img, enemy.x - size / 2, enemy.y - size / 2, size, size);
+                    } else {
+                        game.ctx.fillStyle = enemy.color;
+                        game.ctx.beginPath();
+                        game.ctx.arc(enemy.x, enemy.y, enemy.radius, 0, Math.PI * 2);
+                        game.ctx.fill();
+                    }
 
                     if (enemy.isStrong) {
                         game.ctx.strokeStyle = '#FFFF00';
                         game.ctx.lineWidth = 3;
+                        game.ctx.beginPath();
+                        game.ctx.arc(enemy.x, enemy.y, enemy.radius, 0, Math.PI * 2);
                         game.ctx.stroke();
                     }
 
-                    // Health bar
                     const healthPercent = enemy.health / enemy.maxHealth;
                     game.ctx.fillStyle = healthPercent > 0.5 ? '#06FFA5' : '#FB5607';
-                    game.ctx.fillRect(enemy.x - 15, enemy.y - 25, 30 * healthPercent, 4);
+                    game.ctx.fillRect(enemy.x - 15, enemy.y - 30, 30 * healthPercent, 4);
                     game.ctx.strokeStyle = '#fff';
                     game.ctx.lineWidth = 1;
-                    game.ctx.strokeRect(enemy.x - 15, enemy.y - 25, 30, 4);
+                    game.ctx.strokeRect(enemy.x - 15, enemy.y - 30, 30, 4);
                 }
             }
 
-            // Draw projectiles
             for (const proj of game.projectiles) {
                 game.ctx.fillStyle = proj.color;
                 game.ctx.beginPath();
@@ -2364,7 +1804,6 @@
                 game.ctx.stroke();
             }
 
-            // Draw particles
             for (const p of game.particles) {
                 game.ctx.fillStyle = p.color;
                 game.ctx.globalAlpha = p.life / 30;
@@ -2374,41 +1813,132 @@
                 game.ctx.globalAlpha = 1;
             }
 
-            // Draw player
-            const skin = game.skinEmojis[game.currentSkin] || '⭐';
-            game.ctx.font = '40px Arial';
-            game.ctx.textAlign = 'center';
-            game.ctx.textBaseline = 'middle';
-            game.ctx.fillText(skin, game.playerX, game.playerY);
+            const playerImg = game.images[PLAYER_MODEL];
+            if (playerImg && playerImg.complete && playerImg.naturalWidth > 0) {
+                const size = game.playerRadius * 2.5;
+                game.ctx.drawImage(playerImg, game.playerX - size / 2, game.playerY - size / 2, size, size);
+            } else {
+                game.ctx.fillStyle = '#00D9FF';
+                game.ctx.beginPath();
+                game.ctx.arc(game.playerX, game.playerY, game.playerRadius, 0, Math.PI * 2);
+                game.ctx.fill();
+            }
 
-            // Draw shield
             if (game.shielded) {
                 game.ctx.strokeStyle = '#00D9FF';
                 game.ctx.lineWidth = 3;
                 game.ctx.beginPath();
-                game.ctx.arc(game.playerX, game.playerY, game.playerRadius + 10, 0, Math.PI * 2);
+                game.ctx.arc(game.playerX, game.playerY, game.playerRadius + 15, 0, Math.PI * 2);
                 game.ctx.stroke();
             }
         }
 
-        // Start the game
-        window.addEventListener('load', init);
+        function renderShop() {
+            const upgradesContainer = document.getElementById('upgrades-container');
+            const boostersContainer = document.getElementById('boosters-container');
+            const skinsContainer = document.getElementById('skins-container');
 
-        // Add keyframe animation to style
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes floatAway {
-                0% {
-                    opacity: 1;
-                    transform: translate(-50%, -50%) scale(1);
-                }
-                100% {
-                    opacity: 0;
-                    transform: translate(-50%, -120px) scale(1.3);
-                }
-            }
-        `;
-        document.head.appendChild(style);
+            upgradesContainer.innerHTML = '';
+            boostersContainer.innerHTML = '';
+            skinsContainer.innerHTML = '';
+
+            upgrades.forEach(upgrade => {
+                const item = document.createElement('div');
+                item.className = 'shop-item';
+                item.innerHTML = `
+                    <div class="item-name">${upgrade.name}</div>
+                    <div class="item-desc">${upgrade.desc}</div>
+                    <div class="item-cost">💰 ${upgrade.cost}</div>
+                `;
+                item.onclick = () => {
+                    if (game.tokens >= upgrade.cost) {
+                        game.tokens -= upgrade.cost;
+                        upgrade.fn();
+                        updateHUD();
+                    }
+                };
+                item.disabled = game.tokens < upgrade.cost;
+                upgradesContainer.appendChild(item);
+            });
+
+            boosters.forEach(booster => {
+                const item = document.createElement('div');
+                item.className = 'shop-item booster';
+                item.innerHTML = `
+                    <div class="item-name">${booster.name}</div>
+                    <div class="item-desc">${booster.desc}</div>
+                    <div class="item-cost">💰 ${booster.cost}</div>
+                `;
+                item.onclick = () => {
+                    if (game.tokens >= booster.cost && !game.activeBoosters[booster.id]) {
+                        game.tokens -= booster.cost;
+                        activateBooster(booster);
+                        updateHUD();
+                    }
+                };
+                item.disabled = game.tokens < booster.cost || game.activeBoosters[booster.id];
+                boostersContainer.appendChild(item);
+            });
+
+            const skinNames = {
+                arc: 'Arc',
+                arcraider: 'Arc Raider',
+                fire: 'Inferno',
+                ice: 'Frostbite',
+                electric: 'Spark'
+            };
+
+            Object.keys(game.skinEmojis).forEach(skin => {
+                const item = document.createElement('div');
+                item.className = 'skin-item';
+                if (game.ownedSkins.includes(skin)) item.classList.add('owned');
+                if (game.currentSkin === skin) item.classList.add('active');
+
+                const cost = game.skinCosts[skin];
+                const owned = game.ownedSkins.includes(skin);
+
+                item.innerHTML = `
+                    <div class="skin-emoji">${game.skinEmojis[skin]}</div>
+                    <div class="skin-name">${skinNames[skin]}</div>
+                    <div class="skin-bonus">${game.skinStats[skin].name}</div>
+                    <div class="skin-cost">${owned ? '✓ OWNED' : '💰 ' + cost}</div>
+                `;
+
+                item.onclick = () => {
+                    if (owned) {
+                        game.currentSkin = skin;
+                        renderShop();
+                    } else if (game.tokens >= cost) {
+                        game.tokens -= cost;
+                        game.ownedSkins.push(skin);
+                        game.currentSkin = skin;
+                        updateHUD();
+                        renderShop();
+                    }
+                };
+
+                skinsContainer.appendChild(item);
+            });
+        }
+
+        function showLevelInfo() {
+            const levelInfo = document.getElementById('levelInfo');
+            levelInfo.style.display = 'block';
+            setTimeout(() => {
+                levelInfo.style.display = 'none';
+                startWave();
+            }, 3000);
+        }
+
+        function endGame() {
+            game.isRunning = false;
+            game.recordScore = Math.max(game.recordScore, game.score);
+            document.getElementById('gameOver').style.display = 'block';
+            document.getElementById('finalScore').textContent = game.score;
+            document.getElementById('wavesReached').textContent = game.wave;
+        }
+
+        window.addEventListener('load', init);
     </script>
 </body>
 </html>
