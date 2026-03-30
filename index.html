@@ -337,6 +337,49 @@
             min-width: 120px;
         }
 
+        /* ============ STORE HEADER WITH TOKENS ============ */
+        .pause-store-header {
+            background: linear-gradient(135deg, rgba(255, 183, 3, 0.2), rgba(255, 183, 3, 0.05));
+            border: 2px solid var(--accent-token);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pause-store-header-title {
+            color: var(--accent-token);
+            font-weight: bold;
+            font-size: 14px;
+            text-shadow: 0 0 5px rgba(255, 183, 3, 0.4);
+        }
+
+        .pause-store-tokens {
+            background: rgba(255, 183, 3, 0.3);
+            border: 2px solid var(--accent-token);
+            border-radius: 8px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: bold;
+            font-size: 14px;
+            color: var(--accent-token);
+            box-shadow: 0 0 15px rgba(255, 183, 3, 0.3);
+        }
+
+        .pause-store-tokens-icon {
+            font-size: 18px;
+            animation: tokenBounce 1s infinite;
+        }
+
+        @keyframes tokenBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+
         /* ============ STORE IN PAUSE MENU ============ */
         .pause-store-grid {
             display: grid;
@@ -772,6 +815,14 @@
 
             <!-- STORE TAB -->
             <div class="pause-menu-content" id="tab-store">
+                <div class="pause-store-header">
+                    <div class="pause-store-header-title">YOUR TOKENS</div>
+                    <div class="pause-store-tokens">
+                        <span class="pause-store-tokens-icon">💰</span>
+                        <span id="storeTokensCount">0</span>
+                    </div>
+                </div>
+
                 <div class="pause-section">
                     <div class="pause-section-title">UPGRADES</div>
                     <div class="pause-store-grid" id="pauseStoreUpgrades"></div>
@@ -815,21 +866,24 @@
          * ARC RAIDER - BATTLE DRONES GAME
          * ========================================
          * FINAL VERSION WITH:
-         * - Shelter mechanics (wave 5+)
-         * - Boss enemies on waves 5, 10, 15
-         * - Upgrade progress tracking
-         * - Improved pause menu navigation
-         * - No trail effects
+         * - Shelter near player (Y 20%)
+         * - Boss-only waves (5, 10, 15)
+         * - Dual boss models (arcboss.png / boss.png)
+         * - Token drops from enemies
+         * - Booster drops from enemies
+         * - In-game tokens display
          * ========================================
          */
 
         // ==================== GAME CONSTANTS ====================
         const ENEMY_MODELS = ['arc1', 'arc3', 'arc4', 'arc5'];
         const PLAYER_MODEL = 'arcraider';
-        const BOSS_MODEL = 'arcboss';
+        const BOSS_MODEL_5_10 = 'arcboss';
+        const BOSS_MODEL_15 = 'boss';
         
         const ENEMY_SPAWN_MAX_Y_RATIO = 0.66;
         const SAFE_ZONE_RATIO = 0.85;
+        const SHELTER_Y_RATIO = 0.20;
 
         // ==================== GAME STATE OBJECT ====================
         const game = {
@@ -867,12 +921,13 @@
             enemies: [],
             projectiles: [],
             particles: [],
+            drops: [],
             shelters: [],
             enemyProjectiles: [],
 
             images: {},
             imagesLoaded: 0,
-            totalImages: 6,
+            totalImages: 7,
 
             shielded: false,
             shieldHealth: 0,
@@ -881,7 +936,6 @@
 
             activeBoosters: {},
 
-            // Upgrade tracking
             upgradePurchases: {
                 maxhealth: 0,
                 shield: 0,
@@ -1002,8 +1056,13 @@
         // ==================== HELPER FUNCTIONS ====================
         function getEnemyStats(wave, isStrong, isBoss = false) {
             if (isBoss) {
+                let speed;
+                if (wave === 5) speed = 0.5;
+                else if (wave === 10) speed = 1.0;
+                else speed = 1.5;
+
                 return {
-                    speed: 0.8,
+                    speed: speed,
                     shootInterval: 50,
                     health: 300,
                     damage: 15
@@ -1034,7 +1093,6 @@
 
         function checkShelterCollision(x, y, radius) {
             for (const shelter of game.shelters) {
-                // Check if point is within shelter bounds
                 if (x > shelter.x - radius && x < shelter.x + shelter.width + radius &&
                     y > shelter.y - radius && y < shelter.y + shelter.height + radius) {
                     return true;
@@ -1043,9 +1101,45 @@
             return false;
         }
 
+        function getDropChance(isStrong, isBoss) {
+            if (isBoss) return Math.random() < 0.5 ? 'drop' : null;
+            if (isStrong) return Math.random() < 0.2 ? 'drop' : null;
+            return Math.random() < 0.1 ? 'drop' : null;
+        }
+
+        function createDrop(x, y) {
+            const isBooster = Math.random() < 0.5;
+            let icon, type, value;
+
+            if (isBooster) {
+                const availableBoosters = boosters;
+                const randomBooster = availableBoosters[Math.floor(Math.random() * availableBoosters.length)];
+                icon = '✨';
+                type = 'booster';
+                value = randomBooster;
+            } else {
+                const tokenValues = [10, 25, 50];
+                value = tokenValues[Math.floor(Math.random() * tokenValues.length)];
+                icon = '💰';
+                type = 'token';
+            }
+
+            game.drops.push({
+                x: x,
+                y: y,
+                vx: (Math.random() - 0.5) * 2,
+                vy: (Math.random() - 0.5) * 2,
+                radius: 8,
+                icon: icon,
+                type: type,
+                value: value,
+                life: 300
+            });
+        }
+
         // ==================== IMAGE LOADING ====================
         function loadImages() {
-            const images = ['arcraider', 'arc1', 'arc3', 'arc4', 'arc5', 'arcboss'];
+            const images = ['arcraider', 'arc1', 'arc3', 'arc4', 'arc5', 'arcboss', 'boss'];
             images.forEach(name => {
                 const img = new Image();
                 img.onload = () => {
@@ -1208,6 +1302,8 @@
         }
 
         function updatePauseStore() {
+            document.getElementById('storeTokensCount').textContent = game.tokens;
+
             const upgradesContainer = document.getElementById('pauseStoreUpgrades');
             const boostersContainer = document.getElementById('pauseStoreBoosters');
             upgradesContainer.innerHTML = '';
@@ -1313,7 +1409,7 @@
             if (game.wave >= 5) {
                 const shelterWidth = game.width / 4;
                 const shelterX = Math.random() * (game.width - shelterWidth);
-                const shelterY = game.height * 0.5;
+                const shelterY = game.height * SHELTER_Y_RATIO;
 
                 game.shelters.push({
                     x: shelterX,
@@ -1323,66 +1419,64 @@
                 });
             }
 
-            const baseEnemies = 3 + game.wave * 2;
-            let totalEnemies = baseEnemies;
-            
-            // Boss appears on waves 5, 10, 15
             const isBossWave = game.wave % 5 === 0;
+
             if (isBossWave) {
-                totalEnemies = baseEnemies + 1;
-            }
+                // Only boss spawns on boss waves
+                game.totalEnemiesInWave = 1;
 
-            game.totalEnemiesInWave = totalEnemies;
-            const colors = ['#FF1493', '#00CED1', '#32CD32', '#FFD700'];
-
-            // Spawn regular enemies
-            for (let i = 0; i < baseEnemies; i++) {
-                const isStrong = game.wave >= 3 && Math.random() < (0.2 + game.wave * 0.05);
-                const modelName = ENEMY_MODELS[Math.floor(Math.random() * ENEMY_MODELS.length)];
-                const maxSpawnY = game.height * ENEMY_SPAWN_MAX_Y_RATIO;
-                const spawnY = Math.random() * (maxSpawnY - 200) + 100;
-                
-                const stats = getEnemyStats(game.wave, isStrong);
-
-                game.enemies.push({
-                    x: Math.random() * (game.width - 60) + 30,
-                    y: spawnY,
-                    vx: (Math.random() - 0.5) * 2,
-                    vy: (Math.random() - 0.5) * 2,
-                    speed: stats.speed,
-                    radius: isStrong ? 18 : 12,
-                    health: stats.health,
-                    maxHealth: stats.health,
-                    color: colors[Math.floor(Math.random() * colors.length)],
-                    isStrong: isStrong,
-                    model: modelName,
-                    shootTimer: 0,
-                    shootInterval: stats.shootInterval,
-                    damage: stats.damage,
-                    isBoss: false
-                });
-            }
-
-            // Spawn boss if boss wave
-            if (isBossWave) {
+                const bossModel = game.wave === 15 ? BOSS_MODEL_15 : BOSS_MODEL_5_10;
                 const stats = getEnemyStats(game.wave, false, true);
+
                 game.enemies.push({
                     x: game.width / 2,
                     y: game.height * 0.3,
-                    vx: 0,
-                    vy: 0,
+                    vx: (Math.random() - 0.5) * 2,
+                    vy: (Math.random() - 0.5) * 2,
                     speed: stats.speed,
                     radius: 25,
                     health: stats.health,
                     maxHealth: stats.health,
                     color: '#FF6B00',
                     isStrong: true,
-                    model: BOSS_MODEL,
+                    model: bossModel,
                     shootTimer: 0,
                     shootInterval: stats.shootInterval,
                     damage: stats.damage,
                     isBoss: true
                 });
+            } else {
+                // Regular wave - spawn regular enemies
+                const baseEnemies = 3 + game.wave * 2;
+                game.totalEnemiesInWave = baseEnemies;
+                const colors = ['#FF1493', '#00CED1', '#32CD32', '#FFD700'];
+
+                for (let i = 0; i < baseEnemies; i++) {
+                    const isStrong = game.wave >= 3 && Math.random() < (0.2 + game.wave * 0.05);
+                    const modelName = ENEMY_MODELS[Math.floor(Math.random() * ENEMY_MODELS.length)];
+                    const maxSpawnY = game.height * ENEMY_SPAWN_MAX_Y_RATIO;
+                    const spawnY = Math.random() * (maxSpawnY - 200) + 100;
+                    
+                    const stats = getEnemyStats(game.wave, isStrong);
+
+                    game.enemies.push({
+                        x: Math.random() * (game.width - 60) + 30,
+                        y: spawnY,
+                        vx: (Math.random() - 0.5) * 2,
+                        vy: (Math.random() - 0.5) * 2,
+                        speed: stats.speed,
+                        radius: isStrong ? 18 : 12,
+                        health: stats.health,
+                        maxHealth: stats.health,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        isStrong: isStrong,
+                        model: modelName,
+                        shootTimer: 0,
+                        shootInterval: stats.shootInterval,
+                        damage: stats.damage,
+                        isBoss: false
+                    });
+                }
             }
 
             document.getElementById('waveValue').textContent = game.wave;
@@ -1468,6 +1562,12 @@
                     
                     enemy.vx = Math.max(-3, Math.min(3, enemy.vx));
                     enemy.vy = Math.max(-3, Math.min(3, enemy.vy));
+                } else {
+                    // Boss movement - chaotic with random direction changes
+                    if (Math.random() < 0.02) {
+                        enemy.vx = (Math.random() - 0.5) * enemy.speed * 2;
+                        enemy.vy = (Math.random() - 0.5) * enemy.speed * 2;
+                    }
                 }
 
                 enemy.x += enemy.vx * slowMultiplier;
@@ -1483,7 +1583,6 @@
                 for (const shelter of game.shelters) {
                     if (enemy.x > shelter.x && enemy.x < shelter.x + shelter.width &&
                         enemy.y > shelter.y - enemy.radius && enemy.y < shelter.y + shelter.height + enemy.radius) {
-                        // Bounce back from shelter
                         enemy.vx = -enemy.vx;
                         enemy.vy = -enemy.vy;
                         enemy.x = enemy.x > shelter.x + shelter.width / 2 ? 
@@ -1514,7 +1613,6 @@
                 proj.x += proj.vx;
                 proj.y += proj.vy;
 
-                // Check shelter collision for projectiles
                 if (checkShelterCollision(proj.x, proj.y, proj.radius)) {
                     game.projectiles.splice(i, 1);
                     continue;
@@ -1552,6 +1650,13 @@
                             game.statistics.totalEnemiesDefeated++;
 
                             createParticles(enemy.x, enemy.y, enemy.color);
+                            
+                            // Create drops
+                            const dropChance = getDropChance(enemy.isStrong, enemy.isBoss);
+                            if (dropChance === 'drop') {
+                                createDrop(enemy.x, enemy.y);
+                            }
+
                             showCombo();
                             
                             if (game.enemiesDefeated === game.totalEnemiesInWave) {
@@ -1571,7 +1676,6 @@
                 proj.x += proj.vx;
                 proj.y += proj.vy;
 
-                // Check shelter collision for enemy projectiles
                 if (checkShelterCollision(proj.x, proj.y, proj.radius)) {
                     game.enemyProjectiles.splice(i, 1);
                     continue;
@@ -1596,6 +1700,33 @@
                         if (game.health <= 0) endGame();
                     }
                     game.enemyProjectiles.splice(i, 1);
+                }
+            }
+
+            // UPDATE DROPS
+            for (let i = game.drops.length - 1; i >= 0; i--) {
+                const drop = game.drops[i];
+
+                drop.x += drop.vx;
+                drop.y += drop.vy;
+                drop.life--;
+
+                // Gravity
+                drop.vy += 0.1;
+
+                // Check collision with player
+                const dist = Math.hypot(drop.x - game.playerX, drop.y - game.playerY);
+                if (dist < drop.radius + game.playerRadius) {
+                    if (drop.type === 'token') {
+                        game.tokens += drop.value;
+                        game.statistics.totalTokensEarned += drop.value;
+                    } else if (drop.type === 'booster') {
+                        activateBooster(drop.value);
+                        game.statistics.boosterUsages++;
+                    }
+                    game.drops.splice(i, 1);
+                } else if (drop.life <= 0) {
+                    game.drops.splice(i, 1);
                 }
             }
 
@@ -1638,19 +1769,16 @@
 
             // Draw shelters
             for (const shelter of game.shelters) {
-                // Shelter glow
                 game.ctx.shadowColor = 'rgba(0, 217, 255, 0.6)';
                 game.ctx.shadowBlur = 15;
                 game.ctx.fillStyle = 'rgba(0, 217, 255, 0.3)';
                 game.ctx.fillRect(shelter.x, shelter.y, shelter.width, shelter.height);
                 
-                // Shelter border
                 game.ctx.shadowColor = 'transparent';
                 game.ctx.strokeStyle = '#00D9FF';
                 game.ctx.lineWidth = 3;
                 game.ctx.strokeRect(shelter.x, shelter.y, shelter.width, shelter.height);
 
-                // Shelter pattern
                 game.ctx.fillStyle = 'rgba(0, 217, 255, 0.2)';
                 for (let i = 0; i < shelter.width; i += 10) {
                     game.ctx.fillRect(shelter.x + i, shelter.y, 5, shelter.height);
@@ -1691,6 +1819,29 @@
                     game.ctx.font = 'bold 14px Arial';
                     game.ctx.fillText('BOSS', enemy.x - 20, enemy.y - 40);
                 }
+            }
+
+            // Draw drops
+            for (const drop of game.drops) {
+                game.ctx.fillStyle = drop.type === 'token' ? '#FFB703' : '#FF1493';
+                game.ctx.beginPath();
+                game.ctx.arc(drop.x, drop.y, drop.radius, 0, Math.PI * 2);
+                game.ctx.fill();
+
+                game.ctx.fillStyle = '#fff';
+                game.ctx.font = 'bold 12px Arial';
+                game.ctx.textAlign = 'center';
+                game.ctx.textBaseline = 'middle';
+                game.ctx.fillText(drop.icon, drop.x, drop.y);
+
+                const alpha = drop.life / 300;
+                game.ctx.globalAlpha = alpha * 0.3;
+                game.ctx.strokeStyle = drop.type === 'token' ? '#FFB703' : '#FF1493';
+                game.ctx.lineWidth = 2;
+                game.ctx.beginPath();
+                game.ctx.arc(drop.x, drop.y, drop.radius + 5, 0, Math.PI * 2);
+                game.ctx.stroke();
+                game.ctx.globalAlpha = 1;
             }
 
             // Draw player projectiles
@@ -1758,6 +1909,10 @@
                 game.ctx.stroke();
                 game.ctx.setLineDash([]);
             }
+
+            // Reset text settings
+            game.ctx.textAlign = 'left';
+            game.ctx.textBaseline = 'alphabetic';
         }
 
         // ==================== GAME INITIALIZATION ON LOAD ====================
