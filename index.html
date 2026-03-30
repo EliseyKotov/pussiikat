@@ -1155,17 +1155,17 @@
             let speed, shootInterval, health, damage;
 
             if (wave <= 5) {
-                speed = 0.5 + wave * 0.15;
+                speed = 0.3 + wave * 0.08;
                 shootInterval = 100 + Math.random() * 50;
                 health = isStrong ? 30 : 15;
                 damage = 5;
             } else if (wave <= 10) {
-                speed = 1.2 + wave * 0.2;
+                speed = 0.7 + wave * 0.12;
                 shootInterval = 60 + Math.random() * 30;
                 health = isStrong ? 40 + (wave - 5) * 5 : 20 + (wave - 5) * 3;
                 damage = 7;
             } else {
-                speed = 2.2 + wave * 0.3;
+                speed = 2 + wave * 0.2;
                 shootInterval = 40 + Math.random() * 20;
                 health = isStrong ? 50 + (wave - 10) * 8 : 30 + (wave - 10) * 5;
                 damage = 10 + Math.floor((wave - 10) / 5) * 5;
@@ -1573,6 +1573,11 @@
                         shootInterval: stats.shootInterval,
                         damage: stats.damage,
                         isBoss: false
+                        spawnDelay: Math.floor(i / spawnBatch) * 120  // Задержка 120 фреймов между батчами
+    };
+    
+    game.enemies.push(enemy);
+}
                     });
                 }
             }
@@ -1653,6 +1658,13 @@
             // UPDATE ENEMIES
             for (let i = game.enemies.length - 1; i >= 0; i--) {
                 const enemy = game.enemies[i];
+                
+                if (enemy.spawnDelay > 0) {
+        enemy.spawnDelay--;
+        continue;  // Пропустить обновление пока враг не появился
+    }
+    
+    if (!enemy.isBoss) {
                 
                 if (!enemy.isBoss) {
                     enemy.vx += (Math.random() - 0.5) * 1;
