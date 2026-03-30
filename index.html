@@ -73,19 +73,6 @@
             image-rendering: crisp-edges;
         }
 
-        /* ============ PAUSE OVERLAY ============ */
-        .pause-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            display: none;
-            z-index: 102;
-            backdrop-filter: blur(5px);
-        }
-
         /* ============ PAUSE BUTTON ============ */
         .pause-btn {
             position: absolute;
@@ -114,6 +101,19 @@
             transform: scale(0.95);
         }
 
+        /* ============ PAUSE OVERLAY ============ */
+        .pause-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            z-index: 102;
+            backdrop-filter: blur(5px);
+        }
+
         /* ============ PAUSE MENU ============ */
         .pause-menu {
             position: absolute;
@@ -134,8 +134,12 @@
             flex-direction: column;
         }
 
+        .pause-menu {
+            display: flex !important;
+        }
+
         .pause-menu.active {
-            display: flex;
+            display: flex !important;
         }
 
         .pause-menu-header {
@@ -197,6 +201,7 @@
             font-size: 13px;
             transition: all 0.2s;
             white-space: nowrap;
+            touch-action: manipulation;
         }
 
         .pause-menu-tab:active {
@@ -318,40 +323,405 @@
             text-align: right;
         }
 
-        /* ============ TOP INFO PANEL ============ */
-        .top-info-panel {
+        /* ============ TOP ACHIEVEMENTS PANEL ============ */
+        .achievements-panel {
             position: absolute;
-            top: max(60px, calc(60px + var(--safe-top)));
+            top: max(10px, var(--safe-top));
             left: 50%;
             transform: translateX(-50%);
             background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(10px);
-            padding: 10px 16px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 2px solid var(--primary-arc);
+            z-index: 99;
+            max-width: 90vw;
+            overflow-x: auto;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .achievement-badge {
+            background: linear-gradient(135deg, var(--secondary-arc), var(--primary-arc));
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            border: 1px solid #fff;
+            animation: popIn 0.3s ease-out;
+            box-shadow: 0 0 10px rgba(0, 217, 255, 0.3);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* ============ COMBO DISPLAY ============ */
+        .combo-display {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4em;
+            font-weight: bold;
+            color: var(--accent-token);
+            text-shadow: 0 0 20px var(--secondary-arc), 0 0 40px var(--primary-arc);
+            pointer-events: none;
+            display: none;
+            animation: comboFloat 0.6s ease-out;
+            z-index: 50;
+        }
+
+        @keyframes comboFloat {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -80%) scale(1.5);
+            }
+        }
+
+        /* ============ WAVE TITLE DISPLAY ============ */
+        .wave-title-display {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3.5em;
+            font-weight: bold;
+            color: var(--primary-arc);
+            text-shadow: 0 0 30px var(--secondary-arc), 0 0 60px var(--primary-arc);
+            pointer-events: none;
+            display: none;
+            animation: waveFall 1s ease-out;
+            z-index: 60;
+        }
+
+        @keyframes waveFall {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, -150%) scale(0.5);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, 100%) scale(1);
+            }
+        }
+
+        /* ============ WAVE INFO PANEL ============ */
+        .wave-info-panel {
+            position: absolute;
+            top: max(10px, var(--safe-top));
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 10px 20px;
             border-radius: 8px;
             border: 2px solid var(--primary-arc);
             z-index: 99;
             font-size: 12px;
             pointer-events: none;
             box-shadow: 0 0 20px rgba(0, 217, 255, 0.2);
-            display: flex;
-            gap: 15px;
-            align-items: center;
         }
 
-        .wave-display {
-            color: var(--accent-token);
+        .wave-difficulty {
+            color: var(--success-color);
             font-weight: bold;
+            margin: 0 8px;
         }
 
         .threat-indicator {
             color: var(--critical-color);
             font-weight: bold;
+            margin-left: 10px;
             animation: pulse 1s infinite;
         }
 
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
+        }
+
+        /* ============ RECORD PANEL ============ */
+        .record-panel {
+            position: absolute;
+            top: max(10px, var(--safe-top));
+            right: max(10px, var(--safe-right));
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 2px solid var(--secondary-arc);
+            z-index: 99;
+            font-size: 11px;
+            pointer-events: none;
+            box-shadow: 0 0 20px rgba(255, 0, 110, 0.2);
+        }
+
+        .record-item {
+            color: var(--secondary-arc);
+            margin: 3px 0;
+            font-size: 10px;
+        }
+
+        /* ============ HUD STYLES ============ */
+        .hud {
+            position: absolute;
+            top: auto;
+            bottom: max(120px, calc(120px + var(--safe-bottom)));
+            left: max(10px, var(--safe-left));
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 3px solid var(--primary-arc);
+            z-index: 100;
+            font-size: 12px;
+            min-width: 200px;
+            pointer-events: none;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.2);
+        }
+
+        .fps-counter {
+            position: absolute;
+            top: max(10px, var(--safe-top));
+            left: 220px;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 2px solid var(--success-color);
+            font-size: 12px;
+            color: var(--success-color);
+            font-weight: bold;
+            z-index: 100;
+            pointer-events: none;
+            box-shadow: 0 0 10px rgba(6, 255, 165, 0.2);
+        }
+
+        .hud-item {
+            margin: 6px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .hud-label {
+            color: var(--accent-token);
+            font-weight: bold;
+            min-width: 80px;
+            font-size: 11px;
+        }
+
+        .hud-value {
+            color: #fff;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .health-bar {
+            width: 100px;
+            height: 14px;
+            background: #333;
+            border: 2px solid var(--primary-arc);
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 217, 255, 0.3);
+        }
+
+        .health-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary-arc), var(--primary-arc));
+            transition: width 0.2s;
+        }
+
+        /* ============ SCORE BOARD ============ */
+        .score-board {
+            position: absolute;
+            bottom: max(10px, var(--safe-bottom));
+            left: max(10px, var(--safe-left));
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 3px solid var(--accent-token);
+            z-index: 100;
+            text-align: left;
+            font-size: 12px;
+            pointer-events: none;
+            min-width: 140px;
+            box-shadow: 0 0 20px rgba(255, 183, 3, 0.2);
+        }
+
+        .score-item {
+            margin: 6px 0;
+        }
+
+        .score-label {
+            color: var(--accent-token);
+            font-weight: bold;
+            font-size: 10px;
+        }
+
+        .score-value {
+            color: #fff;
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        .bonus-float {
+            position: absolute;
+            bottom: 60px;
+            left: 20px;
+            color: var(--success-color);
+            font-weight: bold;
+            font-size: 14px;
+            text-shadow: 0 0 10px var(--success-color);
+            pointer-events: none;
+            animation: bonusFloat 2s ease-out;
+            z-index: 50;
+        }
+
+        @keyframes bonusFloat {
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-60px);
+            }
+        }
+
+        /* ============ CHALLENGE HUD ============ */
+        .challenge-hud {
+            position: absolute;
+            bottom: max(10px, var(--safe-bottom));
+            right: max(10px, var(--safe-right));
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 2px solid var(--primary-arc);
+            z-index: 100;
+            font-size: 11px;
+            pointer-events: none;
+            min-width: 180px;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.2);
+        }
+
+        .challenge-title {
+            color: var(--primary-arc);
+            font-weight: bold;
+            margin-bottom: 6px;
+            font-size: 10px;
+        }
+
+        .challenge-progress-bar {
+            width: 160px;
+            height: 10px;
+            background: #333;
+            border: 1px solid var(--primary-arc);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 4px;
+        }
+
+        .challenge-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-arc), var(--success-color));
+            transition: width 0.3s;
+        }
+
+        .challenge-text {
+            color: #fff;
+            font-size: 10px;
+        }
+
+        /* ============ BOOSTERS DISPLAY ============ */
+        .boosters-display {
+            position: absolute;
+            top: max(60px, calc(60px + var(--safe-top)));
+            right: max(10px, var(--safe-right));
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 8px;
+            border-radius: 8px;
+            border: 2px solid var(--secondary-arc);
+            z-index: 100;
+            pointer-events: none;
+            min-width: 100px;
+            box-shadow: 0 0 15px rgba(255, 0, 110, 0.2);
+        }
+
+        .booster-item {
+            color: var(--secondary-arc);
+            font-size: 11px;
+            margin: 4px 0;
+            padding: 2px 4px;
+            background: rgba(255, 0, 110, 0.1);
+            border-radius: 4px;
+        }
+
+        .booster-name {
+            font-weight: bold;
+            color: var(--accent-token);
+        }
+
+        .booster-timer {
+            color: var(--success-color);
+            font-weight: bold;
+        }
+
+        /* ============ SWIPE HINT ============ */
+        .swipe-hint {
+            position: absolute;
+            bottom: 100px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            pointer-events: none;
+            z-index: 80;
+            animation: fadeOut 3s ease-out forwards;
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            70% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        .swipe-arrow {
+            font-size: 2em;
+            color: var(--primary-arc);
+            text-shadow: 0 0 10px var(--primary-arc);
+            animation: slideHint 1s ease-in-out infinite;
+        }
+
+        .swipe-arrow.left {
+            animation: slideLeft 1s ease-in-out infinite;
+        }
+
+        .swipe-arrow.right {
+            animation: slideRight 1s ease-in-out infinite;
+        }
+
+        @keyframes slideLeft {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(-20px); }
+        }
+
+        @keyframes slideRight {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(20px); }
         }
 
         /* ============ BOTTOM CONTROLS ============ */
@@ -391,37 +761,7 @@
             transform: scale(0.95);
         }
 
-        .control-btn.left {
-            content: "◀";
-        }
-
-        .control-btn.right {
-            content: "▶";
-        }
-
-        /* ============ FLOATING LABEL ============ */
-        .floating-label {
-            position: absolute;
-            font-size: 2.5em;
-            font-weight: bold;
-            pointer-events: none;
-            text-shadow: 0 0 20px rgba(255, 183, 3, 0.8);
-            animation: floatAway 2s ease-out forwards;
-            z-index: 80;
-        }
-
-        @keyframes floatAway {
-            0% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-60px) scale(1.2);
-            }
-        }
-
-        /* ============ SHOP TOGGLE (now only for skins) ============ */
+        /* ============ SHOP ============ */
         .shop-toggle {
             position: absolute;
             bottom: max(70px, calc(70px + var(--safe-bottom)));
@@ -447,117 +787,261 @@
             transform: scale(0.95);
         }
 
-        /* ============ SKINS PANEL ============ */
-        .skins-panel {
+        .shop-panel {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: linear-gradient(135deg, rgba(10, 14, 39, 0.98), rgba(30, 20, 60, 0.98));
+            background: linear-gradient(135deg, rgba(10, 10, 30, 0.98), rgba(30, 10, 50, 0.98));
             backdrop-filter: blur(10px);
-            border: 4px solid var(--accent-token);
-            padding: 25px;
-            border-radius: 15px;
-            z-index: 200;
-            display: none;
+            padding: 18px;
+            border-radius: 12px;
+            border: 3px solid var(--accent-token);
+            z-index: 103;
+            font-size: 12px;
             max-width: 90vw;
-            max-height: 85vh;
+            max-height: 80vh;
             overflow-y: auto;
-            box-shadow: 0 0 40px rgba(255, 183, 3, 0.4);
+            box-shadow: 0 0 30px rgba(255, 183, 3, 0.3);
+            display: none;
             animation: slideIn 0.3s ease-out;
         }
 
-        .skins-panel.open {
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        .shop-panel.open {
             display: block;
         }
 
-        .skins-panel h1 {
-            color: var(--accent-token);
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 1.8em;
-        }
-
-        .skins-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-        }
-
-        .skin-item {
-            background: linear-gradient(135deg, rgba(255, 183, 3, 0.1), rgba(255, 183, 3, 0.05));
-            border: 2px solid var(--accent-token);
-            padding: 12px;
-            border-radius: 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            touch-action: manipulation;
-            min-height: 44px;
-        }
-
-        .skin-item:active {
-            transform: scale(0.95);
-        }
-
-        .skin-item.owned {
-            border-color: var(--success-color);
-            background: linear-gradient(135deg, rgba(6, 255, 165, 0.15), rgba(6, 255, 165, 0.05));
-        }
-
-        .skin-item.active {
-            border-color: var(--secondary-arc);
-            background: linear-gradient(135deg, rgba(255, 0, 110, 0.2), rgba(255, 0, 110, 0.1));
-            box-shadow: 0 0 15px var(--secondary-arc);
-        }
-
-        .skin-emoji {
-            font-size: 2.5em;
-            margin-bottom: 8px;
-        }
-
-        .skin-name {
+        .shop-title {
             color: var(--accent-token);
             font-weight: bold;
-            margin-bottom: 5px;
-            font-size: 12px;
+            margin-bottom: 12px;
+            text-align: center;
+            border-bottom: 2px solid var(--accent-token);
+            padding-bottom: 10px;
+            font-size: 14px;
         }
 
-        .skin-bonus {
-            color: #aaa;
-            font-size: 10px;
-            margin-bottom: 8px;
-            line-height: 1.2;
+        .shop-section {
+            margin-bottom: 15px;
         }
 
-        .skin-cost {
-            color: var(--accent-token);
+        .shop-section-title {
+            color: var(--primary-arc);
             font-weight: bold;
             font-size: 11px;
+            margin: 8px 0 6px 0;
+            border-left: 3px solid var(--primary-arc);
+            padding-left: 6px;
         }
 
-        .close-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: var(--secondary-arc);
-            color: white;
-            border: 2px solid #ff0000;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
+        .shop-item {
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, rgba(255,183,3,0.15), rgba(255,183,3,0.05));
+            border: 2px solid var(--accent-token);
+            color: #fff;
+            padding: 10px;
+            margin: 6px 0;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 24px;
-            font-weight: bold;
-            z-index: 201;
+            font-size: 11px;
             transition: all 0.2s;
             touch-action: manipulation;
-            min-height: 44px;
+            min-height: 60px;
             min-width: 44px;
         }
 
-        .close-btn:active {
-            transform: scale(0.9);
+        .shop-item.booster {
+            border-color: var(--secondary-arc);
+            background: linear-gradient(135deg, rgba(255,0,110,0.15), rgba(255,0,110,0.05));
+        }
+
+        .shop-item:active:not(:disabled) {
+            background: linear-gradient(135deg, rgba(255,183,3,0.4), rgba(255,183,3,0.2));
+            transform: scale(0.98);
+        }
+
+        .shop-item.booster:active:not(:disabled) {
+            background: linear-gradient(135deg, rgba(255,0,110,0.4), rgba(255,0,110,0.2));
+        }
+
+        .shop-item:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .item-name {
+            color: var(--accent-token);
+            font-weight: bold;
+            margin-bottom: 3px;
+            font-size: 12px;
+        }
+
+        .shop-item.booster .item-name {
+            color: var(--secondary-arc);
+        }
+
+        .item-desc {
+            color: #aaa;
+            font-size: 10px;
+            margin-bottom: 5px;
+            line-height: 1.3;
+            flex-grow: 1;
+        }
+
+        .item-meta {
+            color: var(--success-color);
+            font-size: 10px;
+            margin-bottom: 3px;
+        }
+
+        .item-cost {
+            color: var(--accent-token);
+            font-weight: bold;
+            text-align: right;
+            font-size: 11px;
+        }
+
+        /* ============ WAVE PAUSE SCREEN ============ */
+        .wave-pause-screen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 15px;
+            border: 4px solid var(--accent-token);
+            z-index: 150;
+            text-align: center;
+            display: none;
+            box-shadow: 0 0 30px rgba(255, 183, 3, 0.5);
+        }
+
+        .wave-pause-screen h2 {
+            color: var(--accent-token);
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .wave-pause-screen p {
+            color: #fff;
+            font-size: 1.1em;
+            margin: 10px 0;
+        }
+
+        .start-wave-btn {
+            background: linear-gradient(135deg, var(--accent-token), #FFED4E);
+            color: #000;
+            border: 3px solid #FF6B00;
+            padding: 15px 40px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            margin-top: 20px;
+            transition: all 0.2s;
+            animation: buttonPulse 1s ease-in-out infinite;
+            min-height: 48px;
+        }
+
+        @keyframes buttonPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .start-wave-btn:active {
+            transform: scale(0.95) !important;
+        }
+
+        /* ============ MINIGAME SCREEN ============ */
+        .minigame-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a3e, #0f0f1e);
+            z-index: 200;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .minigame-screen.active {
+            display: flex;
+        }
+
+        .minigame-title {
+            color: var(--accent-token);
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px var(--accent-token);
+        }
+
+        .minigame-hint {
+            color: var(--primary-arc);
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px var(--primary-arc);
+        }
+
+        .minigame-canvas {
+            border: 3px solid var(--accent-token);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255, 183, 3, 0.3);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .minigame-result {
+            color: var(--success-color);
+            font-size: 1.5em;
+            margin-top: 20px;
+            font-weight: bold;
+            text-shadow: 0 0 10px var(--success-color);
+        }
+
+        /* ============ LEVEL INFO ============ */
+        .level-info {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            border: 4px solid var(--accent-token);
+            padding: 30px 40px;
+            border-radius: 15px;
+            text-align: center;
+            z-index: 150;
+            display: none;
+            animation: popIn 0.5s ease-out;
+            box-shadow: 0 0 30px rgba(255, 183, 3, 0.5);
+        }
+
+        .level-info h2 {
+            color: var(--accent-token);
+            font-size: 2.2em;
+            margin-bottom: 15px;
+        }
+
+        .level-info p {
+            color: #fff;
+            font-size: 1.1em;
+            margin: 8px 0;
         }
 
         /* ============ GAME OVER ============ */
@@ -614,32 +1098,184 @@
             transform: scale(0.95);
         }
 
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translate(-50%, -60%);
-            }
-            to {
-                opacity: 1;
-                transform: translate(-50%, -50%);
-            }
+        /* ============ SKINS PANEL ============ */
+        .skins-panel {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, rgba(10, 10, 30, 0.98), rgba(30, 10, 50, 0.98));
+            backdrop-filter: blur(10px);
+            border: 4px solid var(--accent-token);
+            padding: 25px;
+            border-radius: 15px;
+            z-index: 200;
+            display: none;
+            max-width: 90vw;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 0 40px rgba(255, 183, 3, 0.4);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .skins-panel.open {
+            display: block;
+        }
+
+        .skins-panel h1 {
+            color: var(--accent-token);
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .skins-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .skin-item {
+            background: linear-gradient(135deg, rgba(255,183,3,0.1), rgba(255,183,3,0.05));
+            border: 2px solid var(--accent-token);
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            touch-action: manipulation;
+            min-height: 44px;
+        }
+
+        .skin-item:active {
+            transform: scale(0.95);
+        }
+
+        .skin-item.owned {
+            border-color: var(--success-color);
+            background: linear-gradient(135deg, rgba(6,255,165,0.15), rgba(6,255,165,0.05));
+        }
+
+        .skin-item.active {
+            border-color: var(--secondary-arc);
+            background: linear-gradient(135deg, rgba(255,0,110,0.2), rgba(255,0,110,0.1));
+            box-shadow: 0 0 15px var(--secondary-arc);
+        }
+
+        .skin-emoji {
+            font-size: 2.5em;
+            margin-bottom: 8px;
+        }
+
+        .skin-name {
+            color: var(--accent-token);
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+
+        .skin-bonus {
+            color: #aaa;
+            font-size: 10px;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .skin-cost {
+            color: var(--accent-token);
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--secondary-arc);
+            color: white;
+            border: 2px solid #ff0000;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            font-weight: bold;
+            z-index: 201;
+            transition: all 0.2s;
+            touch-action: manipulation;
+            min-height: 44px;
+            min-width: 44px;
+        }
+
+        .close-btn:active {
+            transform: scale(0.9);
         }
 
         /* ============ RESPONSIVE ============ */
         @media (max-width: 768px) {
+            .fps-counter {
+                display: none;
+            }
+
+            .hud {
+                font-size: 11px;
+                padding: 10px 12px;
+                min-width: 160px;
+                top: auto;
+                bottom: max(70px, calc(70px + var(--safe-bottom)));
+                left: max(5px, var(--safe-left));
+            }
+
+            .score-board {
+                font-size: 11px;
+                padding: 10px 12px;
+                min-width: 120px;
+                left: max(5px, var(--safe-left));
+            }
+
+            .record-panel {
+                display: none;
+            }
+
+            .challenge-hud {
+                font-size: 10px;
+                padding: 10px 12px;
+                min-width: 150px;
+                right: max(5px, var(--safe-right));
+                bottom: auto;
+                top: max(60px, calc(60px + var(--safe-top)));
+            }
+
+            .achievements-panel {
+                top: max(5px, var(--safe-top));
+                padding: 6px 10px;
+                font-size: 10px;
+            }
+
+            .achievement-badge {
+                font-size: 10px;
+                padding: 3px 6px;
+            }
+
+            .wave-info-panel {
+                top: max(10px, var(--safe-top));
+                font-size: 11px;
+                padding: 8px 12px;
+            }
+
+            .shop-panel {
+                max-width: 95vw;
+                max-height: 75vh;
+                padding: 14px;
+            }
+
             .skins-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 10px;
             }
 
-            .pause-store-grid {
-                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            }
-
-            .top-info-panel {
-                font-size: 11px;
-                padding: 8px 12px;
-                gap: 10px;
+            .swipe-hint {
+                display: flex;
             }
 
             .bottom-controls {
@@ -657,13 +1293,8 @@
                 max-height: 85vh;
             }
 
-            .pause-menu-header {
-                padding: 12px;
-                min-height: 45px;
-            }
-
-            .pause-menu-title {
-                font-size: 1.2em;
+            .pause-store-grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
             }
         }
     </style>
@@ -671,24 +1302,12 @@
 <body>
     <div id="gameContainer">
         <canvas id="gameCanvas"></canvas>
-        
+
         <!-- Pause Button -->
         <button class="pause-btn" id="pauseBtn">⏸</button>
 
-        <!-- Top Info Panel -->
-        <div class="top-info-panel" id="topInfoPanel">
-            <span class="wave-display">Wave: <span id="waveDisplay">1</span></span>
-            <span class="threat-indicator" id="threatIndicator"></span>
-        </div>
-
-        <!-- Bottom Controls -->
-        <div class="bottom-controls" id="bottomControls">
-            <button class="control-btn left" id="leftBtn">◀</button>
-            <button class="control-btn right" id="rightBtn">▶</button>
-        </div>
-
-        <!-- Skins Toggle -->
-        <button class="shop-toggle" id="skinsToggle">👾</button>
+        <!-- Pause Overlay -->
+        <div class="pause-overlay" id="pauseOverlay"></div>
 
         <!-- Pause Menu -->
         <div class="pause-menu" id="pauseMenu">
@@ -761,8 +1380,115 @@
             </div>
         </div>
 
-        <!-- Pause Overlay -->
-        <div class="pause-overlay" id="pauseOverlay"></div>
+        <!-- Top Achievements Panel -->
+        <div class="achievements-panel" id="achievementsPanel"></div>
+
+        <!-- Combo Display -->
+        <div class="combo-display" id="comboDisplay"></div>
+
+        <!-- Wave Title Display -->
+        <div class="wave-title-display" id="waveTitleDisplay"></div>
+
+        <!-- Wave Info Panel -->
+        <div class="wave-info-panel" id="waveInfoPanel">
+            <div>Wave: <span id="waveNumber">1</span></div>
+            <div class="threat-indicator" id="threatIndicator"></div>
+        </div>
+
+        <!-- Record Panel -->
+        <div class="record-panel" id="recordPanel">
+            <div class="record-item">🏆 Best: <span id="recordScore">0</span></div>
+        </div>
+
+        <!-- HUD -->
+        <div class="hud" id="hud">
+            <div class="hud-item">
+                <span class="hud-label">Health:</span>
+                <div class="health-bar">
+                    <div class="health-fill" id="healthFill" style="width: 100%"></div>
+                </div>
+            </div>
+            <div class="hud-item">
+                <span class="hud-label">Combo:</span>
+                <span class="hud-value" id="comboValue">0</span>
+            </div>
+        </div>
+
+        <!-- FPS Counter -->
+        <div class="fps-counter" id="fpsCounter">FPS: 60</div>
+
+        <!-- Score Board -->
+        <div class="score-board" id="scoreBoard">
+            <div class="score-item">
+                <span class="score-label">SCORE</span>
+                <span class="score-value" id="scoreValue">0</span>
+            </div>
+            <div class="score-item">
+                <span class="score-label">TOKENS</span>
+                <span class="score-value" id="tokenValue">0</span>
+            </div>
+        </div>
+
+        <!-- Challenge HUD -->
+        <div class="challenge-hud" id="challengeHud">
+            <div class="challenge-title">CHALLENGE</div>
+            <div class="challenge-progress-bar">
+                <div class="challenge-progress-fill" id="challengeProgress" style="width: 0%"></div>
+            </div>
+            <div class="challenge-text" id="challengeText">Kill 10 enemies</div>
+        </div>
+
+        <!-- Boosters Display -->
+        <div class="boosters-display" id="boostersDisplay"></div>
+
+        <!-- Swipe Hint -->
+        <div class="swipe-hint" id="swipeHint">
+            <span class="swipe-arrow left">◀</span>
+            <span class="swipe-arrow right">▶</span>
+        </div>
+
+        <!-- Bottom Controls -->
+        <div class="bottom-controls" id="bottomControls">
+            <button class="control-btn" id="leftBtn">◀ LEFT</button>
+            <button class="control-btn" id="rightBtn">RIGHT ▶</button>
+        </div>
+
+        <!-- Shop Toggle -->
+        <button class="shop-toggle" id="shopToggle">🛍</button>
+
+        <!-- Shop Panel -->
+        <div class="shop-panel" id="shopPanel">
+            <div class="shop-title">SHOP</div>
+            <div class="shop-section">
+                <div class="shop-section-title">UPGRADES</div>
+                <div id="upgradesContainer"></div>
+            </div>
+            <div class="shop-section">
+                <div class="shop-section-title">BOOSTERS</div>
+                <div id="boostersContainer"></div>
+            </div>
+        </div>
+
+        <!-- Wave Pause Screen -->
+        <div class="wave-pause-screen" id="wavePauseScreen">
+            <h2 id="wavePauseTitle">Wave 1</h2>
+            <p>Prepare for battle!</p>
+            <button class="start-wave-btn" onclick="startWave()">START WAVE</button>
+        </div>
+
+        <!-- Level Info -->
+        <div class="level-info" id="levelInfo">
+            <h2>Welcome to Arc Raider</h2>
+            <p>Defeat enemies and earn tokens!</p>
+        </div>
+
+        <!-- Minigame Screen -->
+        <div class="minigame-screen" id="minigameScreen">
+            <div class="minigame-title">Bonus Round!</div>
+            <div class="minigame-hint">Click rapidly!</div>
+            <canvas class="minigame-canvas" id="minigameCanvas" width="400" height="300"></canvas>
+            <div class="minigame-result" id="minigameResult"></div>
+        </div>
 
         <!-- Skins Panel -->
         <div class="skins-panel" id="skinsPanel">
@@ -792,7 +1518,9 @@
             width: 0,
             height: 0,
             score: 0,
+            recordScore: 0,
             wave: 1,
+            waveStarted: false,
             totalEnemiesInWave: 0,
             enemiesDefeated: 0,
             maxHealth: 100,
@@ -804,13 +1532,14 @@
             playerX: 0,
             playerY: 0,
             playerRadius: 15,
-            playerSpeed: 5,
+            playerSpeed: 0,
             playerHealth: 100,
             playerMaxHealth: 100,
             projectileSpeed: 7,
             fireRate: 10,
             fireCounter: 0,
             activeBoosters: {},
+            boosterTimers: {},
             achievements: [],
             currentSkin: 'default',
             skinEmojis: {
@@ -844,41 +1573,46 @@
             enemies: [],
             projectiles: [],
             particles: [],
-            shelters: []
+            shelters: [],
+            challengeProgress: 0,
+            challengeTarget: 10,
+            fps: 60,
+            frameCount: 0,
+            lastTime: Date.now()
         };
 
         const upgrades = [
             { id: 'health', name: '❤️ Health Pack', desc: 'Restore 50 HP', cost: 100, fn: () => {
                 game.health = Math.min(game.health + 50, game.maxHealth);
-                addFloatingLabel('+50 HP', game.width / 2, game.height / 2, '#06FFA5');
+                showNotification('+50 HP');
             }},
-            { id: 'damage', name: '💥 Damage Boost', desc: 'Increase damage by 20%', cost: 200, fn: () => {
+            { id: 'damage', name: '💥 Projectile Speed', desc: 'Increase projectile speed by 20%', cost: 200, fn: () => {
                 game.projectileSpeed *= 1.2;
-                addFloatingLabel('+20% Speed', game.width / 2, game.height / 2, '#FFB703');
+                showNotification('+20% Speed');
             }},
             { id: 'shield', name: '🛡️ Shield', desc: 'Gain 50 shield HP', cost: 150, fn: () => {
                 game.shielded = true;
                 game.shieldHealth = game.shieldMaxHealth;
-                addFloatingLabel('+Shield', game.width / 2, game.height / 2, '#00D9FF');
+                showNotification('+Shield');
             }},
-            { id: 'firerate', name: '⚡ Fire Rate', desc: 'Increase projectile speed', cost: 250, fn: () => {
-                game.fireRate += 3;
-                addFloatingLabel('+Fire Rate', game.width / 2, game.height / 2, '#FFB703');
+            { id: 'firerate', name: '⚡ Fire Rate', desc: 'Increase fire rate', cost: 250, fn: () => {
+                game.fireRate = Math.max(game.fireRate - 2, 2);
+                showNotification('+Fire Rate');
             }}
         ];
 
         const boosters = [
-            { id: 'rapid', name: '🚀 Rapid Fire', desc: 'Triple fire rate for 10s', duration: 10000, fn: () => {
+            { id: 'rapid', name: '🚀 Rapid Fire', desc: 'Triple fire rate for 10s', cost: 300, duration: 10000, fn: () => {
                 game.fireRate *= 3;
             }, fnEnd: () => {
                 game.fireRate /= 3;
             }},
-            { id: 'slow', name: '❄️ Time Slow', desc: 'Slow enemies for 8s', duration: 8000, fn: () => {
+            { id: 'slow', name: '❄️ Time Slow', desc: 'Slow enemies for 8s', cost: 300, duration: 8000, fn: () => {
                 // Enemies slow multiplier handled in update
             }, fnEnd: () => {
                 // Reset
             }},
-            { id: 'dmg', name: '💣 Damage +', desc: 'Double projectile damage for 12s', duration: 12000, fn: () => {
+            { id: 'dmg', name: '💣 Damage +', desc: 'Double projectile damage for 12s', cost: 350, duration: 12000, fn: () => {
                 // Damage multiplier applied on hit
             }, fnEnd: () => {
                 // Reset
@@ -895,7 +1629,8 @@
             game.playerHealth = game.maxHealth;
             initSkins();
             setupEventListeners();
-            startWave();
+            renderShop();
+            showLevelInfo();
             gameLoop();
         }
 
@@ -912,15 +1647,20 @@
             document.addEventListener('keyup', handleKeyUp);
 
             // Touch/Mouse controls
-            document.getElementById('leftBtn').addEventListener('mousedown', () => { game.playerSpeed = -5; });
-            document.getElementById('leftBtn').addEventListener('touchstart', (e) => { e.preventDefault(); game.playerSpeed = -5; });
-            document.getElementById('leftBtn').addEventListener('mouseup', () => { game.playerSpeed = 0; });
-            document.getElementById('leftBtn').addEventListener('touchend', (e) => { e.preventDefault(); game.playerSpeed = 0; });
+            const leftBtn = document.getElementById('leftBtn');
+            const rightBtn = document.getElementById('rightBtn');
 
-            document.getElementById('rightBtn').addEventListener('mousedown', () => { game.playerSpeed = 5; });
-            document.getElementById('rightBtn').addEventListener('touchstart', (e) => { e.preventDefault(); game.playerSpeed = 5; });
-            document.getElementById('rightBtn').addEventListener('mouseup', () => { game.playerSpeed = 0; });
-            document.getElementById('rightBtn').addEventListener('touchend', (e) => { e.preventDefault(); game.playerSpeed = 0; });
+            leftBtn.addEventListener('mousedown', () => { game.playerSpeed = -5; });
+            leftBtn.addEventListener('touchstart', (e) => { e.preventDefault(); game.playerSpeed = -5; });
+            leftBtn.addEventListener('mouseup', () => { game.playerSpeed = 0; });
+            leftBtn.addEventListener('touchend', (e) => { e.preventDefault(); game.playerSpeed = 0; });
+            leftBtn.addEventListener('mouseleave', () => { game.playerSpeed = 0; });
+
+            rightBtn.addEventListener('mousedown', () => { game.playerSpeed = 5; });
+            rightBtn.addEventListener('touchstart', (e) => { e.preventDefault(); game.playerSpeed = 5; });
+            rightBtn.addEventListener('mouseup', () => { game.playerSpeed = 0; });
+            rightBtn.addEventListener('touchend', (e) => { e.preventDefault(); game.playerSpeed = 0; });
+            rightBtn.addEventListener('mouseleave', () => { game.playerSpeed = 0; });
 
             // Pause button
             document.getElementById('pauseBtn').addEventListener('click', togglePause);
@@ -938,19 +1678,21 @@
                 });
             });
 
-            // Skins panel
-            document.getElementById('skinsToggle').addEventListener('click', () => {
-                document.getElementById('skinsPanel').classList.add('open');
+            // Shop
+            document.getElementById('shopToggle').addEventListener('click', () => {
+                document.getElementById('shopPanel').classList.add('open');
             });
+
+            // Skins
             document.getElementById('skinsCloseBtn').addEventListener('click', () => {
                 document.getElementById('skinsPanel').classList.remove('open');
             });
         }
 
         function handleKeyDown(e) {
-            if (e.key === 'ArrowLeft' || e.key === 'a') {
+            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
                 game.playerSpeed = -5;
-            } else if (e.key === 'ArrowRight' || e.key === 'd') {
+            } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
                 game.playerSpeed = 5;
             } else if (e.key === ' ') {
                 e.preventDefault();
@@ -961,14 +1703,15 @@
         }
 
         function handleKeyUp(e) {
-            if ((e.key === 'ArrowLeft' || e.key === 'a') && game.playerSpeed === -5) {
+            if ((e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') && game.playerSpeed === -5) {
                 game.playerSpeed = 0;
-            } else if ((e.key === 'ArrowRight' || e.key === 'd') && game.playerSpeed === 5) {
+            } else if ((e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') && game.playerSpeed === 5) {
                 game.playerSpeed = 0;
             }
         }
 
         function togglePause() {
+            if (!game.isRunning) return;
             game.isPaused = !game.isPaused;
             document.getElementById('pauseMenu').classList.toggle('active');
             document.getElementById('pauseOverlay').style.display = game.isPaused ? 'block' : 'none';
@@ -981,9 +1724,8 @@
         function updatePauseMenu() {
             document.getElementById('pauseScore').textContent = game.score;
             document.getElementById('pauseWave').textContent = game.wave;
-            document.getElementById('pauseHealth').textContent = `${game.health}/${game.maxHealth}`;
+            document.getElementById('pauseHealth').textContent = `${Math.max(0, game.health)}/${game.maxHealth}`;
             document.getElementById('pauseTokens').textContent = game.tokens;
-            document.getElementById('waveDisplay').textContent = game.wave;
 
             // Wave info
             let waveInfo = `<strong>Wave ${game.wave}</strong><br>`;
@@ -1020,7 +1762,15 @@
                 `;
                 btn.disabled = game.tokens < upgrade.cost;
                 if (btn.disabled) btn.style.opacity = '0.5';
-                btn.onclick = () => buyUpgrade(upgrade);
+                btn.style.cursor = btn.disabled ? 'not-allowed' : 'pointer';
+                btn.onclick = () => {
+                    if (game.tokens >= upgrade.cost) {
+                        game.tokens -= upgrade.cost;
+                        upgrade.fn();
+                        updatePauseStore();
+                        updateHUD();
+                    }
+                };
                 upgradesContainer.appendChild(btn);
             });
 
@@ -1030,30 +1780,20 @@
                 btn.innerHTML = `
                     <div class="pause-store-name">${booster.name}</div>
                     <div class="pause-store-desc">${booster.desc}</div>
-                    <div class="pause-store-cost">💰 ${booster.cost || 300}</div>
+                    <div class="pause-store-cost">💰 ${booster.cost}</div>
                 `;
-                btn.disabled = game.tokens < (booster.cost || 300) || game.activeBoosters[booster.id];
+                btn.disabled = game.tokens < booster.cost || game.activeBoosters[booster.id];
                 if (btn.disabled) btn.style.opacity = '0.5';
-                btn.onclick = () => buyBooster(booster);
+                btn.style.cursor = btn.disabled ? 'not-allowed' : 'pointer';
+                btn.onclick = () => {
+                    if (game.tokens >= booster.cost && !game.activeBoosters[booster.id]) {
+                        game.tokens -= booster.cost;
+                        activateBooster(booster);
+                        updatePauseStore();
+                    }
+                };
                 boostersContainer.appendChild(btn);
             });
-        }
-
-        function buyUpgrade(upgrade) {
-            if (game.tokens >= upgrade.cost && !game.isPaused) return;
-            if (game.tokens >= upgrade.cost) {
-                game.tokens -= upgrade.cost;
-                upgrade.fn();
-            }
-        }
-
-        function buyBooster(booster) {
-            const cost = booster.cost || 300;
-            if (game.tokens >= cost && !game.activeBoosters[booster.id] && !game.isPaused) return;
-            if (game.tokens >= cost && !game.activeBoosters[booster.id]) {
-                game.tokens -= cost;
-                activateBooster(booster);
-            }
         }
 
         function initSkins() {
@@ -1079,13 +1819,12 @@
                 `;
 
                 item.onclick = () => {
-                    if (isOwned) {
+                    if (isOwned || game.tokens >= cost) {
+                        if (!isOwned) {
+                            game.tokens -= cost;
+                            game.ownedSkins.push(skinKey);
+                        }
                         selectSkin(skinKey);
-                    } else if (game.tokens >= cost) {
-                        game.tokens -= cost;
-                        game.ownedSkins.push(skinKey);
-                        selectSkin(skinKey);
-                        initSkins();
                     }
                 };
 
@@ -1098,14 +1837,81 @@
             const stats = game.skinStats[skinKey];
             game.projectileSpeed = 7 * stats.damage;
             game.maxHealth = stats.health;
-            game.playerHealth = stats.health;
             game.health = stats.health;
+            game.playerHealth = stats.health;
             initSkins();
             document.getElementById('skinsPanel').classList.remove('open');
+            updateHUD();
+        }
+
+        function renderShop() {
+            const upgradesDiv = document.getElementById('upgradesContainer');
+            const boostersDiv = document.getElementById('boostersContainer');
+
+            upgradesDiv.innerHTML = '';
+            boostersDiv.innerHTML = '';
+
+            upgrades.forEach(upgrade => {
+                const item = document.createElement('div');
+                item.className = 'shop-item';
+                item.innerHTML = `
+                    <div class="item-name">${upgrade.name}</div>
+                    <div class="item-desc">${upgrade.desc}</div>
+                    <div class="item-cost">💰 ${upgrade.cost}</div>
+                `;
+                item.disabled = game.tokens < upgrade.cost;
+                item.onclick = () => {
+                    if (game.tokens >= upgrade.cost && !game.isPaused) {
+                        game.tokens -= upgrade.cost;
+                        upgrade.fn();
+                        renderShop();
+                        updateHUD();
+                    }
+                };
+                upgradesDiv.appendChild(item);
+            });
+
+            boosters.forEach(booster => {
+                const item = document.createElement('div');
+                item.className = 'shop-item booster';
+                item.innerHTML = `
+                    <div class="item-name">${booster.name}</div>
+                    <div class="item-desc">${booster.desc}</div>
+                    <div class="item-cost">💰 ${booster.cost}</div>
+                `;
+                item.disabled = game.tokens < booster.cost || game.activeBoosters[booster.id];
+                item.onclick = () => {
+                    if (game.tokens >= booster.cost && !game.activeBoosters[booster.id] && !game.isPaused) {
+                        game.tokens -= booster.cost;
+                        activateBooster(booster);
+                        renderShop();
+                    }
+                };
+                boostersDiv.appendChild(item);
+            });
+        }
+
+        function showLevelInfo() {
+            const levelInfo = document.getElementById('levelInfo');
+            levelInfo.style.display = 'block';
+            setTimeout(() => {
+                levelInfo.style.display = 'none';
+                startWave();
+            }, 3000);
         }
 
         // ==================== GAME LOOP ====================
         function gameLoop() {
+            // FPS Counter
+            game.frameCount++;
+            const now = Date.now();
+            if (now - game.lastTime >= 1000) {
+                game.fps = game.frameCount;
+                document.getElementById('fpsCounter').textContent = `FPS: ${game.fps}`;
+                game.frameCount = 0;
+                game.lastTime = now;
+            }
+
             if (!game.isPaused) {
                 update();
             }
@@ -1203,6 +2009,10 @@
                             game.tokens += reward;
                             game.score += reward * 10;
                             game.enemiesDefeated++;
+                            game.challengeProgress++;
+
+                            // Check achievements
+                            checkAchievements();
 
                             // Spawn booster randomly
                             if (Math.random() < 0.2) {
@@ -1212,6 +2022,7 @@
                             }
 
                             createParticles(enemy.x, enemy.y, enemy.color);
+                            showCombo();
                             
                             if (game.enemiesDefeated === game.totalEnemiesInWave) {
                                 startWave();
@@ -1252,13 +2063,15 @@
             }
 
             // Update boosters
-            for (const [boosterId, endTime] of Object.entries(game.activeBoosters)) {
-                if (Date.now() > endTime) {
+            for (const boosterId in game.activeBoosters) {
+                if (Date.now() > game.activeBoosters[boosterId]) {
                     const booster = boosters.find(b => b.id === boosterId);
                     if (booster && booster.fnEnd) booster.fnEnd();
                     delete game.activeBoosters[boosterId];
                 }
             }
+
+            updateHUD();
         }
 
         function checkShelterCollision(enemy) {
@@ -1304,7 +2117,8 @@
         function activateBooster(booster) {
             if (booster.fn) booster.fn();
             game.activeBoosters[booster.id] = Date.now() + booster.duration;
-            addFloatingLabel(`+${booster.name}`, game.width / 2, game.height / 2, '#FF006E');
+            updateBoostersDisplay();
+            showNotification(`+${booster.name}`);
         }
 
         function fireProjectile() {
@@ -1319,9 +2133,18 @@
 
         function startWave() {
             game.wave++;
+            game.waveStarted = true;
             game.enemiesDefeated = 0;
             game.enemies = [];
             game.shelters = [];
+
+            // Show wave title
+            const waveTitleDisplay = document.getElementById('waveTitleDisplay');
+            waveTitleDisplay.textContent = `WAVE ${game.wave}`;
+            waveTitleDisplay.style.display = 'block';
+            setTimeout(() => {
+                waveTitleDisplay.style.display = 'none';
+            }, 1000);
 
             // Add shelters starting from wave 6
             if (game.wave >= 6) {
@@ -1367,6 +2190,9 @@
                     isStrong: isStrong
                 });
             }
+
+            document.getElementById('waveNumber').textContent = game.wave;
+            updateHUD();
         }
 
         function createParticles(x, y, color) {
@@ -1385,15 +2211,90 @@
             }
         }
 
-        function addFloatingLabel(text, x, y, color) {
+        function showCombo() {
+            if (game.combo >= 3) {
+                const comboDisplay = document.getElementById('comboDisplay');
+                comboDisplay.textContent = `${game.combo}x COMBO!`;
+                comboDisplay.style.display = 'block';
+                setTimeout(() => {
+                    comboDisplay.style.display = 'none';
+                }, 600);
+            }
+        }
+
+        function showNotification(text) {
             const label = document.createElement('div');
-            label.className = 'floating-label';
+            label.style.cssText = `
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                font-size: 2.5em;
+                font-weight: bold;
+                color: #FFB703;
+                text-shadow: 0 0 20px rgba(255, 183, 3, 0.8);
+                pointer-events: none;
+                animation: floatAway 2s ease-out forwards;
+                z-index: 80;
+            `;
             label.textContent = text;
-            label.style.color = color;
-            label.style.left = x + 'px';
-            label.style.top = y + 'px';
             document.getElementById('gameContainer').appendChild(label);
             setTimeout(() => label.remove(), 2000);
+        }
+
+        function checkAchievements() {
+            if (game.combo === 5 && !game.achievements.includes('5x Combo')) {
+                game.achievements.push('5x Combo');
+            }
+            if (game.wave === 10 && !game.achievements.includes('Wave 10')) {
+                game.achievements.push('Wave 10');
+            }
+            if (game.score >= 10000 && !game.achievements.includes('10k Score')) {
+                game.achievements.push('10k Score');
+            }
+        }
+
+        function updateHUD() {
+            document.getElementById('scoreValue').textContent = game.score;
+            document.getElementById('tokenValue').textContent = game.tokens;
+            document.getElementById('comboValue').textContent = game.combo;
+            
+            const healthPercent = (game.health / game.maxHealth) * 100;
+            document.getElementById('healthFill').style.width = healthPercent + '%';
+
+            const threatCount = game.enemies.length;
+            const threatText = threatCount > 0 ? `🚨 THREAT: ${threatCount}` : '';
+            document.getElementById('threatIndicator').textContent = threatText;
+
+            const challengePercent = (game.challengeProgress / game.challengeTarget) * 100;
+            document.getElementById('challengeProgress').style.width = Math.min(challengePercent, 100) + '%';
+            document.getElementById('challengeText').textContent = `Kill ${game.challengeTarget} - ${game.challengeProgress}/${game.challengeTarget}`;
+
+            if (game.score > game.recordScore) {
+                game.recordScore = game.score;
+                document.getElementById('recordScore').textContent = game.recordScore;
+            }
+
+            updateBoostersDisplay();
+        }
+
+        function updateBoostersDisplay() {
+            const container = document.getElementById('boostersDisplay');
+            container.innerHTML = '';
+
+            for (const boosterId in game.activeBoosters) {
+                const booster = boosters.find(b => b.id === boosterId);
+                if (booster) {
+                    const timeLeft = Math.ceil((game.activeBoosters[boosterId] - Date.now()) / 1000);
+                    const item = document.createElement('div');
+                    item.className = 'booster-item';
+                    item.innerHTML = `
+                        <span class="booster-name">${booster.name}</span>
+                        <span class="booster-timer">${timeLeft}s</span>
+                    `;
+                    container.appendChild(item);
+                }
+            }
         }
 
         function gameOver() {
@@ -1488,21 +2389,26 @@
                 game.ctx.arc(game.playerX, game.playerY, game.playerRadius + 10, 0, Math.PI * 2);
                 game.ctx.stroke();
             }
-
-            // Update top info panel
-            document.getElementById('waveDisplay').textContent = game.wave;
-            const threatText = game.enemies.length > 0 ? `THREAT: ${game.enemies.length}` : '';
-            document.getElementById('threatIndicator').textContent = threatText;
-
-            if (threatText === '') {
-                document.getElementById('threatIndicator').style.display = 'none';
-            } else {
-                document.getElementById('threatIndicator').style.display = 'inline';
-            }
         }
 
         // Start the game
         window.addEventListener('load', init);
+
+        // Add keyframe animation to style
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes floatAway {
+                0% {
+                    opacity: 1;
+                    transform: translate(-50%, -50%) scale(1);
+                }
+                100% {
+                    opacity: 0;
+                    transform: translate(-50%, -120px) scale(1.3);
+                }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
