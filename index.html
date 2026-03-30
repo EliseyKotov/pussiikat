@@ -26,6 +26,8 @@
             --dark-bg: #0A0E27;
             --success-color: #06FFA5;
             --critical-color: #FB5607;
+            --light-blue-1: #87CEEB;
+            --light-blue-2: #B0E0E6;
             --safe-top: env(safe-area-inset-top, 0px);
             --safe-bottom: env(safe-area-inset-bottom, 0px);
             --safe-left: env(safe-area-inset-left, 0px);
@@ -34,14 +36,14 @@
 
         @media (prefers-color-scheme: dark) {
             body {
-                background: linear-gradient(135deg, #87CEEB 0%, #E0F6FF 100%);
+                background: var(--dark-bg);
                 color: #fff;
             }
         }
 
         body {
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #87CEEB 0%, #E0F6FF 100%);
+            background: linear-gradient(135deg, var(--light-blue-1) 0%, var(--light-blue-2) 100%);
             color: #fff;
             overflow: hidden;
             width: 100%;
@@ -58,7 +60,7 @@
             width: 100%;
             height: 100vh;
             position: relative;
-            background: linear-gradient(135deg, #87CEEB 0%, #E0F6FF 100%);
+            background: linear-gradient(135deg, var(--light-blue-1) 0%, var(--light-blue-2) 100%);
             overflow: hidden;
             display: flex;
             align-items: center;
@@ -86,7 +88,108 @@
             backdrop-filter: blur(5px);
         }
 
-        /* ============ TOP ACHIEVEMENTS PANEL ============ */
+        /* ============ TOP HUD (MOBILE) ============ */
+        .mobile-top-hud {
+            position: absolute;
+            top: max(5px, var(--safe-top));
+            left: max(5px, var(--safe-left));
+            right: max(5px, var(--safe-right));
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(10px);
+            padding: 6px 10px;
+            border-radius: 8px;
+            border: 2px solid var(--primary-arc);
+            z-index: 99;
+            font-size: 11px;
+            pointer-events: none;
+            box-shadow: 0 0 15px rgba(0, 217, 255, 0.2);
+            display: none;
+            gap: 12px;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .mobile-top-hud.active {
+            display: flex;
+        }
+
+        .mobile-hud-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .mobile-hud-label {
+            color: var(--accent-token);
+            font-size: 10px;
+        }
+
+        .mobile-hud-value {
+            color: #fff;
+            font-size: 12px;
+        }
+
+        /* ============ BOTTOM CONTROLS (MOBILE) ============ */
+        .mobile-controls {
+            position: absolute;
+            bottom: max(5px, var(--safe-bottom));
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            width: auto;
+        }
+
+        .mobile-controls.active {
+            display: flex;
+        }
+
+        .mobile-btn {
+            background: rgba(0, 217, 255, 0.3);
+            border: 2px solid var(--primary-arc);
+            color: var(--primary-arc);
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            touch-action: manipulation;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+            min-width: 48px;
+            box-shadow: 0 0 10px rgba(0, 217, 255, 0.2);
+        }
+
+        .mobile-btn:active {
+            background: rgba(0, 217, 255, 0.6);
+            transform: scale(0.95);
+        }
+
+        .mobile-btn.pause-btn {
+            background: rgba(255, 183, 3, 0.3);
+            border-color: var(--accent-token);
+            color: var(--accent-token);
+            box-shadow: 0 0 10px rgba(255, 183, 3, 0.2);
+        }
+
+        .mobile-btn.pause-btn:active {
+            background: rgba(255, 183, 3, 0.6);
+        }
+
+        /* ============ DESKTOP HUD ============ */
+        .desktop-hud {
+            display: block;
+        }
+
         .achievements-panel {
             position: absolute;
             top: max(10px, var(--safe-top));
@@ -235,8 +338,7 @@
         /* ============ HUD STYLES ============ */
         .hud {
             position: absolute;
-            top: auto;
-            bottom: max(70px, calc(70px + var(--safe-bottom)));
+            top: max(10px, var(--safe-top));
             left: max(10px, var(--safe-left));
             background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(10px);
@@ -265,7 +367,6 @@
             z-index: 100;
             pointer-events: none;
             box-shadow: 0 0 10px rgba(6, 255, 165, 0.2);
-            display: none;
         }
 
         .hud-item {
@@ -514,6 +615,11 @@
             transform: scale(0.95);
         }
 
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
         .shop-panel {
             position: absolute;
             top: 50%;
@@ -640,6 +746,190 @@
             font-size: 11px;
         }
 
+        /* ============ PAUSE MENU MODAL ============ */
+        .pause-menu-modal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            border: 4px solid var(--accent-token);
+            border-radius: 15px;
+            z-index: 200;
+            display: none;
+            max-width: 95vw;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 0 40px rgba(255, 183, 3, 0.5);
+            animation: slideIn 0.3s ease-out;
+            padding: 0;
+        }
+
+        .pause-menu-modal.active {
+            display: block;
+        }
+
+        .pause-menu-header {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(30, 10, 50, 0.95));
+            padding: 20px;
+            border-bottom: 2px solid var(--accent-token);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            z-index: 1;
+        }
+
+        .pause-menu-title {
+            color: var(--accent-token);
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .pause-menu-close-btn {
+            background: var(--secondary-arc);
+            color: white;
+            border: 2px solid #ff0000;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            font-weight: bold;
+            transition: all 0.2s;
+            touch-action: manipulation;
+            min-height: 44px;
+            min-width: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pause-menu-close-btn:active {
+            transform: scale(0.9);
+        }
+
+        .pause-menu-tabs {
+            display: flex;
+            gap: 10px;
+            padding: 10px 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-bottom: 1px solid rgba(255, 183, 3, 0.2);
+        }
+
+        .pause-menu-tab {
+            background: rgba(255, 183, 3, 0.1);
+            border: 2px solid rgba(255, 183, 3, 0.3);
+            color: var(--accent-token);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.2s;
+            touch-action: manipulation;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pause-menu-tab:active {
+            transform: scale(0.95);
+        }
+
+        .pause-menu-tab.active {
+            background: linear-gradient(135deg, var(--accent-token), #FFED4E);
+            border-color: #FF6B00;
+            color: #000;
+        }
+
+        .pause-menu-content {
+            padding: 20px;
+            display: none;
+        }
+
+        .pause-menu-content.active {
+            display: block;
+        }
+
+        .pause-menu-section {
+            margin-bottom: 20px;
+        }
+
+        .pause-menu-section-title {
+            color: var(--primary-arc);
+            font-weight: bold;
+            font-size: 13px;
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--primary-arc);
+            padding-bottom: 5px;
+        }
+
+        .pause-menu-stat {
+            display: flex;
+            justify-content: space-between;
+            color: #fff;
+            margin: 8px 0;
+            font-size: 12px;
+        }
+
+        .pause-menu-stat-label {
+            color: var(--accent-token);
+            font-weight: bold;
+        }
+
+        .pause-menu-stat-value {
+            color: var(--success-color);
+            font-weight: bold;
+        }
+
+        .pause-menu-achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .pause-menu-achievement-item {
+            background: linear-gradient(135deg, rgba(255,183,3,0.1), rgba(255,183,3,0.05));
+            border: 2px solid var(--accent-token);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 24px;
+        }
+
+        .pause-menu-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid rgba(255, 183, 3, 0.2);
+        }
+
+        .pause-menu-button {
+            flex: 1;
+            background: linear-gradient(135deg, var(--accent-token), #FFED4E);
+            color: #000;
+            border: 2px solid #FF6B00;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.2s;
+            min-height: 44px;
+            touch-action: manipulation;
+        }
+
+        .pause-menu-button:active {
+            transform: scale(0.95);
+        }
+
         /* ============ WAVE PAUSE SCREEN ============ */
         .wave-pause-screen {
             position: absolute;
@@ -682,6 +972,7 @@
             transition: all 0.2s;
             animation: buttonPulse 1s ease-in-out infinite;
             min-height: 48px;
+            touch-action: manipulation;
         }
 
         @keyframes buttonPulse {
@@ -819,6 +1110,7 @@
             font-size: 14px;
             transition: all 0.2s;
             min-height: 44px;
+            touch-action: manipulation;
         }
 
         .game-over-buttons button:active {
@@ -941,19 +1233,11 @@
             }
 
             .hud {
-                font-size: 11px;
-                padding: 10px 12px;
-                min-width: 160px;
-                top: auto;
-                bottom: max(70px, calc(70px + var(--safe-bottom)));
-                left: max(5px, var(--safe-left));
+                display: none;
             }
 
             .score-board {
-                font-size: 11px;
-                padding: 10px 12px;
-                min-width: 120px;
-                left: max(5px, var(--safe-left));
+                display: none;
             }
 
             .record-panel {
@@ -961,29 +1245,35 @@
             }
 
             .challenge-hud {
-                font-size: 10px;
-                padding: 10px 12px;
-                min-width: 150px;
-                right: max(5px, var(--safe-right));
-                bottom: auto;
-                top: max(60px, calc(60px + var(--safe-top)));
+                display: none;
             }
 
             .achievements-panel {
-                top: max(5px, var(--safe-top));
-                padding: 6px 10px;
-                font-size: 10px;
-            }
-
-            .achievement-badge {
-                font-size: 10px;
-                padding: 3px 6px;
+                display: none;
             }
 
             .wave-info-panel {
-                top: max(50px, calc(50px + var(--safe-top)));
-                font-size: 11px;
-                padding: 8px 12px;
+                display: none;
+            }
+
+            .shop-toggle {
+                display: none;
+            }
+
+            .boosters-display {
+                display: none;
+            }
+
+            .mobile-top-hud.active {
+                display: flex;
+            }
+
+            .mobile-controls.active {
+                display: flex;
+            }
+
+            .swipe-hint {
+                display: none;
             }
 
             .shop-panel {
@@ -997,14 +1287,14 @@
                 gap: 10px;
             }
 
-            .swipe-hint {
-                display: flex;
+            .pause-menu-modal {
+                max-width: 95vw;
+                max-height: 90vh;
             }
 
             .shop-item,
             .skin-item,
             .close-btn,
-            .shop-toggle,
             .start-wave-btn {
                 min-height: 48px;
             }
@@ -1018,12 +1308,6 @@
 
             .skins-grid {
                 grid-template-columns: repeat(2, 1fr);
-            }
-
-            .boosters-display {
-                font-size: 9px;
-                right: max(5px, var(--safe-right));
-                top: max(140px, calc(140px + var(--safe-top)));
             }
 
             .wave-pause-screen {
@@ -1040,12 +1324,27 @@
                 font-size: 14px;
             }
 
-            .hud {
-                font-size: 10px;
+            .pause-menu-modal {
+                max-width: 95vw;
+                max-height: 85vh;
             }
 
             .shop-item {
                 min-height: 50px;
+            }
+
+            .mobile-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 20px;
+            }
+
+            .mobile-hud-value {
+                font-size: 11px;
+            }
+
+            .mobile-hud-label {
+                font-size: 9px;
             }
         }
 
@@ -1060,10 +1359,199 @@
 </head>
 
 <body>
-    <!-- ============ MAIN GAME CONTAINER ============ -->
     <div id="gameContainer">
         <canvas id="gameCanvas"></canvas>
         <div class="pause-overlay" id="pauseOverlay"></div>
+
+        <!-- ============ MOBILE TOP HUD ============ -->
+        <div class="mobile-top-hud" id="mobileTopHud">
+            <div class="mobile-hud-item">
+                <span class="mobile-hud-label">❤️</span>
+                <span class="mobile-hud-value" id="mobileHealth">100/100</span>
+            </div>
+            <div class="mobile-hud-item">
+                <span class="mobile-hud-label">🔷</span>
+                <span class="mobile-hud-value" id="mobileTokens">0</span>
+            </div>
+            <div class="mobile-hud-item">
+                <span class="mobile-hud-label">📊</span>
+                <span class="mobile-hud-value" id="mobileWave">1</span>
+            </div>
+            <div class="mobile-hud-item">
+                <span class="mobile-hud-label">👹</span>
+                <span class="mobile-hud-value" id="mobileEnemies">0</span>
+            </div>
+        </div>
+
+        <!-- ============ MOBILE CONTROLS ============ -->
+        <div class="mobile-controls" id="mobileControls">
+            <button class="mobile-btn" id="leftBtn">←</button>
+            <button class="mobile-btn pause-btn" id="pauseBtn">⏸️</button>
+            <button class="mobile-btn" id="rightBtn">→</button>
+        </div>
+
+        <!-- ============ PAUSE MENU MODAL ============ -->
+        <div class="pause-menu-modal" id="pauseMenuModal">
+            <div class="pause-menu-header">
+                <span class="pause-menu-title">⏸️ PAUSE</span>
+                <button class="pause-menu-close-btn" id="pauseMenuCloseBtn">✕</button>
+            </div>
+
+            <div class="pause-menu-tabs">
+                <button class="pause-menu-tab active" data-tab="info">📊 INFO</button>
+                <button class="pause-menu-tab" data-tab="shop">🛍️ SHOP</button>
+                <button class="pause-menu-tab" data-tab="settings">⚙️ SETTINGS</button>
+            </div>
+
+            <!-- INFO TAB -->
+            <div class="pause-menu-content active" id="infoTab">
+                <div class="pause-menu-section">
+                    <div class="pause-menu-section-title">📊 Wave Information</div>
+                    <div class="pause-menu-stat">
+                        <span class="pause-menu-stat-label">Wave:</span>
+                        <span class="pause-menu-stat-value" id="pauseWaveInfo">1</span>
+                    </div>
+                    <div class="pause-menu-stat">
+                        <span class="pause-menu-stat-label">Difficulty:</span>
+                        <span class="pause-menu-stat-value" id="pauseDifficultyInfo">Tutorial</span>
+                    </div>
+                    <div class="pause-menu-stat">
+                        <span class="pause-menu-stat-label">Enemies:</span>
+                        <span class="pause-menu-stat-value" id="pauseEnemiesInfo">0</span>
+                    </div>
+                </div>
+
+                <div class="pause-menu-section">
+                    <div class="pause-menu-section-title">🎯 Wave Stats</div>
+                    <div class="pause-menu-stat">
+                        <span class="pause-menu-stat-label">Kills This Wave:</span>
+                        <span class="pause-menu-stat-value" id="pauseKillsThisWave">0</span>
+                    </div>
+                    <div class="pause-menu-stat">
+                        <span class="pause-menu-stat-label">Current Combo:</span>
+                        <span class="pause-menu-stat-value" id="pauseCurrentCombo">0</span>
+                    </div>
+                </div>
+
+                <div class="pause-menu-section">
+                    <div class="pause-menu-section-title">🏆 Achievements</div>
+                    <div class="pause-menu-achievements-grid" id="pauseAchievementsGrid"></div>
+                </div>
+
+                <div class="pause-menu-section">
+                    <div class="pause-menu-section-title">📌 Daily Challenge</div>
+                    <div class="pause-menu-stat">
+                        <span class="pause-menu-stat-label">Challenge:</span>
+                        <span class="pause-menu-stat-value" id="pauseChallengeTitle">-</span>
+                    </div>
+                    <div class="pause-menu-stat">
+                        <span class="pause-menu-stat-label">Progress:</span>
+                        <span class="pause-menu-stat-value" id="pauseChallengeProgress">0/0</span>
+                    </div>
+                </div>
+
+                <div class="pause-menu-section">
+                    <div class="pause-menu-section-title">📈 Records</div>
+                    <div class="pause-menu-stat">
+                        <span class="pause-menu-stat-label">Max Wave:</span>
+                        <span class="pause-menu-stat-value" id="pauseMaxWave">1</span>
+                    </div>
+                    <div class="pause-menu-stat">
+                        <span class="pause-menu-stat-label">Total Points:</span>
+                        <span class="pause-menu-stat-value" id="pauseTotalScore">0</span>
+                    </div>
+                    <div class="pause-menu-stat">
+                        <span class="pause-menu-stat-label">Best Combo:</span>
+                        <span class="pause-menu-stat-value" id="pauseBestCombo">0</span>
+                    </div>
+                </div>
+
+                <div class="pause-menu-buttons">
+                    <button class="pause-menu-button" id="resumeBtn">▶️ RESUME</button>
+                </div>
+            </div>
+
+            <!-- SHOP TAB -->
+            <div class="pause-menu-content" id="shopTab">
+                <div class="pause-menu-section">
+                    <div class="pause-menu-section-title">⚡ PERMANENT UPGRADES</div>
+                    <button class="shop-item" id="pauseDamageBtn" onclick="upgradeDamage()">
+                        <span class="item-name">⚡ Firepower</span>
+                        <span class="item-desc">Increased damage output</span>
+                        <span class="item-cost" id="pauseDamageCost">35🔷</span>
+                    </button>
+                    <button class="shop-item" id="pauseFireRateBtn" onclick="upgradeFireRate()">
+                        <span class="item-name">🔥 Fire Rate</span>
+                        <span class="item-desc">Faster shooting</span>
+                        <span class="item-cost" id="pauseFireRateCost">50🔷</span>
+                    </button>
+                    <button class="shop-item" id="pauseBulletBtn" onclick="upgradeBulletSize()">
+                        <span class="item-name">◯ Projectile Size</span>
+                        <span class="item-desc">Larger projectiles</span>
+                        <span class="item-cost" id="pauseBulletCost">40🔷</span>
+                    </button>
+                    <button class="shop-item" id="pauseHealthBtn" onclick="upgradeHealth()">
+                        <span class="item-name">❤️ Hull Armor</span>
+                        <span class="item-desc">More HP</span>
+                        <span class="item-cost" id="pauseHealthCost">70🔷</span>
+                    </button>
+                </div>
+
+                <div class="pause-menu-section">
+                    <div class="pause-menu-section-title">⚡ TEMPORARY BOOSTERS</div>
+                    <button class="shop-item booster" id="pauseQuickDrawBtn" onclick="activateBooster('quickDraw')">
+                        <span class="item-name">⚡ Rapid Fire</span>
+                        <span class="item-desc">3x fire rate</span>
+                        <span class="item-meta">⏱️ 15 sec</span>
+                        <span class="item-cost">30🔷</span>
+                    </button>
+                    <button class="shop-item booster" id="pausePowerStrikeBtn" onclick="activateBooster('powerStrike')">
+                        <span class="item-name">💪 Power Strike</span>
+                        <span class="item-desc">2x damage</span>
+                        <span class="item-meta">⏱️ 20 sec</span>
+                        <span class="item-cost">40🔷</span>
+                    </button>
+                    <button class="shop-item booster" id="pauseShieldBtn" onclick="activateBooster('shield')">
+                        <span class="item-name">🛡️ Defense Matrix</span>
+                        <span class="item-desc">-50% incoming damage</span>
+                        <span class="item-meta">⏱️ 30 sec</span>
+                        <span class="item-cost">50🔷</span>
+                    </button>
+                    <button class="shop-item booster" id="pauseSpeedBoostBtn" onclick="activateBooster('speedBoost')">
+                        <span class="item-name">🚀 Overdrive</span>
+                        <span class="item-desc">1.5x movement speed</span>
+                        <span class="item-meta">⏱️ 20 sec</span>
+                        <span class="item-cost">25🔷</span>
+                    </button>
+                </div>
+
+                <div class="pause-menu-section">
+                    <button class="shop-item" id="pauseSkinsBtn" onclick="showSkinsPanel()" style="border-color: var(--primary-arc);">
+                        <span class="item-name" style="color: var(--primary-arc);">🎨 Drones</span>
+                        <span class="item-desc">New drone models and bonuses</span>
+                    </button>
+                </div>
+
+                <div class="pause-menu-buttons">
+                    <button class="pause-menu-button" id="closeShopBtn">✕ CLOSE</button>
+                </div>
+            </div>
+
+            <!-- SETTINGS TAB -->
+            <div class="pause-menu-content" id="settingsTab">
+                <div class="pause-menu-section">
+                    <div class="pause-menu-section-title">⚙️ Game Settings</div>
+                    <div class="pause-menu-stat">
+                        <span class="pause-menu-stat-label">Sound:</span>
+                        <span class="pause-menu-stat-value" id="soundStatus">ON</span>
+                    </div>
+                </div>
+
+                <div class="pause-menu-buttons">
+                    <button class="pause-menu-button" id="resumeBtn2">��️ RESUME</button>
+                </div>
+            </div>
+        </div>
 
         <!-- ============ MINIGAME SCREEN ============ -->
         <div class="minigame-screen" id="minigameScreen">
@@ -1073,23 +1561,23 @@
             <div class="minigame-result" id="minigameResult"></div>
         </div>
 
-        <!-- ============ ACHIEVEMENTS PANEL ============ -->
+        <!-- ============ ACHIEVEMENTS PANEL (DESKTOP) ============ -->
         <div class="achievements-panel" id="achievementsPanel"></div>
 
-        <!-- ============ WAVE INFO PANEL ============ -->
+        <!-- ============ WAVE INFO PANEL (DESKTOP) ============ -->
         <div class="wave-info-panel" id="waveInfoPanel">
             📊 Wave: <span id="waveCounter">1</span> | 
             <span class="wave-difficulty" id="difficultyLevel">Tutorial</span>
             <span class="threat-indicator" id="threatIndicator" style="display: none;"></span>
         </div>
 
-        <!-- ============ RECORD PANEL ============ -->
+        <!-- ============ RECORD PANEL (DESKTOP) ============ -->
         <div class="record-panel" id="recordPanel">
             <div class="record-item">🏆 Max Wave: <span id="maxWave">1</span></div>
             <div class="record-item">⭐ Total Points: <span id="totalScore">0</span></div>
         </div>
 
-        <!-- ============ CHALLENGE HUD ============ -->
+        <!-- ============ CHALLENGE HUD (DESKTOP) ============ -->
         <div class="challenge-hud" id="challengeHud" style="display: none;">
             <div class="challenge-title" id="challengeTitle">📌 Daily Mission</div>
             <div class="challenge-progress-bar">
@@ -1098,7 +1586,7 @@
             <div class="challenge-text" id="challengeText">0/0</div>
         </div>
 
-        <!-- ============ HUD ============ -->
+        <!-- ============ HUD (DESKTOP) ============ -->
         <div class="hud">
             <div class="hud-item">
                 <span class="hud-label">❤️ Hull:</span>
@@ -1118,7 +1606,7 @@
 
         <div class="fps-counter" id="fpsCounter">FPS: 60</div>
 
-        <!-- ============ SCORE BOARD ============ -->
+        <!-- ============ SCORE BOARD (DESKTOP) ============ -->
         <div class="score-board">
             <div class="score-item">
                 <span class="score-label">POINTS</span>
@@ -1130,7 +1618,7 @@
             </div>
         </div>
 
-        <!-- ============ ACTIVE BOOSTERS ============ -->
+        <!-- ============ ACTIVE BOOSTERS (DESKTOP) ============ -->
         <div class="boosters-display" id="boostersDisplay" style="display: none;"></div>
 
         <!-- ============ COMBO DISPLAY ============ -->
@@ -1145,10 +1633,10 @@
             <div class="swipe-arrow right">→</div>
         </div>
 
-        <!-- ============ SHOP BUTTON ============ -->
+        <!-- ============ SHOP BUTTON (DESKTOP) ============ -->
         <div class="shop-toggle" id="shopToggle" onclick="toggleShop()">🛍️</div>
 
-        <!-- ============ SHOP PANEL ============ -->
+        <!-- ============ SHOP PANEL (DESKTOP) ============ -->
         <div class="shop-panel" id="shopPanel">
             <div class="shop-title">🛍️ SHOP</div>
 
@@ -1272,6 +1760,7 @@
         const images = {
             raider: new Image(),
             arc1: new Image(),
+            arc2: new Image(),
             arc3: new Image(),
             arc4: new Image(),
             arc5: new Image(),
@@ -1281,12 +1770,12 @@
 
         images.raider.src = 'arcraider.png';
         images.arc1.src = 'arc1.png';
+        images.arc2.src = 'arc2.png';
         images.arc3.src = 'arc3.png';
         images.arc4.src = 'arc4.png';
         images.arc5.src = 'arc5.png';
         images.arcboss.src = 'arcboss.png';
 
-        // Graceful fallback
         Object.values(images).forEach(img => {
             img.onerror = function() {
                 console.warn('Image failed to load, using fallback');
@@ -1307,9 +1796,9 @@
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             isMobile = window.innerWidth <= CONFIG.MOBILE_BREAKPOINT;
+            updateMobileUI();
         });
 
-        // Prevent scrolling/zooming
         document.addEventListener('touchmove', (e) => {
             if (e.target.closest('canvas')) {
                 e.preventDefault();
@@ -1334,7 +1823,8 @@
             waveStats: {
                 timeTaken: 0,
                 waveStartTime: 0,
-                damageReceivedThisWave: 0
+                damageReceivedThisWave: 0,
+                killsThisWave: 0
             },
             upgrades: {
                 damage: { level: 1, baseCost: 35 },
@@ -1349,7 +1839,6 @@
             minigamePlayedWaves: new Set()
         };
 
-        // Load saved game
         const savedData = loadGameData();
         if (savedData) {
             Object.assign(gameState, savedData);
@@ -1413,6 +1902,111 @@
                 return null;
             }
         }
+
+        /* ============ MOBILE UI ============ */
+        function updateMobileUI() {
+            const mobileTopHud = document.getElementById('mobileTopHud');
+            const mobileControls = document.getElementById('mobileControls');
+            
+            if (isMobile) {
+                mobileTopHud.classList.add('active');
+                mobileControls.classList.add('active');
+            } else {
+                mobileTopHud.classList.remove('active');
+                mobileControls.classList.remove('active');
+            }
+        }
+
+        function updateMobileHUD() {
+            if (!isMobile) return;
+            
+            document.getElementById('mobileHealth').textContent = `${Math.ceil(player.health)}/${Math.ceil(player.maxHealth)}`;
+            document.getElementById('mobileTokens').textContent = gameState.tokens;
+            document.getElementById('mobileWave').textContent = gameState.currentWave;
+            document.getElementById('mobileEnemies').textContent = enemies.filter(e => e.alive).length;
+        }
+
+        /* ============ PAUSE MENU ============ */
+        let currentPauseTab = 'info';
+
+        function openPauseMenu() {
+            gameState.isPaused = true;
+            document.getElementById('pauseMenuModal').classList.add('active');
+            document.getElementById('pauseOverlay').style.display = 'block';
+            updatePauseMenuInfo();
+        }
+
+        function closePauseMenu() {
+            gameState.isPaused = false;
+            document.getElementById('pauseMenuModal').classList.remove('active');
+            document.getElementById('pauseOverlay').style.display = 'none';
+        }
+
+        function updatePauseMenuInfo() {
+            const difficulty = getWaveDifficulty(gameState.currentWave);
+            
+            document.getElementById('pauseWaveInfo').textContent = gameState.currentWave;
+            document.getElementById('pauseDifficultyInfo').textContent = difficulty.name;
+            document.getElementById('pauseEnemiesInfo').textContent = enemies.filter(e => e.alive).length;
+            document.getElementById('pauseKillsThisWave').textContent = gameState.waveStats.killsThisWave;
+            document.getElementById('pauseCurrentCombo').textContent = gameState.combo;
+            document.getElementById('pauseMaxWave').textContent = gameState.maxWave;
+            document.getElementById('pauseTotalScore').textContent = gameState.totalScore;
+            document.getElementById('pauseBestCombo').textContent = gameState.maxCombo;
+
+            if (dailyChallenge) {
+                document.getElementById('pauseChallengeTitle').textContent = dailyChallenge.name;
+                document.getElementById('pauseChallengeProgress').textContent = `${dailyChallenge.current}/${dailyChallenge.target}`;
+            }
+
+            updateAchievementsDisplay();
+            const grid = document.getElementById('pauseAchievementsGrid');
+            grid.innerHTML = '';
+            gameState.achievements.forEach(key => {
+                const achievement = ACHIEVEMENTS[key];
+                if (achievement) {
+                    const item = document.createElement('div');
+                    item.className = 'pause-menu-achievement-item';
+                    item.innerHTML = achievement.icon;
+                    item.title = achievement.name;
+                    grid.appendChild(item);
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('pauseMenuCloseBtn').addEventListener('click', closePauseMenu);
+            document.getElementById('resumeBtn').addEventListener('click', closePauseMenu);
+            document.getElementById('resumeBtn2').addEventListener('click', closePauseMenu);
+            document.getElementById('closeShopBtn').addEventListener('click', closePauseMenu);
+
+            document.querySelectorAll('.pause-menu-tab').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    document.querySelectorAll('.pause-menu-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.pause-menu-content').forEach(c => c.classList.remove('active'));
+                    
+                    const tabName = e.target.dataset.tab;
+                    e.target.classList.add('active');
+                    document.getElementById(tabName + 'Tab').classList.add('active');
+                    currentPauseTab = tabName;
+                });
+            });
+
+            if (isMobile) {
+                document.getElementById('pauseBtn').addEventListener('click', openPauseMenu);
+                document.getElementById('leftBtn').addEventListener('mousedown', () => keys.a = true);
+                document.getElementById('leftBtn').addEventListener('mouseup', () => keys.a = false);
+                document.getElementById('leftBtn').addEventListener('touchstart', (e) => { e.preventDefault(); keys.a = true; });
+                document.getElementById('leftBtn').addEventListener('touchend', (e) => { e.preventDefault(); keys.a = false; });
+                
+                document.getElementById('rightBtn').addEventListener('mousedown', () => keys.d = true);
+                document.getElementById('rightBtn').addEventListener('mouseup', () => keys.d = false);
+                document.getElementById('rightBtn').addEventListener('touchstart', (e) => { e.preventDefault(); keys.d = true; });
+                document.getElementById('rightBtn').addEventListener('touchend', (e) => { e.preventDefault(); keys.d = false; });
+            }
+
+            updateMobileUI();
+        });
 
         /* ============ FPS COUNTER ============ */
         let lastTime = performance.now();
@@ -1491,7 +2085,6 @@
             }
         }, { passive: true });
 
-        // Prevent default iOS behaviors
         document.addEventListener('gesturestart', (e) => e.preventDefault());
         document.addEventListener('dblclick', (e) => e.preventDefault());
 
@@ -1723,47 +2316,6 @@
             ninja: { name: 'Phantom', emoji: '⚡', bonus: '+20% All', bonusType: 'all', value: 1.2, cost: 350 }
         };
 
-        /* ============ SHELTERS/BARRIERS ============ */
-        let shelters = [];
-
-        function createShelters(waveNum) {
-            shelters = [];
-            if (waveNum >= 6) {
-                const shelterCount = Math.floor(waveNum / 5);
-                for (let i = 0; i < shelterCount; i++) {
-                    shelters.push({
-                        x: Math.random() * (canvas.width - 150) + 75,
-                        y: Math.random() * (canvas.height - 300) + 150,
-                        width: 120,
-                        height: 30,
-                        health: 100,
-                        maxHealth: 100
-                    });
-                }
-            }
-        }
-
-        function drawShelters() {
-            shelters.forEach(shelter => {
-                ctx.fillStyle = 'rgba(0, 217, 255, 0.5)';
-                ctx.fillRect(shelter.x - shelter.width / 2, shelter.y - shelter.height / 2, shelter.width, shelter.height);
-                ctx.strokeStyle = '#00D9FF';
-                ctx.lineWidth = 2;
-                ctx.strokeRect(shelter.x - shelter.width / 2, shelter.y - shelter.height / 2, shelter.width, shelter.height);
-            });
-        }
-
-        function checkShelterCollision(x, y, size) {
-            for (let shelter of shelters) {
-                const dx = x - shelter.x;
-                const dy = y - shelter.y;
-                if (Math.abs(dx) < shelter.width / 2 + size && Math.abs(dy) < shelter.height / 2 + size) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
         /* ============ GAME OBJECTS - PLAYER ============ */
         const player = {
             x: canvas.width / 2,
@@ -1916,8 +2468,7 @@
             const difficulty = getWaveDifficulty(gameState.currentWave);
 
             if (type === 'normal') {
-                const arcTypes = [1, 3, 4, 5];
-                const arcType = arcTypes[Math.floor(Math.random() * arcTypes.length)];
+                const arcType = Math.floor(Math.random() * 5) + 1;
                 const arcImg = images[`arc${arcType}`];
                 const enemyHealth = Math.floor((15 + gameState.currentWave * 2) * difficulty.multiplier);
 
@@ -1950,6 +2501,7 @@
                             this.alive = false;
                             gameState.score += 50;
                             gameState.totalScore += 50;
+                            gameState.waveStats.killsThisWave++;
                             
                             let tokenReward = 10 + gameState.currentWave * 2;
                             if (this.isRed) tokenReward *= 3;
@@ -2080,6 +2632,7 @@
                             gameState.totalScore += 1000;
                             gameState.tokens += 200 + gameState.currentWave * 100;
                             gameState.kills++;
+                            gameState.waveStats.killsThisWave++;
                             playSound('enemy-death');
                             bossActive = false;
                             triggerScreenShake(5);
@@ -2133,6 +2686,7 @@
             
             gameState.currentWave++;
             gameState.maxWave = Math.max(gameState.maxWave, gameState.currentWave);
+            gameState.waveStats.killsThisWave = 0;
             saveGameData();
             
             if ((gameState.currentWave - 1) % 5 === 0 && gameState.currentWave > 1) {
@@ -2155,7 +2709,8 @@
             gameState.waveStats = {
                 timeTaken: 0,
                 waveStartTime: Date.now(),
-                damageReceivedThisWave: 0
+                damageReceivedThisWave: 0,
+                killsThisWave: 0
             };
 
             player.health = player.getMaxHealth();
@@ -2172,8 +2727,6 @@
             } else {
                 document.getElementById('threatIndicator').style.display = 'none';
             }
-
-            createShelters(waveNum);
 
             if (waveNum % 5 === 0) {
                 enemies.push(createEnemy('boss'));
@@ -2490,284 +3043,4 @@
             
             const damageCost = gameState.upgrades.damage.baseCost * gameState.upgrades.damage.level;
             const fireRateCost = gameState.upgrades.fireRate.baseCost * gameState.upgrades.fireRate.level;
-            const bulletCost = gameState.upgrades.bulletSize.baseCost * gameState.upgrades.bulletSize.level;
-            const healthCost = gameState.upgrades.health.baseCost * gameState.upgrades.health.level;
-
-            document.getElementById('damageCost').textContent = damageCost + '🔷';
-            document.getElementById('fireRateCost').textContent = fireRateCost + '🔷';
-            document.getElementById('bulletCost').textContent = bulletCost + '🔷';
-            document.getElementById('healthCost').textContent = healthCost + '🔷';
-
-            document.getElementById('damageBtn').disabled = gameState.tokens < damageCost;
-            document.getElementById('fireRateBtn').disabled = gameState.tokens < fireRateCost;
-            document.getElementById('bulletBtn').disabled = gameState.tokens < bulletCost;
-            document.getElementById('healthBtn').disabled = gameState.tokens < healthCost;
-
-            updateChallengeHUD();
-            checkAchievements();
-        }
-
-        function updateChallengeHUD() {
-            const hud = document.getElementById('challengeHud');
-            if (!dailyChallenge) {
-                hud.style.display = 'none';
-                return;
-            }
-
-            hud.style.display = 'block';
-            document.getElementById('challengeTitle').textContent = `📌 ${dailyChallenge.name.split(' ')[0]}...`;
-            
-            const progress = (dailyChallenge.current / dailyChallenge.target) * 100;
-            document.getElementById('challengeProgress').style.width = Math.min(progress, 100) + '%';
-            document.getElementById('challengeText').textContent = `${dailyChallenge.current}/${dailyChallenge.target}`;
-
-            if (dailyChallenge.current >= dailyChallenge.target && dailyChallenge.current > 0) {
-                document.getElementById('challengeTitle').textContent = '✅ Complete!';
-                document.getElementById('challengeText').textContent = '+50% tokens!';
-            }
-        }
-
-        /* ============ GAME LOOP ============ */
-        function gameLoop() {
-            ctx.save();
-            
-            // Draw background with light blue gradient
-            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-            gradient.addColorStop(0, '#87CEEB');
-            gradient.addColorStop(1, '#E0F6FF');
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Animated grid overlay
-            ctx.strokeStyle = 'rgba(0, 217, 255, 0.05)';
-            ctx.lineWidth = 1;
-            const gridSize = 40;
-            const offset = (Date.now() / 100) % gridSize;
-            for (let x = -offset; x < canvas.width; x += gridSize) {
-                ctx.beginPath();
-                ctx.moveTo(x, 0);
-                ctx.lineTo(x, canvas.height);
-                ctx.stroke();
-            }
-            for (let y = -offset; y < canvas.height; y += gridSize) {
-                ctx.beginPath();
-                ctx.moveTo(0, y);
-                ctx.lineTo(canvas.width, y);
-                ctx.stroke();
-            }
-
-            applyScreenShake();
-
-            if (!gameState.isGameOver && !gameState.isPaused) {
-                updateBoosters();
-                updateParticles();
-                player.update();
-                
-                for (let enemy of enemies) {
-                    if (enemy.alive) enemy.update();
-                }
-
-                // Update bullets
-                for (let i = bullets.length - 1; i >= 0; i--) {
-                    const bullet = bullets[i];
-                    bullet.x += bullet.vx;
-                    bullet.y += bullet.vy;
-                    bullet.life--;
-
-                    if (bullet.life <= 0 || bullet.x < 0 || bullet.x > canvas.width || bullet.y < 0 || bullet.y > canvas.height) {
-                        bullets.splice(i, 1);
-                        continue;
-                    }
-
-                    // Check collision with shelters
-                    if (checkShelterCollision(bullet.x, bullet.y, bullet.size)) {
-                        bullets.splice(i, 1);
-                        continue;
-                    }
-
-                    // Distance-based collision
-                    for (let enemy of enemies) {
-                        if (enemy.alive) {
-                            const dist = Math.hypot(bullet.x - enemy.x, bullet.y - enemy.y);
-                            if (dist < bullet.size + 20) {
-                                enemy.takeDamage(bullet.damage);
-                                triggerFlash('kill');
-                                playSound('hit');
-                                bullets.splice(i, 1);
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                // Enemy shooting
-                for (let enemy of enemies) {
-                    if (enemy.alive && Math.random() < 0.008) {
-                        if (Math.hypot(enemy.x - player.x, enemy.y - player.y) < 400) {
-                            const angle = Math.atan2(player.y - enemy.y, player.x - enemy.x);
-                            enemyBullets.push({
-                                x: enemy.x,
-                                y: enemy.y,
-                                vx: Math.cos(angle) * 4,
-                                vy: Math.sin(angle) * 4,
-                                life: 100,
-                                damage: 5
-                            });
-                        }
-                    }
-                }
-
-                // Update enemy bullets
-                for (let i = enemyBullets.length - 1; i >= 0; i--) {
-                    const bullet = enemyBullets[i];
-                    bullet.x += bullet.vx;
-                    bullet.y += bullet.vy;
-                    bullet.life--;
-
-                    if (bullet.life <= 0 || bullet.x < -50 || bullet.x > canvas.width + 50 || bullet.y < -50 || bullet.y > canvas.height + 50) {
-                        enemyBullets.splice(i, 1);
-                        continue;
-                    }
-
-                    // Check collision with shelters
-                    if (checkShelterCollision(bullet.x, bullet.y, 3)) {
-                        enemyBullets.splice(i, 1);
-                        continue;
-                    }
-
-                    // Distance-based collision for enemy bullets
-                    const dist = Math.hypot(bullet.x - player.x, bullet.y - player.y);
-                    if (dist < 40) {
-                        player.takeDamage(bullet.damage || 5);
-                        enemyBullets.splice(i, 1);
-                    }
-                }
-
-                // Check wave completion
-                const allEnemiesDead = enemies.every(e => !e.alive);
-                if (allEnemiesDead && enemies.length > 0 && waveEnemySpawnCount > 0) {
-                    const timeTaken = Math.round((Date.now() - gameState.waveStats.waveStartTime) / 1000);
-                    let bonusText = '';
-                    let bonusTokens = 0;
-
-                    if (timeTaken <= 30) {
-                        bonusText = '⚡ SPEED BONUS! +200🔷';
-                        bonusTokens = 200;
-                    }
-
-                    if (gameState.waveStats.damageReceivedThisWave === 0) {
-                        bonusText = '🛡️ PERFECT! +500🔷';
-                        bonusTokens = 500;
-                    }
-
-                    if (bonusText) {
-                        gameState.tokens += bonusTokens;
-                        showBonusFloat(bonusText);
-                    }
-
-                    if (dailyChallenge.type === 'waves') {
-                        dailyChallenge.current++;
-                        if (dailyChallenge.current >= dailyChallenge.target) {
-                            gameState.tokens += Math.floor(gameState.tokens * 0.5);
-                        }
-                    }
-
-                    showWavePause();
-                }
-
-                // Check game over
-                if (player.health <= 0) {
-                    gameState.isGameOver = true;
-                    document.getElementById('gameOverScore').textContent = `Points: ${gameState.score}`;
-                    document.getElementById('gameOverKills').textContent = `Enemies Destroyed: ${gameState.kills}`;
-                    document.getElementById('gameOverLevel').textContent = `Waves Survived: ${gameState.currentWave}`;
-                    document.getElementById('gameOverCombo').textContent = `Best Streak: ${gameState.maxCombo}`;
-                    document.getElementById('gameOver').style.display = 'block';
-                    saveGameData();
-                }
-
-                player.draw();
-
-                for (let enemy of enemies) {
-                    if (enemy.alive) enemy.draw();
-                }
-
-                // Draw shelters
-                drawShelters();
-
-                // Draw player bullets
-                for (let bullet of bullets) {
-                    ctx.fillStyle = '#FFB703';
-                    ctx.beginPath();
-                    ctx.arc(bullet.x, bullet.y, bullet.size, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.strokeStyle = 'rgba(255, 183, 3, 0.6)';
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    ctx.arc(bullet.x, bullet.y, bullet.size + 2, 0, Math.PI * 2);
-                    ctx.stroke();
-                }
-
-                // Draw enemy bullets
-                for (let bullet of enemyBullets) {
-                    ctx.fillStyle = '#FF006E';
-                    ctx.beginPath();
-                    ctx.arc(bullet.x, bullet.y, 3, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.strokeStyle = 'rgba(255, 0, 110, 0.6)';
-                    ctx.lineWidth = 1;
-                    ctx.beginPath();
-                    ctx.arc(bullet.x, bullet.y, 5, 0, Math.PI * 2);
-                    ctx.stroke();
-                }
-
-                drawParticles();
-            }
-
-            drawFlash();
-            ctx.restore();
-
-            // Update HUD
-            document.getElementById('healthFill').style.width = (player.health / player.maxHealth * 100) + '%';
-            document.getElementById('score').textContent = gameState.score;
-            document.getElementById('kills').textContent = gameState.kills;
-
-            updateUI();
-            updateFPS();
-
-            requestAnimationFrame(gameLoop);
-        }
-
-        /* ============ INITIALIZATION ============ */
-        function init() {
-            if (isMobile) {
-                const hint = document.getElementById('swipeHint');
-                hint.style.display = 'flex';
-                setTimeout(() => {
-                    hint.style.display = 'none';
-                }, 3000);
-            }
-
-            createWave(1);
-            updateUI();
-            updateAchievementsDisplay();
-            gameLoop();
-        }
-
-        // Hide address bar on mobile
-        window.addEventListener('load', () => {
-            window.scrollTo(0, 1);
-            init();
-        });
-
-        // Pause when app loses focus
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden && !gameState.isGameOver) {
-                gameState.isPaused = true;
-                document.getElementById('pauseOverlay').style.display = 'block';
-            }
-        });
-    </script>
-
-</body>
-</html>
+            const bulletCost = gameState.
