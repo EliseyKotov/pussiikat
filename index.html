@@ -598,10 +598,10 @@
             box-shadow: 0 0 10px rgba(0, 217, 255, 0.2);
         }
 
-    .control-btn:active {
-    background: rgba(138, 43, 226, 0.7);     /* Ярче фиолетовый */
-    transform: scale(0.95);
-}
+        .control-btn:active {
+            background: rgba(138, 43, 226, 0.7);
+            transform: scale(0.95);
+        }
 
         /* ============ LEVEL INFO ============ */
         .level-info {
@@ -898,6 +898,7 @@
          * - 2x higher kill rewards
          * - Advanced shop with scaling prices
          * - 5 upgrade levels per item
+         * - Progressive enemy spawning
          * - Bug fixes
          * ========================================
          */
@@ -1100,35 +1101,35 @@
                 fn: () => {},
                 fnEnd: () => {}
             },
-           {
-    id: 'shield_plus',
-    name: '🛡️+ Mega Shield',
-    desc: 'Temporary shield for 15s',
-    cost: 180,
-    duration: 15000,
-    fn: () => {
-        game.shielded = true;
-        game.shieldHealth = game.shieldMaxHealth * 2;
-    },
-    fnEnd: () => {
-        game.shielded = false;
-        game.shieldHealth = 0;
-    }
-},
-{
-    id: 'hppotion',
-    name: '🍎 HP Potion',
-    desc: 'Restore 50 health instantly',
-    cost: 25,
-    duration: 0,
-    fn: () => {
-        const healAmount = 50;
-        game.health = Math.min(game.maxHealth, game.health + healAmount);
-        updateHUD();
-        createParticles(game.playerX, game.playerY, '#06FFA5');
-    },
-    fnEnd: () => {}
-}
+            {
+                id: 'shield_plus',
+                name: '🛡️+ Mega Shield',
+                desc: 'Temporary shield for 15s',
+                cost: 180,
+                duration: 15000,
+                fn: () => {
+                    game.shielded = true;
+                    game.shieldHealth = game.shieldMaxHealth * 2;
+                },
+                fnEnd: () => {
+                    game.shielded = false;
+                    game.shieldHealth = 0;
+                }
+            },
+            {
+                id: 'hppotion',
+                name: '🍎 HP Potion',
+                desc: 'Restore 50 health instantly',
+                cost: 25,
+                duration: 0,
+                fn: () => {
+                    const healAmount = 50;
+                    game.health = Math.min(game.maxHealth, game.health + healAmount);
+                    updateHUD();
+                    createParticles(game.playerX, game.playerY, '#06FFA5');
+                },
+                fnEnd: () => {}
+            }
         ];
 
         // ==================== HELPER FUNCTIONS ====================
@@ -1448,32 +1449,32 @@
             boostersContainer.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #FFB703; font-size: 13px; padding: 10px;">Pick up boosters from enemies or buy here!</div>';
             
             boosters.forEach(booster => {
-    const btn = document.createElement('div');
-    btn.className = 'pause-store-item booster';
-    btn.innerHTML = `
-        <div class="pause-store-name">${booster.name}</div>
-        <div class="pause-store-desc">${booster.desc}</div>
-        <div class="pause-store-cost">💰 ${booster.cost}</div>
-    `;
-    
-    // HP Potion можно покупать неограниченно, остальные бустеры - только один активный
-    const isHPPotion = booster.id === 'hppotion';
-    const isBlocked = isHPPotion ? false : game.activeBoosters[booster.id];
-    
-    btn.disabled = game.tokens < booster.cost || isBlocked;
-    if (btn.disabled) btn.style.opacity = '0.6';
-    btn.style.cursor = btn.disabled ? 'not-allowed' : 'pointer';
-    btn.onclick = () => {
-        if (game.tokens >= booster.cost && !isBlocked) {
-            game.tokens -= booster.cost;
-            activateBooster(booster);
-            game.statistics.boosterUsages++;
-            updatePauseStore();
-            updateHUD();
-        }
-    };
-    boostersContainer.appendChild(btn);
-});
+                const btn = document.createElement('div');
+                btn.className = 'pause-store-item booster';
+                btn.innerHTML = `
+                    <div class="pause-store-name">${booster.name}</div>
+                    <div class="pause-store-desc">${booster.desc}</div>
+                    <div class="pause-store-cost">💰 ${booster.cost}</div>
+                `;
+                
+                // HP Potion можно покупать неограниченно, остальные бустеры - только один активный
+                const isHPPotion = booster.id === 'hppotion';
+                const isBlocked = isHPPotion ? false : game.activeBoosters[booster.id];
+                
+                btn.disabled = game.tokens < booster.cost || isBlocked;
+                if (btn.disabled) btn.style.opacity = '0.6';
+                btn.style.cursor = btn.disabled ? 'not-allowed' : 'pointer';
+                btn.onclick = () => {
+                    if (game.tokens >= booster.cost && !isBlocked) {
+                        game.tokens -= booster.cost;
+                        activateBooster(booster);
+                        game.statistics.boosterUsages++;
+                        updatePauseStore();
+                        updateHUD();
+                    }
+                };
+                boostersContainer.appendChild(btn);
+            });
         }
 
         function activateBooster(booster) {
@@ -1543,7 +1544,8 @@
                     shootTimer: 0,
                     shootInterval: stats.shootInterval,
                     damage: stats.damage,
-                    isBoss: true
+                    isBoss: true,
+                    spawnDelay: 0
                 });
             } else {
                 const baseEnemies = 3 + game.wave * 2;
@@ -1559,23 +1561,24 @@
                     const stats = getEnemyStats(game.wave, isStrong);
 
                     game.enemies.push({
-    x: Math.random() * (game.width - 60) + 30,
-    y: spawnY,
-    vx: (Math.random() - 0.5) * 2,
-    vy: (Math.random() - 0.5) * 2,
-    speed: stats.speed,
-    radius: isStrong ? 18 : 12,
-    health: stats.health,
-    maxHealth: stats.health,
-    color: colors[Math.floor(Math.random() * colors.length)],
-    isStrong: isStrong,
-    model: modelName,
-    shootTimer: 0,
-    shootInterval: stats.shootInterval,
-    damage: stats.damage,
-    isBoss: false,
-    spawnDelay: Math.floor(i / 3) * 120  // ✅ ДОБАВЛЕНА ЗАПЯТАЯ, spawnBatch заменён на 3
-});
+                        x: Math.random() * (game.width - 60) + 30,
+                        y: spawnY,
+                        vx: (Math.random() - 0.5) * 2,
+                        vy: (Math.random() - 0.5) * 2,
+                        speed: stats.speed,
+                        radius: isStrong ? 18 : 12,
+                        health: stats.health,
+                        maxHealth: stats.health,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        isStrong: isStrong,
+                        model: modelName,
+                        shootTimer: 0,
+                        shootInterval: stats.shootInterval,
+                        damage: stats.damage,
+                        isBoss: false,
+                        spawnDelay: Math.floor(i / 3) * 120
+                    });
+                }
             }
 
             document.getElementById('waveValue').textContent = game.wave;
@@ -1651,42 +1654,43 @@
 
             const slowMultiplier = game.activeBoosters['slow'] ? 0.5 : 1;
 
-            // UPDATE ENEMIES
+            // ========== UPDATE ENEMIES ==========
             for (let i = game.enemies.length - 1; i >= 0; i--) {
                 const enemy = game.enemies[i];
                 
+                // Check spawn delay
                 if (enemy.spawnDelay > 0) {
-        enemy.spawnDelay--;
-        continue;  // Пропустить обновление пока враг не появился
-    }
-    
-    if (!enemy.isBoss) {
+                    enemy.spawnDelay--;
+                    continue;
+                }
                 
+                // Enemy movement
                 if (!enemy.isBoss) {
                     enemy.vx += (Math.random() - 0.5) * 1;
                     enemy.vy += (Math.random() - 0.5) * 1;
                     
-       if (!enemy.isBoss) {
-    enemy.vx += (Math.random() - 0.5) * 1;
-    enemy.vy += (Math.random() - 0.5) * 1;
-    
-    enemy.vx = Math.max(-3, Math.min(3, enemy.vx));
-    enemy.vy = Math.max(-3, Math.min(3, enemy.vy));
-} else {
-    // Boss movement
-    if (Math.random() < 0.1) {
-        enemy.vx = (Math.random() - 0.5) * enemy.speed * 15;
-        enemy.vy = (Math.random() - 0.5) * enemy.speed * 15;
-    }
-}
+                    enemy.vx = Math.max(-3, Math.min(3, enemy.vx));
+                    enemy.vy = Math.max(-3, Math.min(3, enemy.vy));
+                } else {
+                    // Boss movement
+                    if (Math.random() < 0.1) {
+                        enemy.vx = (Math.random() - 0.5) * enemy.speed * 15;
+                        enemy.vy = (Math.random() - 0.5) * enemy.speed * 15;
+                    }
+                }
 
+                // Apply movement
+                enemy.x += enemy.vx * slowMultiplier;
+                enemy.y += enemy.vy * slowMultiplier;
+
+                // Boundary checks
                 const maxY = game.height * ENEMY_SPAWN_MAX_Y_RATIO;
                 if (enemy.x < enemy.radius) enemy.x = enemy.radius;
                 if (enemy.x > game.width - enemy.radius) enemy.x = game.width - enemy.radius;
                 if (enemy.y < enemy.radius) enemy.y = enemy.radius;
                 if (enemy.y > maxY) enemy.y = maxY;
 
-                // Check shelter collision for enemies
+                // Check shelter collision
                 for (const shelter of game.shelters) {
                     if (enemy.x > shelter.x && enemy.x < shelter.x + shelter.width &&
                         enemy.y > shelter.y - enemy.radius && enemy.y < shelter.y + shelter.height + enemy.radius) {
@@ -1698,6 +1702,7 @@
                     }
                 }
 
+                // Enemy shooting
                 enemy.shootTimer++;
                 if (enemy.shootTimer >= enemy.shootInterval) {
                     const angle = Math.atan2(game.playerY - enemy.y, game.playerX - enemy.x);
@@ -1714,7 +1719,7 @@
                 }
             }
 
-            // UPDATE PLAYER PROJECTILES
+            // ========== UPDATE PLAYER PROJECTILES ==========
             for (let i = game.projectiles.length - 1; i >= 0; i--) {
                 const proj = game.projectiles[i];
                 proj.x += proj.vx;
@@ -1747,7 +1752,7 @@
                             game.combo++;
                             game.comboTimer = game.comboTimeout;
 
-                            // DOUBLED KILL REWARDS
+                            // KILL REWARDS
                             const baseReward = enemy.isBoss ? 1000 : (enemy.isStrong ? 100 : 50);
                             const reward = Math.floor(baseReward * (1 + game.combo * 0.15));
                             game.tokens += reward;
@@ -1778,7 +1783,7 @@
                 }
             }
 
-            // UPDATE ENEMY PROJECTILES
+            // ========== UPDATE ENEMY PROJECTILES ==========
             for (let i = game.enemyProjectiles.length - 1; i >= 0; i--) {
                 const proj = game.enemyProjectiles[i];
                 proj.x += proj.vx;
@@ -1811,7 +1816,7 @@
                 }
             }
 
-            // UPDATE DROPS
+            // ========== UPDATE DROPS ==========
             for (let i = game.drops.length - 1; i >= 0; i--) {
                 const drop = game.drops[i];
 
@@ -1838,7 +1843,7 @@
                 }
             }
 
-            // UPDATE PARTICLES
+            // ========== UPDATE PARTICLES ==========
             for (let i = game.particles.length - 1; i >= 0; i--) {
                 const p = game.particles[i];
                 p.x += p.vx;
@@ -1849,7 +1854,7 @@
                 }
             }
 
-            // BOOSTER TIMERS
+            // ========== BOOSTER TIMERS ==========
             for (const boosterId in game.activeBoosters) {
                 if (Date.now() > game.activeBoosters[boosterId]) {
                     const booster = boosters.find(b => b.id === boosterId);
@@ -1895,6 +1900,9 @@
 
             // Draw enemies
             for (const enemy of game.enemies) {
+                // Skip drawing if not spawned yet
+                if (enemy.spawnDelay > 0) continue;
+
                 const img = game.images[enemy.model];
                 if (img && img.complete && img.naturalWidth > 0) {
                     const size = enemy.radius * 2.5;
