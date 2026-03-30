@@ -9,6 +9,7 @@
     <title>Arc Raider - Battle Drones</title>
     
     <style>
+        /* ============ UNIVERSAL STYLES ============ */
         * {
             margin: 0;
             padding: 0;
@@ -19,6 +20,7 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        /* ============ CSS VARIABLES ============ */
         :root {
             --primary-arc: #00D9FF;
             --secondary-arc: #FF006E;
@@ -32,6 +34,7 @@
             --safe-right: env(safe-area-inset-right, 0px);
         }
 
+        /* ============ BODY & HTML ============ */
         body {
             font-family: 'Arial', sans-serif;
             background: linear-gradient(135deg, #87CEEB 0%, #E0F6FF 100%);
@@ -47,6 +50,7 @@
             touch-action: manipulation;
         }
 
+        /* ============ GAME CONTAINER ============ */
         #gameContainer {
             width: 100%;
             height: 100vh;
@@ -58,6 +62,7 @@
             justify-content: center;
         }
 
+        /* ============ CANVAS SETUP ============ */
         canvas {
             display: block;
             width: 100%;
@@ -79,7 +84,7 @@
             z-index: 99;
             font-size: 12px;
             box-shadow: 0 0 20px rgba(0, 217, 255, 0.2);
-            min-width: 180px;
+            min-width: 200px;
         }
 
         .info-item {
@@ -138,7 +143,6 @@
             align-items: center;
             justify-content: center;
             animation: pulse 1s infinite;
-            box-shadow: 0 0 15px rgba(255, 183, 3, 0.3);
         }
 
         .pause-btn:active {
@@ -309,7 +313,7 @@
             color: var(--accent-token);
             font-weight: bold;
             display: inline-block;
-            min-width: 100px;
+            min-width: 120px;
         }
 
         /* ============ STORE IN PAUSE MENU ============ */
@@ -558,7 +562,7 @@
             transform: scale(0.95);
         }
 
-        /* ============ RESPONSIVE ============ */
+        /* ============ RESPONSIVE DESIGN ============ */
         @media (max-width: 768px) {
             .info-bar-top {
                 font-size: 10px;
@@ -585,6 +589,32 @@
                 width: 95%;
                 gap: 8px;
             }
+
+            .combo-display {
+                font-size: 2.5em;
+            }
+
+            .wave-title-display {
+                font-size: 2.2em;
+            }
+        }
+
+        /* ============ SCROLLBAR STYLING ============ */
+        .pause-menu-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .pause-menu-content::-webkit-scrollbar-track {
+            background: rgba(0, 217, 255, 0.1);
+        }
+
+        .pause-menu-content::-webkit-scrollbar-thumb {
+            background: rgba(0, 217, 255, 0.5);
+            border-radius: 3px;
+        }
+
+        .pause-menu-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 217, 255, 0.8);
         }
     </style>
 </head>
@@ -601,8 +631,8 @@
                 </div>
             </div>
             <div class="info-item">
-                <span class="info-label">Score:</span>
-                <span class="info-value" id="scoreValue">0</span>
+                <span class="info-label">Tokens:</span>
+                <span class="info-value" id="tokensValue">0</span>
             </div>
             <div class="info-item">
                 <span class="info-label">Wave:</span>
@@ -644,8 +674,8 @@
                 <div class="pause-section">
                     <div class="pause-section-title">GAME STATUS</div>
                     <div class="pause-info-item">
-                        <span class="pause-info-label">Score:</span>
-                        <span id="pauseScore">0</span>
+                        <span class="pause-info-label">Tokens Earned:</span>
+                        <span id="pauseTokens">0</span>
                     </div>
                     <div class="pause-info-item">
                         <span class="pause-info-label">Wave:</span>
@@ -656,8 +686,8 @@
                         <span id="pauseHealth">100/100</span>
                     </div>
                     <div class="pause-info-item">
-                        <span class="pause-info-label">Tokens:</span>
-                        <span id="pauseTokens">0</span>
+                        <span class="pause-info-label">Combo:</span>
+                        <span id="pauseCombo">0x</span>
                     </div>
                 </div>
             </div>
@@ -706,13 +736,15 @@
             <h2>Welcome to Arc Raider</h2>
             <p>🎮 Defend yourself from incoming drones!</p>
             <p>Click anywhere to shoot!</p>
+            <p style="margin-top: 15px; font-size: 0.9em; color: #aaa;">Earn tokens to buy upgrades and boosters!</p>
         </div>
 
         <!-- Game Over Screen -->
         <div class="game-over" id="gameOverScreen">
             <h1>GAME OVER</h1>
-            <p>Final Score: <span id="finalScore">0</span></p>
+            <p>Tokens Earned: <span id="finalTokens">0</span></p>
             <p>Waves Survived: <span id="wavesReached">1</span></p>
+            <p>Total Enemies Defeated: <span id="totalEnemiesDefeated">0</span></p>
             <div class="game-over-buttons">
                 <button onclick="location.reload()">RESTART</button>
             </div>
@@ -720,50 +752,108 @@
     </div>
 
     <script>
+        /**
+         * ========================================
+         * ARC RAIDER - BATTLE DRONES GAME
+         * ========================================
+         * Complete game implementation with:
+         * - Token-based currency system
+         * - Restricted enemy movement (2/3 upper screen)
+         * - Minimal visual effects (5 particles per hit)
+         * - No trail effects on projectiles
+         * - Advanced game state management
+         * - Comprehensive statistics tracking
+         * ========================================
+         */
+
+        // ==================== GAME CONSTANTS ====================
         const ENEMY_MODELS = ['arc1', 'arc3', 'arc4', 'arc5'];
         const PLAYER_MODEL = 'arcraider';
+        
+        // Enemy spawn boundary constants
+        const ENEMY_SPAWN_MAX_Y_RATIO = 0.66; // Enemies spawn in upper 2/3 of screen
+        const SAFE_ZONE_RATIO = 0.85; // Player safe zone starts at 85% of screen height
 
+        // ==================== GAME STATE OBJECT ====================
+        /**
+         * Main game state object containing all game data
+         * Tracks game status, entities, and statistics
+         */
         const game = {
+            // Canvas and rendering
             canvas: null,
             ctx: null,
             width: 0,
             height: 0,
+
+            // Game flags
             isRunning: true,
             isPaused: false,
-            score: 0,
-            wave: 1,
             waveStarted: false,
+
+            // Player stats
             maxHealth: 100,
             health: 100,
             tokens: 0,
-            combo: 0,
-            comboTimer: 0,
-            comboTimeout: 3000,
             playerX: 0,
             playerY: 0,
             playerRadius: 20,
             playerSpeed: 0,
+
+            // Combat stats
+            combo: 0,
+            comboTimer: 0,
+            comboTimeout: 3000,
             projectileSpeed: 7,
             fireRate: 10,
             fireCounter: 0,
-            activeBoosters: {},
+
+            // Game progression
+            wave: 1,
+            totalEnemiesInWave: 0,
+            enemiesDefeated: 0,
+            challengeProgress: 0,
+            challengeTarget: 10,
+
+            // Game entities
             enemies: [],
             projectiles: [],
             particles: [],
             shelters: [],
+            enemyProjectiles: [],
+
+            // Visual elements
             images: {},
             imagesLoaded: 0,
             totalImages: 5,
+
+            // Protection
             shielded: false,
             shieldHealth: 0,
             shieldMaxHealth: 50,
-            challengeProgress: 0,
-            challengeTarget: 10,
-            totalEnemiesInWave: 0,
-            enemiesDefeated: 0,
-            enemyProjectiles: []
+
+            // Active boosters
+            activeBoosters: {},
+
+            // Statistics tracking
+            statistics: {
+                totalTokensEarned: 0,
+                totalEnemiesDefeated: 0,
+                totalDamageTaken: 0,
+                highestCombo: 0,
+                highestWave: 1,
+                upgradePurchases: 0,
+                boosterUsages: 0,
+                gamesPlayed: 1,
+                playTime: 0
+            }
         };
 
+        // ==================== UPGRADES CONFIGURATION ====================
+        /**
+         * Array of available upgrades that player can purchase with tokens
+         * Each upgrade has cost, description, and activation function
+         */
         const upgrades = [
             {
                 id: 'health',
@@ -801,9 +891,35 @@
                 fn: () => {
                     game.fireRate = Math.max(game.fireRate - 2, 2);
                 }
+            },
+            {
+                id: 'maxhealth',
+                name: '💪 Max Health+',
+                desc: 'Increase max health by 25',
+                cost: 180,
+                fn: () => {
+                    game.maxHealth += 25;
+                    game.health = game.maxHealth;
+                }
+            },
+            {
+                id: 'shield_regen',
+                name: '🔄 Shield Restore',
+                desc: 'Restore shield to full',
+                cost: 120,
+                fn: () => {
+                    if (game.shielded) {
+                        game.shieldHealth = game.shieldMaxHealth;
+                    }
+                }
             }
         ];
 
+        // ==================== BOOSTERS CONFIGURATION ====================
+        /**
+         * Array of temporary power-ups that can be activated during gameplay
+         * Boosters have duration and activation/deactivation functions
+         */
         const boosters = [
             {
                 id: 'rapid',
@@ -835,9 +951,29 @@
                 duration: 12000,
                 fn: () => {},
                 fnEnd: () => {}
+            },
+            {
+                id: 'shield_plus',
+                name: '🛡️+ Mega Shield',
+                desc: 'Temporary shield for 15s',
+                cost: 250,
+                duration: 15000,
+                fn: () => {
+                    game.shielded = true;
+                    game.shieldHealth = game.shieldMaxHealth * 2;
+                },
+                fnEnd: () => {
+                    game.shielded = false;
+                    game.shieldHealth = 0;
+                }
             }
         ];
 
+        // ==================== IMAGE LOADING ====================
+        /**
+         * Load all game images from assets directory
+         * Images include player sprite and all enemy sprite variations
+         */
         function loadImages() {
             const images = ['arcraider', 'arc1', 'arc3', 'arc4', 'arc5'];
             images.forEach(name => {
@@ -853,6 +989,11 @@
             });
         }
 
+        // ==================== GAME INITIALIZATION ====================
+        /**
+         * Initialize game on page load
+         * Setup canvas, load resources, attach event listeners
+         */
         function init() {
             game.canvas = document.getElementById('gameCanvas');
             game.ctx = game.canvas.getContext('2d');
@@ -867,6 +1008,11 @@
             gameLoop();
         }
 
+        // ==================== CANVAS MANAGEMENT ====================
+        /**
+         * Resize canvas to fit window size
+         * Called on window resize and initialization
+         */
         function resizeCanvas() {
             game.width = window.innerWidth;
             game.height = window.innerHeight;
@@ -874,16 +1020,21 @@
             game.canvas.height = game.height;
         }
 
+        // ==================== EVENT LISTENERS ====================
+        /**
+         * Setup all keyboard and touch event listeners
+         * Handles player input for movement, shooting, and menu navigation
+         */
         function setupEventListeners() {
             window.addEventListener('resize', resizeCanvas);
             document.addEventListener('keydown', handleKeyDown);
             document.addEventListener('keyup', handleKeyUp);
             
-            // CANVAS SHOOTING
+            // Canvas shooting events
             game.canvas.addEventListener('click', handleCanvasClick);
             game.canvas.addEventListener('touchend', handleCanvasTouch);
 
-            // MOVEMENT BUTTONS
+            // Movement button events
             const leftBtn = document.getElementById('leftBtn');
             const rightBtn = document.getElementById('rightBtn');
 
@@ -899,11 +1050,11 @@
             rightBtn.addEventListener('touchend', (e) => { e.preventDefault(); game.playerSpeed = 0; });
             rightBtn.addEventListener('mouseleave', () => { game.playerSpeed = 0; });
 
-            // PAUSE
+            // Pause menu events
             document.getElementById('pauseBtn').addEventListener('click', togglePause);
             document.getElementById('pauseCloseBtn').addEventListener('click', togglePause);
 
-            // TABS
+            // Tab switching in pause menu
             const tabs = document.querySelectorAll('.pause-menu-tab');
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
@@ -919,6 +1070,11 @@
             });
         }
 
+        // ==================== INPUT HANDLING ====================
+        /**
+         * Handle canvas click for shooting
+         * Convert mouse position to world coordinates and fire projectile
+         */
         function handleCanvasClick(e) {
             if (game.isPaused || !game.isRunning) return;
             const rect = game.canvas.getBoundingClientRect();
@@ -927,6 +1083,10 @@
             fireProjectileTowards(x, y);
         }
 
+        /**
+         * Handle touch input for mobile devices
+         * Convert touch position to world coordinates and fire projectile
+         */
         function handleCanvasTouch(e) {
             if (game.isPaused || !game.isRunning) return;
             const rect = game.canvas.getBoundingClientRect();
@@ -936,6 +1096,10 @@
             fireProjectileTowards(x, y);
         }
 
+        /**
+         * Create and fire projectile towards target coordinates
+         * Projectile travels in straight line at constant speed
+         */
         function fireProjectileTowards(targetX, targetY) {
             const angle = Math.atan2(targetY - game.playerY, targetX - game.playerX);
             const speed = game.projectileSpeed;
@@ -949,6 +1113,10 @@
             });
         }
 
+        /**
+         * Handle keyboard key press
+         * Arrow keys and WASD for movement, ESC for pause
+         */
         function handleKeyDown(e) {
             if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
                 game.playerSpeed = -5;
@@ -959,6 +1127,10 @@
             }
         }
 
+        /**
+         * Handle keyboard key release
+         * Stop player movement when key is released
+         */
         function handleKeyUp(e) {
             if ((e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') && game.playerSpeed === -5) {
                 game.playerSpeed = 0;
@@ -967,6 +1139,11 @@
             }
         }
 
+        // ==================== PAUSE MENU ====================
+        /**
+         * Toggle pause state on/off
+         * Show/hide pause menu and overlay
+         */
         function togglePause() {
             if (!game.isRunning) return;
             game.isPaused = !game.isPaused;
@@ -978,11 +1155,15 @@
             }
         }
 
+        /**
+         * Update pause menu statistics display
+         * Show current game stats, wave info, and challenges
+         */
         function updatePauseMenu() {
-            document.getElementById('pauseScore').textContent = game.score;
+            document.getElementById('pauseTokens').textContent = game.tokens;
             document.getElementById('pauseWave').textContent = game.wave;
             document.getElementById('pauseHealth').textContent = `${Math.max(0, Math.floor(game.health))}/${game.maxHealth}`;
-            document.getElementById('pauseTokens').textContent = game.tokens;
+            document.getElementById('pauseCombo').textContent = `${game.combo}x`;
 
             let waveInfo = `<strong>Wave ${game.wave}</strong><br>`;
             waveInfo += `Total Enemies: ${game.totalEnemiesInWave}<br>`;
@@ -993,16 +1174,22 @@
             document.getElementById('waveInfo').innerHTML = waveInfo;
 
             let challengeInfo = `Progress: ${game.challengeProgress}/${game.challengeTarget}<br>`;
-            challengeInfo += `Kill more enemies to unlock rewards!`;
+            challengeInfo += `Current Combo: ${game.combo}x<br>`;
+            challengeInfo += `Enemies Defeated This Session: ${game.statistics.totalEnemiesDefeated}`;
             document.getElementById('challengeInfo').innerHTML = challengeInfo;
         }
 
+        /**
+         * Update and render store in pause menu
+         * Display available upgrades and boosters with costs
+         */
         function updatePauseStore() {
             const upgradesContainer = document.getElementById('pauseStoreUpgrades');
             const boostersContainer = document.getElementById('pauseStoreBoosters');
             upgradesContainer.innerHTML = '';
             boostersContainer.innerHTML = '';
 
+            // Render upgrade items
             upgrades.forEach(upgrade => {
                 const btn = document.createElement('div');
                 btn.className = 'pause-store-item';
@@ -1018,6 +1205,7 @@
                     if (game.tokens >= upgrade.cost) {
                         game.tokens -= upgrade.cost;
                         upgrade.fn();
+                        game.statistics.upgradePurchases++;
                         updatePauseStore();
                         updateHUD();
                     }
@@ -1025,6 +1213,7 @@
                 upgradesContainer.appendChild(btn);
             });
 
+            // Render booster items
             boosters.forEach(booster => {
                 const btn = document.createElement('div');
                 btn.className = 'pause-store-item booster';
@@ -1040,6 +1229,7 @@
                     if (game.tokens >= booster.cost && !game.activeBoosters[booster.id]) {
                         game.tokens -= booster.cost;
                         activateBooster(booster);
+                        game.statistics.boosterUsages++;
                         updatePauseStore();
                     }
                 };
@@ -1047,11 +1237,20 @@
             });
         }
 
+        /**
+         * Activate a booster and schedule its deactivation
+         * Apply activation function and set expiration timer
+         */
         function activateBooster(booster) {
             if (booster.fn) booster.fn();
             game.activeBoosters[booster.id] = Date.now() + booster.duration;
         }
 
+        // ==================== LEVEL MANAGEMENT ====================
+        /**
+         * Display level intro screen
+         * Shows game instructions and starts first wave after delay
+         */
         function showLevelInfo() {
             const levelInfo = document.getElementById('levelInfo');
             levelInfo.style.display = 'block';
@@ -1061,6 +1260,10 @@
             }, 3000);
         }
 
+        /**
+         * Initialize new wave
+         * Spawn enemies with increasing difficulty
+         */
         function startWave() {
             game.wave++;
             game.waveStarted = true;
@@ -1068,6 +1271,7 @@
             game.enemies = [];
             game.shelters = [];
 
+            // Display wave title
             const waveTitleDisplay = document.getElementById('waveTitleDisplay');
             waveTitleDisplay.textContent = `WAVE ${game.wave}`;
             waveTitleDisplay.style.display = 'block';
@@ -1075,6 +1279,7 @@
                 waveTitleDisplay.style.display = 'none';
             }, 1000);
 
+            // Add shelter for later waves
             if (game.wave >= 6) {
                 game.shelters.push({
                     x: game.width / 2 - 40,
@@ -1084,17 +1289,23 @@
                 });
             }
 
+            // Calculate enemy spawn count
             const baseEnemies = 3 + game.wave * 2;
             game.totalEnemiesInWave = baseEnemies;
             const colors = ['#FF1493', '#00CED1', '#32CD32', '#FFD700'];
 
+            // Spawn enemies in upper 2/3 of screen
             for (let i = 0; i < baseEnemies; i++) {
                 const isStrong = game.wave >= 3 && Math.random() < (0.2 + game.wave * 0.05);
                 const modelName = ENEMY_MODELS[Math.floor(Math.random() * ENEMY_MODELS.length)];
                 
+                // CRITICAL: Enemies spawn only in upper 2/3 of screen
+                const maxSpawnY = game.height * ENEMY_SPAWN_MAX_Y_RATIO;
+                const spawnY = Math.random() * (maxSpawnY - 200) + 100;
+                
                 game.enemies.push({
                     x: Math.random() * (game.width - 60) + 30,
-                    y: Math.random() * (game.height - 200) + 100,
+                    y: spawnY,
                     vx: (Math.random() - 0.5) * 3,
                     vy: (Math.random() - 0.5) * 3,
                     speed: 1.5 + game.wave * 0.3,
@@ -1110,25 +1321,38 @@
             }
 
             document.getElementById('waveValue').textContent = game.wave;
+            if (game.wave > game.statistics.highestWave) {
+                game.statistics.highestWave = game.wave;
+            }
             updateHUD();
         }
 
+        // ==================== PARTICLE SYSTEM ====================
+        /**
+         * Create particle effect at specified location
+         * REDUCED to 5 particles per hit for cleaner visuals
+         * No trail effects on projectiles
+         */
         function createParticles(x, y, color) {
-            for (let i = 0; i < 12; i++) {
-                const angle = (Math.PI * 2 * i) / 12;
+            // OPTIMIZED: Only 5 particles per hit (down from 12)
+            for (let i = 0; i < 5; i++) {
+                const angle = (Math.PI * 2 * i) / 5;
                 const speed = 2 + Math.random() * 2;
                 game.particles.push({
                     x: x,
                     y: y,
                     vx: Math.cos(angle) * speed,
                     vy: Math.sin(angle) * speed,
-                    life: 30,
+                    life: 20, // Reduced life for faster fade
                     color: color,
-                    radius: 4
+                    radius: 3 // Smaller particles
                 });
             }
         }
 
+        /**
+         * Display combo counter when player reaches 3+ combos
+         */
         function showCombo() {
             if (game.combo >= 3) {
                 const comboDisplay = document.getElementById('comboDisplay');
@@ -1137,11 +1361,20 @@
                 setTimeout(() => {
                     comboDisplay.style.display = 'none';
                 }, 600);
+                
+                if (game.combo > game.statistics.highestCombo) {
+                    game.statistics.highestCombo = game.combo;
+                }
             }
         }
 
+        // ==================== HUD UPDATE ====================
+        /**
+         * Update all on-screen display elements
+         * Shows current tokens, wave, enemies remaining, health
+         */
         function updateHUD() {
-            document.getElementById('scoreValue').textContent = game.score;
+            document.getElementById('tokensValue').textContent = game.tokens;
             document.getElementById('waveValue').textContent = game.wave;
             document.getElementById('enemiesValue').textContent = game.enemies.length;
             
@@ -1149,7 +1382,11 @@
             document.getElementById('healthFill').style.width = healthPercent + '%';
         }
 
-        // ==================== GAME LOOP ====================
+        // ==================== MAIN GAME LOOP ====================
+        /**
+         * Main game loop - runs every frame
+         * Updates game state then renders everything
+         */
         function gameLoop() {
             if (!game.isPaused) {
                 update();
@@ -1158,41 +1395,52 @@
             requestAnimationFrame(gameLoop);
         }
 
+        // ==================== GAME UPDATE ====================
+        /**
+         * Update all game entities and logic
+         * Called every frame when game is not paused
+         */
         function update() {
             if (!game.isRunning) return;
 
+            // Update player position
             game.playerX += game.playerSpeed;
             game.playerX = Math.max(game.playerRadius, Math.min(game.playerX, game.width - game.playerRadius));
 
+            // Update combo timer
             if (game.comboTimer > 0) {
                 game.comboTimer--;
             } else {
                 game.combo = 0;
             }
 
+            // Get slow multiplier from booster
             const slowMultiplier = game.activeBoosters['slow'] ? 0.5 : 1;
 
-            // UPDATE ENEMIES
+            // ========== UPDATE ENEMIES ==========
             for (let i = game.enemies.length - 1; i >= 0; i--) {
                 const enemy = game.enemies[i];
                 
-                // ХАОТИЧНОЕ ДВИЖЕНИЕ
+                // Chaotic movement with randomness
                 enemy.vx += (Math.random() - 0.5) * 0.5;
                 enemy.vy += (Math.random() - 0.5) * 0.5;
                 
+                // Clamp velocity
                 enemy.vx = Math.max(-3, Math.min(3, enemy.vx));
                 enemy.vy = Math.max(-3, Math.min(3, enemy.vy));
 
+                // Apply movement
                 enemy.x += enemy.vx * slowMultiplier;
                 enemy.y += enemy.vy * slowMultiplier;
 
-                // ГРАНИЦЫ
+                // CRITICAL: Keep enemies in upper 2/3 of screen
+                const maxY = game.height * ENEMY_SPAWN_MAX_Y_RATIO;
                 if (enemy.x < enemy.radius) enemy.x = enemy.radius;
                 if (enemy.x > game.width - enemy.radius) enemy.x = game.width - enemy.radius;
                 if (enemy.y < enemy.radius) enemy.y = enemy.radius;
-                if (enemy.y > game.height - enemy.radius) enemy.y = game.height - enemy.radius;
+                if (enemy.y > maxY) enemy.y = maxY;
 
-                // СТРЕЛЬБА ВРАГА В ИГРОКА
+                // Enemy shooting at player
                 enemy.shootTimer++;
                 if (enemy.shootTimer >= enemy.shootInterval) {
                     const angle = Math.atan2(game.playerY - enemy.y, game.playerX - enemy.x);
@@ -1208,17 +1456,19 @@
                 }
             }
 
-            // UPDATE PLAYER PROJECTILES
+            // ========== UPDATE PLAYER PROJECTILES ==========
             for (let i = game.projectiles.length - 1; i >= 0; i--) {
                 const proj = game.projectiles[i];
                 proj.x += proj.vx;
                 proj.y += proj.vy;
 
+                // Remove projectiles that leave screen
                 if (proj.x < 0 || proj.x > game.width || proj.y < 0 || proj.y > game.height) {
                     game.projectiles.splice(i, 1);
                     continue;
                 }
 
+                // Check collision with enemies
                 for (let j = game.enemies.length - 1; j >= 0; j--) {
                     const enemy = game.enemies[j];
                     const dist = Math.hypot(proj.x - enemy.x, proj.y - enemy.y);
@@ -1232,24 +1482,32 @@
                         game.projectiles.splice(i, 1);
 
                         if (enemy.health <= 0) {
+                            // Enemy defeated
                             game.enemies.splice(j, 1);
                             game.combo++;
                             game.comboTimer = game.comboTimeout;
 
+                            // Calculate token reward
                             const baseReward = enemy.isStrong ? 50 : 25;
                             const reward = Math.floor(baseReward * (1 + game.combo * 0.1));
                             game.tokens += reward;
-                            game.score += reward * 10;
                             game.enemiesDefeated++;
                             game.challengeProgress++;
+                            
+                            // Update statistics
+                            game.statistics.totalTokensEarned += reward;
+                            game.statistics.totalEnemiesDefeated++;
 
+                            // Visual feedback
                             createParticles(enemy.x, enemy.y, enemy.color);
                             showCombo();
                             
+                            // Check if wave complete
                             if (game.enemiesDefeated === game.totalEnemiesInWave) {
                                 startWave();
                             }
                         } else {
+                            // Hit but not killed - small particle effect
                             createParticles(proj.x, proj.y, '#FFB703');
                         }
                         break;
@@ -1257,17 +1515,19 @@
                 }
             }
 
-            // UPDATE ENEMY PROJECTILES
+            // ========== UPDATE ENEMY PROJECTILES ==========
             for (let i = game.enemyProjectiles.length - 1; i >= 0; i--) {
                 const proj = game.enemyProjectiles[i];
                 proj.x += proj.vx;
                 proj.y += proj.vy;
 
+                // Remove projectiles that leave screen
                 if (proj.x < 0 || proj.x > game.width || proj.y < 0 || proj.y > game.height) {
                     game.enemyProjectiles.splice(i, 1);
                     continue;
                 }
 
+                // Check collision with player
                 const dist = Math.hypot(proj.x - game.playerX, proj.y - game.playerY);
                 if (dist < proj.radius + game.playerRadius) {
                     if (game.shielded) {
@@ -1277,13 +1537,14 @@
                         }
                     } else {
                         game.health -= 5;
+                        game.statistics.totalDamageTaken += 5;
                         if (game.health <= 0) endGame();
                     }
                     game.enemyProjectiles.splice(i, 1);
                 }
             }
 
-            // UPDATE PARTICLES
+            // ========== UPDATE PARTICLES ==========
             for (let i = game.particles.length - 1; i >= 0; i--) {
                 const p = game.particles[i];
                 p.x += p.vx;
@@ -1294,7 +1555,7 @@
                 }
             }
 
-            // BOOSTER TIMERS
+            // ========== BOOSTER TIMERS ==========
             for (const boosterId in game.activeBoosters) {
                 if (Date.now() > game.activeBoosters[boosterId]) {
                     const booster = boosters.find(b => b.id === boosterId);
@@ -1306,19 +1567,28 @@
             updateHUD();
         }
 
+        /**
+         * End game - show game over screen with statistics
+         */
         function endGame() {
             game.isRunning = false;
             document.getElementById('gameOverScreen').style.display = 'block';
-            document.getElementById('finalScore').textContent = game.score;
+            document.getElementById('finalTokens').textContent = game.tokens;
             document.getElementById('wavesReached').textContent = game.wave;
+            document.getElementById('totalEnemiesDefeated').textContent = game.statistics.totalEnemiesDefeated;
         }
 
         // ==================== RENDERING ====================
+        /**
+         * Render all game elements to canvas
+         * Called every frame
+         */
         function draw() {
+            // Clear canvas with semi-transparent background
             game.ctx.fillStyle = 'rgba(135, 206, 235, 0.1)';
             game.ctx.fillRect(0, 0, game.width, game.height);
 
-            // SHELTERS
+            // Draw shelters
             game.ctx.fillStyle = 'rgba(100, 100, 100, 0.5)';
             game.ctx.strokeStyle = '#888888';
             game.ctx.lineWidth = 3;
@@ -1327,7 +1597,7 @@
                 game.ctx.strokeRect(shelter.x, shelter.y, shelter.width, shelter.height);
             }
 
-            // ENEMIES
+            // Draw enemies
             for (const enemy of game.enemies) {
                 const img = game.images[enemy.model];
                 if (img && img.complete && img.naturalWidth > 0) {
@@ -1340,6 +1610,7 @@
                     game.ctx.fill();
                 }
 
+                // Draw strong enemy indicator
                 if (enemy.isStrong) {
                     game.ctx.strokeStyle = '#FFFF00';
                     game.ctx.lineWidth = 3;
@@ -1348,7 +1619,7 @@
                     game.ctx.stroke();
                 }
 
-                // HEALTH BAR
+                // Draw enemy health bar
                 const healthPercent = enemy.health / enemy.maxHealth;
                 game.ctx.fillStyle = healthPercent > 0.5 ? '#06FFA5' : '#FB5607';
                 game.ctx.fillRect(enemy.x - 15, enemy.y - 30, 30 * healthPercent, 4);
@@ -1357,7 +1628,7 @@
                 game.ctx.strokeRect(enemy.x - 15, enemy.y - 30, 30, 4);
             }
 
-            // PLAYER PROJECTILES
+            // Draw player projectiles
             for (const proj of game.projectiles) {
                 game.ctx.fillStyle = proj.color;
                 game.ctx.beginPath();
@@ -1368,7 +1639,7 @@
                 game.ctx.stroke();
             }
 
-            // ENEMY PROJECTILES
+            // Draw enemy projectiles
             for (const proj of game.enemyProjectiles) {
                 game.ctx.fillStyle = proj.color;
                 game.ctx.beginPath();
@@ -1379,17 +1650,17 @@
                 game.ctx.stroke();
             }
 
-            // PARTICLES
+            // Draw particles with fade effect
             for (const p of game.particles) {
                 game.ctx.fillStyle = p.color;
-                game.ctx.globalAlpha = p.life / 30;
+                game.ctx.globalAlpha = p.life / 20;
                 game.ctx.beginPath();
                 game.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
                 game.ctx.fill();
                 game.ctx.globalAlpha = 1;
             }
 
-            // PLAYER
+            // Draw player
             const playerImg = game.images[PLAYER_MODEL];
             if (playerImg && playerImg.complete && playerImg.naturalWidth > 0) {
                 const size = game.playerRadius * 2.5;
@@ -1401,6 +1672,7 @@
                 game.ctx.fill();
             }
 
+            // Draw player shield if active
             if (game.shielded) {
                 game.ctx.strokeStyle = '#00D9FF';
                 game.ctx.lineWidth = 3;
@@ -1408,8 +1680,22 @@
                 game.ctx.arc(game.playerX, game.playerY, game.playerRadius + 15, 0, Math.PI * 2);
                 game.ctx.stroke();
             }
+
+            // Draw enemy zone boundary (visual indicator)
+            if (game.wave <= 3) { // Only show in early waves
+                const maxY = game.height * ENEMY_SPAWN_MAX_Y_RATIO;
+                game.ctx.strokeStyle = 'rgba(0, 217, 255, 0.1)';
+                game.ctx.lineWidth = 1;
+                game.ctx.setLineDash([5, 5]);
+                game.ctx.beginPath();
+                game.ctx.moveTo(0, maxY);
+                game.ctx.lineTo(game.width, maxY);
+                game.ctx.stroke();
+                game.ctx.setLineDash([]);
+            }
         }
 
+        // ==================== GAME INITIALIZATION ON LOAD ====================
         window.addEventListener('load', init);
     </script>
 </body>
