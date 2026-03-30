@@ -1447,27 +1447,32 @@
             boostersContainer.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #FFB703; font-size: 13px; padding: 10px;">Pick up boosters from enemies or buy here!</div>';
             
             boosters.forEach(booster => {
-                const btn = document.createElement('div');
-                btn.className = 'pause-store-item booster';
-                btn.innerHTML = `
-                    <div class="pause-store-name">${booster.name}</div>
-                    <div class="pause-store-desc">${booster.desc}</div>
-                    <div class="pause-store-cost">💰 ${booster.cost}</div>
-                `;
-                btn.disabled = game.tokens < booster.cost || game.activeBoosters[booster.id];
-                if (btn.disabled) btn.style.opacity = '0.6';
-                btn.style.cursor = btn.disabled ? 'not-allowed' : 'pointer';
-                btn.onclick = () => {
-                    if (game.tokens >= booster.cost && !game.activeBoosters[booster.id]) {
-                        game.tokens -= booster.cost;
-                        activateBooster(booster);
-                        game.statistics.boosterUsages++;
-                        updatePauseStore();
-                        updateHUD();
-                    }
-                };
-                boostersContainer.appendChild(btn);
-            });
+    const btn = document.createElement('div');
+    btn.className = 'pause-store-item booster';
+    btn.innerHTML = `
+        <div class="pause-store-name">${booster.name}</div>
+        <div class="pause-store-desc">${booster.desc}</div>
+        <div class="pause-store-cost">💰 ${booster.cost}</div>
+    `;
+    
+    // HP Potion можно покупать неограниченно, остальные бустеры - только один активный
+    const isHPPotion = booster.id === 'hppotion';
+    const isBlocked = isHPPotion ? false : game.activeBoosters[booster.id];
+    
+    btn.disabled = game.tokens < booster.cost || isBlocked;
+    if (btn.disabled) btn.style.opacity = '0.6';
+    btn.style.cursor = btn.disabled ? 'not-allowed' : 'pointer';
+    btn.onclick = () => {
+        if (game.tokens >= booster.cost && !isBlocked) {
+            game.tokens -= booster.cost;
+            activateBooster(booster);
+            game.statistics.boosterUsages++;
+            updatePauseStore();
+            updateHUD();
+        }
+    };
+    boostersContainer.appendChild(btn);
+});
         }
 
         function activateBooster(booster) {
