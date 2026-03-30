@@ -383,7 +383,7 @@
         /* ============ STORE IN PAUSE MENU ============ */
         .pause-store-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 12px;
         }
 
@@ -397,7 +397,7 @@
             font-size: 11px;
             transition: all 0.2s;
             touch-action: manipulation;
-            min-height: 100px;
+            min-height: 120px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -436,6 +436,11 @@
             background: linear-gradient(135deg, rgba(6, 255, 165, 0.15), rgba(6, 255, 165, 0.05));
         }
 
+        .pause-store-item.maxed {
+            border-color: #FFFF00;
+            background: linear-gradient(135deg, rgba(255, 255, 0, 0.15), rgba(255, 255, 0, 0.05));
+        }
+
         .pause-store-name {
             color: var(--accent-token);
             font-weight: bold;
@@ -451,6 +456,19 @@
 
         .pause-store-item.purchased .pause-store-name {
             color: var(--success-color);
+        }
+
+        .pause-store-item.maxed .pause-store-name {
+            color: #FFFF00;
+        }
+
+        .pause-store-level {
+            color: #FFD700;
+            font-weight: bold;
+            font-size: 9px;
+            margin-bottom: 4px;
+            position: relative;
+            z-index: 1;
         }
 
         .pause-store-progress {
@@ -479,6 +497,17 @@
             text-align: right;
             position: relative;
             z-index: 1;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .pause-store-cost-strike {
+            text-decoration: line-through;
+            color: #888;
+            font-size: 9px;
+            margin-right: 4px;
         }
 
         /* ============ COMBO DISPLAY ============ */
@@ -677,7 +706,7 @@
             }
 
             .pause-store-grid {
-                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             }
 
             .control-btn {
@@ -863,15 +892,13 @@
     <script>
         /**
          * ========================================
-         * ARC RAIDER - BATTLE DRONES GAME
+         * ARC RAIDER - BATTLE DRONES GAME (V2.0)
          * ========================================
-         * FINAL VERSION WITH:
-         * - Shelter near player (Y 80%)
-         * - Boss-only waves (5, 10, 15)
-         * - Dual boss models (arcboss.png / boss.png)
-         * - Token drops from enemies
-         * - Booster drops from enemies
-         * - In-game tokens display
+         * IMPROVEMENTS:
+         * - 2x higher kill rewards
+         * - Advanced shop with scaling prices
+         * - 5 upgrade levels per item
+         * - Bug fixes
          * ========================================
          */
 
@@ -940,7 +967,9 @@
                 maxhealth: 0,
                 shield: 0,
                 damage: 0,
-                speed: 0
+                speed: 0,
+                regen: 0,
+                firerate: 0
             },
 
             statistics: {
@@ -962,8 +991,10 @@
                 id: 'maxhealth',
                 name: '❤️ Max Health+',
                 desc: 'Increase max health by 25',
-                cost: 120,
-                fn: () => {
+                baseCost: 80,
+                costMultiplier: 1.2,
+                maxLevel: 5,
+                fn: (level) => {
                     game.maxHealth += 25;
                     game.health = game.maxHealth;
                     game.upgradePurchases.maxhealth++;
@@ -973,8 +1004,10 @@
                 id: 'shield',
                 name: '🛡️ Shield',
                 desc: 'Gain 50 shield HP',
-                cost: 100,
-                fn: () => {
+                baseCost: 100,
+                costMultiplier: 1.15,
+                maxLevel: 3,
+                fn: (level) => {
                     game.shielded = true;
                     game.shieldHealth = game.shieldMaxHealth;
                     game.shieldPurchased = true;
@@ -985,8 +1018,10 @@
                 id: 'damage',
                 name: '💥 Projectile Damage',
                 desc: 'Increase projectile damage +5',
-                cost: 150,
-                fn: () => {
+                baseCost: 90,
+                costMultiplier: 1.25,
+                maxLevel: 5,
+                fn: (level) => {
                     game.projectileDamage += 5;
                     game.upgradePurchases.damage++;
                 }
@@ -995,10 +1030,39 @@
                 id: 'speed',
                 name: '⚡ Projectile Speed',
                 desc: 'Increase projectile speed +2',
-                cost: 100,
-                fn: () => {
+                baseCost: 70,
+                costMultiplier: 1.2,
+                maxLevel: 5,
+                fn: (level) => {
                     game.projectileSpeed += 2;
                     game.upgradePurchases.speed++;
+                }
+            },
+            {
+                id: 'firerate',
+                name: '🔥 Fire Rate',
+                desc: 'Increase fire rate by 20%',
+                baseCost: 100,
+                costMultiplier: 1.3,
+                maxLevel: 4,
+                fn: (level) => {
+                    game.fireRate *= 0.8;
+                    game.upgradePurchases.firerate++;
+                }
+            },
+            {
+                id: 'regen',
+                name: '✨ Health Regen',
+                desc: 'Regenerate health every 5s',
+                baseCost: 150,
+                costMultiplier: 1.25,
+                maxLevel: 3,
+                fn: (level) => {
+                    game.upgradePurchases.regen++;
+                    if (!game.regenActive) {
+                        game.regenActive = true;
+                        startHealthRegen();
+                    }
                 }
             }
         ];
@@ -1009,7 +1073,7 @@
                 id: 'rapid',
                 name: '🚀 Rapid Fire',
                 desc: 'Triple fire rate for 10s',
-                cost: 300,
+                cost: 200,
                 duration: 10000,
                 fn: () => {
                     game.fireRate *= 3;
@@ -1022,7 +1086,7 @@
                 id: 'slow',
                 name: '❄️ Time Slow',
                 desc: 'Slow enemies for 8s',
-                cost: 300,
+                cost: 200,
                 duration: 8000,
                 fn: () => {},
                 fnEnd: () => {}
@@ -1031,7 +1095,7 @@
                 id: 'dmg',
                 name: '💣 Damage +',
                 desc: 'Double projectile damage for 12s',
-                cost: 350,
+                cost: 250,
                 duration: 12000,
                 fn: () => {},
                 fnEnd: () => {}
@@ -1040,7 +1104,7 @@
                 id: 'shield_plus',
                 name: '🛡️+ Mega Shield',
                 desc: 'Temporary shield for 15s',
-                cost: 250,
+                cost: 180,
                 duration: 15000,
                 fn: () => {
                     game.shielded = true;
@@ -1054,6 +1118,12 @@
         ];
 
         // ==================== HELPER FUNCTIONS ====================
+        function getUpgradeCost(upgradeId, level) {
+            const upgrade = upgrades.find(u => u.id === upgradeId);
+            if (!upgrade) return 0;
+            return Math.floor(upgrade.baseCost * Math.pow(upgrade.costMultiplier, level));
+        }
+
         function getEnemyStats(wave, isStrong, isBoss = false) {
             if (isBoss) {
                 let speed;
@@ -1102,13 +1172,13 @@
         }
 
         function getDropChance(isStrong, isBoss) {
-            if (isBoss) return Math.random() < 0.5 ? 'drop' : null;
-            if (isStrong) return Math.random() < 0.2 ? 'drop' : null;
-            return Math.random() < 0.1 ? 'drop' : null;
+            if (isBoss) return Math.random() < 0.6 ? 'drop' : null;
+            if (isStrong) return Math.random() < 0.25 ? 'drop' : null;
+            return Math.random() < 0.12 ? 'drop' : null;
         }
 
         function createDrop(x, y) {
-            const isBooster = Math.random() < 0.5;
+            const isBooster = Math.random() < 0.4;
             let icon, type, value;
 
             if (isBooster) {
@@ -1118,7 +1188,7 @@
                 type = 'booster';
                 value = randomBooster;
             } else {
-                const tokenValues = [10, 25, 50];
+                const tokenValues = [15, 30, 60];
                 value = tokenValues[Math.floor(Math.random() * tokenValues.length)];
                 icon = '💰';
                 type = 'token';
@@ -1135,6 +1205,20 @@
                 value: value,
                 life: 300
             });
+        }
+
+        function startHealthRegen() {
+            const regenAmount = 5 + game.upgradePurchases.regen * 2;
+            const regenInterval = setInterval(() => {
+                if (!game.isRunning) {
+                    clearInterval(regenInterval);
+                    return;
+                }
+                if (game.health < game.maxHealth) {
+                    game.health = Math.min(game.maxHealth, game.health + regenAmount);
+                    updateHUD();
+                }
+            }, 5000);
         }
 
         // ==================== IMAGE LOADING ====================
@@ -1313,38 +1397,32 @@
                 const btn = document.createElement('div');
                 btn.className = 'pause-store-item';
                 
-                const totalUpgrade = game.upgradePurchases[upgrade.id] || 0;
-                let progressText = '';
+                const level = game.upgradePurchases[upgrade.id] || 0;
+                const currentCost = getUpgradeCost(upgrade.id, level);
+                const isMaxed = level >= upgrade.maxLevel;
                 
-                if (upgrade.id === 'maxhealth') {
-                    progressText = `✓ +${totalUpgrade * 25} Health`;
-                } else if (upgrade.id === 'shield') {
-                    if (game.shieldPurchased) {
-                        progressText = `✓ PURCHASED`;
-                        btn.classList.add('purchased');
-                    }
-                } else if (upgrade.id === 'damage') {
-                    progressText = `✓ +${totalUpgrade * 5} Damage`;
-                } else if (upgrade.id === 'speed') {
-                    progressText = `✓ +${totalUpgrade * 2} Speed`;
+                let levelText = `Lv. ${level}/${upgrade.maxLevel}`;
+                let costDisplay = isMaxed ? '<span style="color: #FFFF00;">MAXED</span>' : `💰 ${currentCost}`;
+
+                if (isMaxed) {
+                    btn.classList.add('maxed');
                 }
 
                 btn.innerHTML = `
                     <div class="pause-store-name">${upgrade.name}</div>
-                    ${progressText ? `<div class="pause-store-progress">${progressText}</div>` : ''}
+                    <div class="pause-store-level">${levelText}</div>
                     <div class="pause-store-desc">${upgrade.desc}</div>
-                    <div class="pause-store-cost">💰 ${upgrade.cost}</div>
+                    <div class="pause-store-cost">${costDisplay}</div>
                 `;
 
-                const isShieldAlreadyPurchased = upgrade.id === 'shield' && game.shieldPurchased;
-                btn.disabled = game.tokens < upgrade.cost || isShieldAlreadyPurchased;
+                btn.disabled = game.tokens < currentCost || isMaxed;
                 
-                if (btn.disabled) btn.style.opacity = '0.5';
+                if (btn.disabled) btn.style.opacity = '0.6';
                 btn.style.cursor = btn.disabled ? 'not-allowed' : 'pointer';
                 btn.onclick = () => {
-                    if (game.tokens >= upgrade.cost && !isShieldAlreadyPurchased) {
-                        game.tokens -= upgrade.cost;
-                        upgrade.fn();
+                    if (game.tokens >= currentCost && !isMaxed) {
+                        game.tokens -= currentCost;
+                        upgrade.fn(level);
                         game.statistics.upgradePurchases++;
                         updatePauseStore();
                         updateHUD();
@@ -1353,6 +1431,8 @@
                 upgradesContainer.appendChild(btn);
             });
 
+            boostersContainer.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #FFB703; font-size: 13px; padding: 10px;">Pick up boosters from enemies or buy here!</div>';
+            
             boosters.forEach(booster => {
                 const btn = document.createElement('div');
                 btn.className = 'pause-store-item booster';
@@ -1362,7 +1442,7 @@
                     <div class="pause-store-cost">💰 ${booster.cost}</div>
                 `;
                 btn.disabled = game.tokens < booster.cost || game.activeBoosters[booster.id];
-                if (btn.disabled) btn.style.opacity = '0.5';
+                if (btn.disabled) btn.style.opacity = '0.6';
                 btn.style.cursor = btn.disabled ? 'not-allowed' : 'pointer';
                 btn.onclick = () => {
                     if (game.tokens >= booster.cost && !game.activeBoosters[booster.id]) {
@@ -1370,6 +1450,7 @@
                         activateBooster(booster);
                         game.statistics.boosterUsages++;
                         updatePauseStore();
+                        updateHUD();
                     }
                 };
                 boostersContainer.appendChild(btn);
@@ -1422,7 +1503,6 @@
             const isBossWave = game.wave % 5 === 0;
 
             if (isBossWave) {
-                // Only boss spawns on boss waves
                 game.totalEnemiesInWave = 1;
 
                 const bossModel = game.wave === 15 ? BOSS_MODEL_15 : BOSS_MODEL_5_10;
@@ -1446,7 +1526,6 @@
                     isBoss: true
                 });
             } else {
-                // Regular wave - spawn regular enemies
                 const baseEnemies = 3 + game.wave * 2;
                 game.totalEnemiesInWave = baseEnemies;
                 const colors = ['#FF1493', '#00CED1', '#32CD32', '#FFD700'];
@@ -1563,7 +1642,7 @@
                     enemy.vx = Math.max(-3, Math.min(3, enemy.vx));
                     enemy.vy = Math.max(-3, Math.min(3, enemy.vy));
                 } else {
-                    // Boss movement - chaotic with random direction changes
+                    // Boss movement
                     if (Math.random() < 0.02) {
                         enemy.vx = (Math.random() - 0.5) * enemy.speed * 2;
                         enemy.vy = (Math.random() - 0.5) * enemy.speed * 2;
@@ -1640,8 +1719,9 @@
                             game.combo++;
                             game.comboTimer = game.comboTimeout;
 
-                            const baseReward = enemy.isBoss ? 500 : (enemy.isStrong ? 50 : 25);
-                            const reward = Math.floor(baseReward * (1 + game.combo * 0.1));
+                            // DOUBLED KILL REWARDS
+                            const baseReward = enemy.isBoss ? 1000 : (enemy.isStrong ? 100 : 50);
+                            const reward = Math.floor(baseReward * (1 + game.combo * 0.15));
                             game.tokens += reward;
                             game.enemiesDefeated++;
                             game.challengeProgress++;
@@ -1763,7 +1843,7 @@
 
         // ==================== RENDERING ====================
         function draw() {
-            // CLEAR CANVAS COMPLETELY
+            // CLEAR CANVAS
             game.ctx.fillStyle = 'rgba(135, 206, 235, 1)';
             game.ctx.fillRect(0, 0, game.width, game.height);
 
@@ -1866,7 +1946,7 @@
                 game.ctx.stroke();
             }
 
-            // Draw particles with fade effect
+            // Draw particles with fade
             for (const p of game.particles) {
                 game.ctx.fillStyle = p.color;
                 game.ctx.globalAlpha = p.life / 20;
@@ -1888,7 +1968,7 @@
                 game.ctx.fill();
             }
 
-            // Draw player shield if active
+            // Draw player shield
             if (game.shielded) {
                 game.ctx.strokeStyle = '#00D9FF';
                 game.ctx.lineWidth = 3;
@@ -1910,12 +1990,11 @@
                 game.ctx.setLineDash([]);
             }
 
-            // Reset text settings
             game.ctx.textAlign = 'left';
             game.ctx.textBaseline = 'alphabetic';
         }
 
-        // ==================== GAME INITIALIZATION ON LOAD ====================
+        // ==================== INITIALIZATION ====================
         window.addEventListener('load', init);
     </script>
 </body>
