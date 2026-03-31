@@ -939,7 +939,7 @@
             projectileSize: 5,
             projectileDamage: 10,
             fireRate: 5,
-            tripleShot: false,  // ← ДОБАВИТЬ ЭТУ СТРОКУ
+            tripleShot: true,  // ← ДОБАВИТЬ ЭТУ СТРОКУ
             fireCounter: 0,
             lastComboRewardAt: 0,
 
@@ -1079,7 +1079,7 @@
                 name: '❄️ Time Slow',
                 desc: 'Slow enemies for 8s',
                 cost: 200,
-                duration: 8000,
+                duration: 15000,
                 fn: () => {},
                 fnEnd: () => {}
             },
@@ -1088,7 +1088,7 @@
                 name: '💣 Damage +',
                 desc: 'Double projectile damage for 12s',
                 cost: 250,
-                duration: 12000,
+                duration: 20000,
                 fn: () => {},
                 fnEnd: () => {}
             },
@@ -1097,7 +1097,7 @@
                 name: '🛡️+ Mega Shield',
                 desc: 'Temporary shield for 15s',
                 cost: 180,
-                duration: 15000,
+                duration: 25000,
                 fn: () => {
                     game.shielded = true;
                     game.shieldHealth = game.shieldMaxHealth * 2;
@@ -1348,7 +1348,7 @@
     
     if (game.tripleShot) {
         // 3 снаряда под разными углами
-        const angles = [angle - 0.3, angle, angle + 0.3];
+        const angles = [angle - 0.2, angle, angle + 0.2];
         angles.forEach(a => {
             game.projectiles.push({
                 x: game.playerX,
