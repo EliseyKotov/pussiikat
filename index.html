@@ -1671,20 +1671,18 @@
                     continue;
                 }
                 
-                // Enemy movement
-                if (!enemy.isBoss) {
-                    enemy.vx += (Math.random() - 0.4) * 3;
-                    enemy.vy += (Math.random() - 0.1) * 3;
-                    
-                    enemy.vx = Math.max(-3, Math.min(3, enemy.vx));
-                    enemy.vy = Math.max(-3, Math.min(3, enemy.vy));
-                } else {
-                    // Boss movement
-                    if (Math.random() < 0.1) {
-                        enemy.vx = (Math.random() - 0.5) * enemy.speed * 15;
-                        enemy.vy = (Math.random() - 0.5) * enemy.speed * 15;
-                    }
-                }
+                // Enemy movement - pure random every frame
+if (!enemy.isBoss) {
+    // Генерируем полностью новую случайную скорость каждый кадр
+    enemy.vx = (Math.random() - 0.5) * 5;
+    enemy.vy = (Math.random() - 0.5) * 5;
+} else {
+    // Boss movement
+    if (Math.random() < 0.1) {
+        enemy.vx = (Math.random() - 0.5) * enemy.speed * 15;
+        enemy.vy = (Math.random() - 0.5) * enemy.speed * 15;
+    }
+}
 
                 // Apply movement
                 enemy.x += enemy.vx * slowMultiplier;
