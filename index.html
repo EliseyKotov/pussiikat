@@ -870,7 +870,7 @@ function getUpgradeCost(id, level) {
 function getEnemyStats(wave, isStrong, isBoss = false) {
     if (isBoss) {
         let speed = wave === 5 ? 0.25 : wave === 10 ? 0.45 : 0.85;
-        return { speed, shootInterval: 11, health: 350 + wave * 20, damage: 15 + Math.floor(wave/5)*5, projectileSize: 6 };
+        return { speed, shootInterval: 20, health: 350 + wave * 20, damage: 15 + Math.floor(wave/5)*5, projectileSize: 6 };
     }
     const speed = 0.2 + wave * 0.08;
     let shootInterval, health, damage;
@@ -1587,7 +1587,7 @@ function update() {
         if (e.isBoss && !e.rageMode && e.health < e.maxHealth * 0.5) {
             e.rageMode = true;
             game.bossRageTriggered = true;
-            e.shootInterval = Math.max(4, e.shootInterval * 0.5);
+            e.shootInterval = Math.max(6, e.shootInterval * 0.7);
             SFX.bossRage();
             const rageEl = document.getElementById('bossRageDisplay');
             rageEl.style.display = 'block';
