@@ -381,32 +381,8 @@
             display: block; margin-top: 5px;
         }
 
-        /* ===== BOTTOM CONTROLS ===== */
-        .bottom-controls {
-            position: absolute;
-            bottom: max(10px, var(--safe-bottom));
-            left: 50%; transform: translateX(-50%);
-            display: flex; gap: 10px;
-            z-index: 100; pointer-events: auto;
-            width: 90%; max-width: 500px;
-        }
-        .control-btn {
-            flex: 1;
-            background: rgba(255,0,110,0.2);
-            border: 2px solid rgba(255,0,110,0.6);
-            color: #FF70A6; padding: 18px 20px;
-            border-radius: 10px; font-size: 14px;
-            cursor: pointer; font-weight: bold;
-            transition: all 0.15s; touch-action: manipulation;
-            min-height: 60px; text-align: center;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 15px rgba(255,0,110,0.15);
-        }
-        .control-btn:active {
-            background: rgba(255,0,110,0.4);
-            transform: scale(0.96);
-            box-shadow: 0 0 25px rgba(255,0,110,0.4);
-        }
+        /* ===== BOTTOM CONTROLS (hidden - replaced by canvas joystick) ===== */
+        .bottom-controls { display: none; }
 
         /* ===== LEVEL INFO ===== */
         .level-info {
@@ -630,7 +606,7 @@
         <h2>ARC RAIDER</h2>
         <p>🎮 Защищайся от дронов!</p>
         <p>Кликай чтобы стрелять</p>
-        <p>Стрелки/A,D для движения</p>
+        <p>🕹️ Джойстик (слева) или стрелки/A,D</p>
         <p style="margin-top:12px;font-size:0.85em;color:#aaa;">Зарабатывай токены и покупай апгрейды!</p>
     </div>
 
@@ -686,6 +662,15 @@ const game = {
     tokens: 0, score: 0, highscore: 0,
     playerX: 0, playerY: 0,
     playerRadius: 20, playerSpeed: 0,
+
+    joystick: {
+        active: false,
+        touchId: null,
+        mouseActive: false,
+        stickX: 0, stickY: 0,
+        radius: 62,
+        stickRadius: 27
+    },
 
     combo: 0, comboTimer: 0, comboTimeout: 180,
     projectileSpeed: 5, projectileSize: 5,
@@ -870,7 +855,7 @@ function getUpgradeCost(id, level) {
 function getEnemyStats(wave, isStrong, isBoss = false) {
     if (isBoss) {
         let speed = wave === 5 ? 0.25 : wave === 10 ? 0.45 : 0.85;
-        return { speed, shootInterval: 20, health: 350 + wave * 20, damage: 15 + Math.floor(wave/5)*5, projectileSize: 6 };
+        return { speed, shootInterval: 11, health: 350 + wave * 20, damage: 15 + Math.floor(wave/5)*5, projectileSize: 6 };
     }
     const speed = 0.2 + wave * 0.08;
     let shootInterval, health, damage;
@@ -1113,22 +1098,17 @@ function setupEventListeners() {
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('keyup', handleKeyUp);
     game.canvas.addEventListener('click', handleCanvasClick);
-    game.canvas.addEventListener('touchend', handleCanvasTouch, { passive: false });
 
-    const leftBtn = document.getElementById('leftBtn');
-    const rightBtn = document.getElementById('rightBtn');
+    // Joystick touch events
+    game.canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+    game.canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+    game.canvas.addEventListener('touchend', handleTouchEnd, { passive: false });
+    game.canvas.addEventListener('touchcancel', handleTouchEnd, { passive: false });
 
-    leftBtn.addEventListener('mousedown', () => { game.playerSpeed = -5; });
-    leftBtn.addEventListener('touchstart', (e) => { e.preventDefault(); game.playerSpeed = -5; }, { passive: false });
-    leftBtn.addEventListener('mouseup', () => { game.playerSpeed = 0; });
-    leftBtn.addEventListener('touchend', (e) => { e.preventDefault(); game.playerSpeed = 0; }, { passive: false });
-    leftBtn.addEventListener('mouseleave', () => { game.playerSpeed = 0; });
-
-    rightBtn.addEventListener('mousedown', () => { game.playerSpeed = 5; });
-    rightBtn.addEventListener('touchstart', (e) => { e.preventDefault(); game.playerSpeed = 5; }, { passive: false });
-    rightBtn.addEventListener('mouseup', () => { game.playerSpeed = 0; });
-    rightBtn.addEventListener('touchend', (e) => { e.preventDefault(); game.playerSpeed = 0; }, { passive: false });
-    rightBtn.addEventListener('mouseleave', () => { game.playerSpeed = 0; });
+    // Joystick mouse events (desktop testing)
+    game.canvas.addEventListener('mousedown', handleMouseDownJoystick);
+    window.addEventListener('mousemove', handleMouseMoveJoystick);
+    window.addEventListener('mouseup', handleMouseUpJoystick);
 
     document.getElementById('pauseBtn').addEventListener('click', togglePause);
     document.getElementById('pauseCloseBtn').addEventListener('click', togglePause);
@@ -1152,19 +1132,102 @@ function setupEventListeners() {
     });
 }
 
+// ===== JOYSTICK HELPERS =====
+function getJoystickBase() {
+    return { x: 90, y: game.height - 90 };
+}
+
+function isInJoystickZone(x, y) {
+    const b = getJoystickBase();
+    const dx = x - b.x, dy = y - b.y;
+    return Math.sqrt(dx * dx + dy * dy) < game.joystick.radius * 1.9;
+}
+
+function applyJoystickPosition(cx, cy) {
+    const b = getJoystickBase();
+    let dx = cx - b.x;
+    let dy = cy - b.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    const r = game.joystick.radius;
+    if (dist > r) { dx = (dx / dist) * r; dy = (dy / dist) * r; }
+    game.joystick.stickX = dx;
+    game.joystick.stickY = dy;
+}
+
+function releaseJoystick() {
+    game.joystick.active = false;
+    game.joystick.touchId = null;
+    game.joystick.mouseActive = false;
+    game.joystick.stickX = 0;
+    game.joystick.stickY = 0;
+}
+
 // ===== INPUT =====
 function handleCanvasClick(e) {
     if (game.isPaused || !game.isRunning || game.isShopBreak) return;
+    if (game.joystick.mouseActive) return; // ignore click after joystick drag
     const rect = game.canvas.getBoundingClientRect();
     fireProjectileTowards(e.clientX - rect.left, e.clientY - rect.top);
 }
 
-function handleCanvasTouch(e) {
-    if (game.isPaused || !game.isRunning || game.isShopBreak) return;
+function handleTouchStart(e) {
     e.preventDefault();
     const rect = game.canvas.getBoundingClientRect();
-    const t = e.changedTouches[0];
-    fireProjectileTowards(t.clientX - rect.left, t.clientY - rect.top);
+    for (let i = 0; i < e.changedTouches.length; i++) {
+        const t = e.changedTouches[i];
+        const cx = t.clientX - rect.left;
+        const cy = t.clientY - rect.top;
+        if (!game.joystick.active && isInJoystickZone(cx, cy)) {
+            game.joystick.active = true;
+            game.joystick.touchId = t.identifier;
+            applyJoystickPosition(cx, cy);
+        }
+    }
+}
+
+function handleTouchMove(e) {
+    e.preventDefault();
+    const rect = game.canvas.getBoundingClientRect();
+    for (let i = 0; i < e.changedTouches.length; i++) {
+        const t = e.changedTouches[i];
+        if (t.identifier === game.joystick.touchId) {
+            applyJoystickPosition(t.clientX - rect.left, t.clientY - rect.top);
+        }
+    }
+}
+
+function handleTouchEnd(e) {
+    e.preventDefault();
+    const rect = game.canvas.getBoundingClientRect();
+    for (let i = 0; i < e.changedTouches.length; i++) {
+        const t = e.changedTouches[i];
+        if (t.identifier === game.joystick.touchId) {
+            releaseJoystick();
+        } else if (game.isRunning && !game.isPaused && !game.isShopBreak) {
+            fireProjectileTowards(t.clientX - rect.left, t.clientY - rect.top);
+        }
+    }
+}
+
+function handleMouseDownJoystick(e) {
+    const rect = game.canvas.getBoundingClientRect();
+    const cx = e.clientX - rect.left;
+    const cy = e.clientY - rect.top;
+    if (isInJoystickZone(cx, cy)) {
+        game.joystick.mouseActive = true;
+        game.joystick.active = true;
+        applyJoystickPosition(cx, cy);
+    }
+}
+
+function handleMouseMoveJoystick(e) {
+    if (!game.joystick.mouseActive) return;
+    const rect = game.canvas.getBoundingClientRect();
+    applyJoystickPosition(e.clientX - rect.left, e.clientY - rect.top);
+}
+
+function handleMouseUpJoystick() {
+    if (game.joystick.mouseActive) releaseJoystick();
 }
 
 function fireProjectileTowards(tx, ty) {
@@ -1408,8 +1471,6 @@ function startWave() {
     game.shelters = [];
     game.bossRageTriggered = false;
     challengeStats.currentWaveNoDamage = true;
-    game.projectiles = [];          // Очистить снаряды игрока
-    game.enemyProjectiles = [];     // Очистить снаряды врагов
 
     const isBossWaveCheck = game.wave % 5 === 0;
     if (isBossWaveCheck) SFX.bossWave(); else SFX.wave();
@@ -1419,7 +1480,7 @@ function startWave() {
     waveTitleDisplay.style.display = 'block';
     setTimeout(() => { waveTitleDisplay.style.display = 'none'; }, 1200);
 
-    if (game.wave >= 3) {
+    if (game.wave >= 5) {
         const sw = game.width / 4;
         const sx = Math.random() * (game.width - sw);
         game.shelters.push({ x: sx, y: game.height * SHELTER_Y_RATIO, width: sw, height: 15 });
@@ -1550,8 +1611,11 @@ function gameLoop() {
 function update() {
     if (!game.isRunning || game.isShopBreak) return;
 
-    // Player movement
-    game.playerX += game.playerSpeed;
+    // Player movement (joystick overrides keyboard when active)
+    const effectiveSpeed = game.joystick.active
+        ? (game.joystick.stickX / game.joystick.radius) * 7
+        : game.playerSpeed;
+    game.playerX += effectiveSpeed;
     game.playerX = Math.max(game.playerRadius, Math.min(game.playerX, game.width - game.playerRadius));
 
     if (game.fireCounter > 0) game.fireCounter--;
@@ -1587,7 +1651,7 @@ function update() {
         if (e.isBoss && !e.rageMode && e.health < e.maxHealth * 0.5) {
             e.rageMode = true;
             game.bossRageTriggered = true;
-            e.shootInterval = Math.max(6, e.shootInterval * 0.7);
+            e.shootInterval = Math.max(4, e.shootInterval * 0.5);
             SFX.bossRage();
             const rageEl = document.getElementById('bossRageDisplay');
             rageEl.style.display = 'block';
@@ -2360,6 +2424,97 @@ function draw() {
         ctx.fillRect(0, 0, W, H);
     }
 
+    // ===== VIRTUAL JOYSTICK =====
+    drawJoystick(ctx);
+
+    ctx.restore();
+}
+
+function drawJoystick(ctx) {
+    if (!game.isRunning) return;
+    const jb = getJoystickBase();
+    const jx = jb.x, jy = jb.y;
+    const jr = game.joystick.radius;
+    const sr = game.joystick.stickRadius;
+    const active = game.joystick.active;
+
+    ctx.save();
+
+    // --- Outer ring (base) ---
+    const baseAlpha = active ? 0.55 : 0.32;
+    ctx.globalAlpha = baseAlpha;
+    ctx.strokeStyle = '#00D9FF';
+    ctx.lineWidth = 2.5;
+    ctx.shadowColor = '#00D9FF';
+    ctx.shadowBlur = active ? 18 : 8;
+    ctx.beginPath();
+    ctx.arc(jx, jy, jr, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Inner fill
+    ctx.globalAlpha = active ? 0.18 : 0.1;
+    ctx.fillStyle = '#00D9FF';
+    ctx.beginPath();
+    ctx.arc(jx, jy, jr, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Crosshair guides
+    ctx.globalAlpha = active ? 0.35 : 0.2;
+    ctx.strokeStyle = '#00D9FF';
+    ctx.lineWidth = 1;
+    ctx.shadowBlur = 0;
+    // Left arrow
+    ctx.beginPath();
+    ctx.moveTo(jx - jr * 0.35, jy);
+    ctx.lineTo(jx - jr * 0.72, jy);
+    ctx.moveTo(jx - jr * 0.72, jy);
+    ctx.lineTo(jx - jr * 0.55, jy - 8);
+    ctx.moveTo(jx - jr * 0.72, jy);
+    ctx.lineTo(jx - jr * 0.55, jy + 8);
+    ctx.stroke();
+    // Right arrow
+    ctx.beginPath();
+    ctx.moveTo(jx + jr * 0.35, jy);
+    ctx.lineTo(jx + jr * 0.72, jy);
+    ctx.moveTo(jx + jr * 0.72, jy);
+    ctx.lineTo(jx + jr * 0.55, jy - 8);
+    ctx.moveTo(jx + jr * 0.72, jy);
+    ctx.lineTo(jx + jr * 0.55, jy + 8);
+    ctx.stroke();
+
+    // --- Stick ---
+    const sx = active ? jx + game.joystick.stickX : jx;
+    const sy = active ? jy + game.joystick.stickY : jy;
+
+    // Stick shadow/glow
+    ctx.globalAlpha = active ? 0.8 : 0.45;
+    ctx.shadowColor = active ? '#FFB703' : '#00D9FF';
+    ctx.shadowBlur = active ? 20 : 10;
+
+    // Stick body gradient effect
+    ctx.fillStyle = active ? '#FFB703' : '#00D9FF';
+    ctx.beginPath();
+    ctx.arc(sx, sy, sr, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Stick highlight
+    ctx.globalAlpha = active ? 0.9 : 0.5;
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(sx - sr * 0.28, sy - sr * 0.28, sr * 0.32, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Stick border
+    ctx.globalAlpha = active ? 1 : 0.6;
+    ctx.strokeStyle = active ? '#FFC933' : '#55EEFF';
+    ctx.lineWidth = 2;
+    ctx.shadowBlur = 0;
+    ctx.beginPath();
+    ctx.arc(sx, sy, sr, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.globalAlpha = 1;
+    ctx.shadowBlur = 0;
     ctx.restore();
 }
 
