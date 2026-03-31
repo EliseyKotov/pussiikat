@@ -1675,21 +1675,21 @@
 if (!enemy.isBoss) {
     // Меняем направление каждые N кадров
     if (!enemy.directionTimer) {
-        enemy.directionTimer = 30; // Меняем направление каждые 30 кадров (~0.5 сек)
+        enemy.directionTimer = 20; // Меняем направление каждые 30 кадров (~0.5 сек)
     }
     
     if (enemy.directionTimer <= 0) {
         enemy.vx = (Math.random() - 0.5) * 2;
         enemy.vy = (Math.random() - 0.5) * 2;
-        enemy.directionTimer = 30; // Сбрасываем счётчик
+        enemy.directionTimer = 20; // Сбрасываем счётчик
     } else {
         enemy.directionTimer--;
     }
 } else {
     // Boss movement
     if (Math.random() < 0.1) {
-        enemy.vx = (Math.random() - 0.5) * enemy.speed * 30;
-        enemy.vy = (Math.random() - 0.5) * enemy.speed * 30;
+        enemy.vx = (Math.random() - 0.5) * enemy.speed * 15;
+        enemy.vy = (Math.random() - 0.5) * enemy.speed * 15;
     }
 }
 
