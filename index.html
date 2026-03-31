@@ -1719,6 +1719,8 @@ function startWave() {
     game.waveStarted = true;
     game.enemiesDefeated = 0;
     game.enemies = [];
+    game.projectiles = [];
+    game.enemyProjectiles = [];
     game.shelters = [];
     game.bossRageTriggered = false;
     challengeStats.currentWaveNoDamage = true;
@@ -1746,11 +1748,9 @@ function startWave() {
     waveTitleDisplay.style.display = 'block';
     setTimeout(() => { waveTitleDisplay.style.display = 'none'; }, 1400);
 
-    if (game.wave >= 5) {
-        const sw = game.width / 4;
-        const sx = Math.random() * (game.width - sw);
-        game.shelters.push({ x: sx, y: game.height * SHELTER_Y_RATIO, width: sw, height: 15 });
-    }
+    const sw = game.width / 4;
+    const sx = Math.random() * (game.width - sw);
+    game.shelters.push({ x: sx, y: game.height * SHELTER_Y_RATIO, width: sw, height: 15 });
 
     const isBossWave = game.wave % 5 === 0;
     const isDoubleBossWave = game.wave === 20;
