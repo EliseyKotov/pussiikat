@@ -1674,9 +1674,9 @@
             // Enemy movement - continuously change direction with frequency
 if (!enemy.isBoss) {
     // Меняем направление с вероятностью каждый кадр
-    if (Math.random() < 0.06) { // 15% вероятность каждый кадр
-        enemy.vx = (Math.random() - 0.5) * 2;
-        enemy.vy = (Math.random() - 0.5) * 2;
+    if (Math.random() < 0.01) { // 15% вероятность каждый кадр
+        enemy.vx = (Math.random() - 0.5) * 3;
+        enemy.vy = (Math.random() - 0.5) * 3;
     }
 } else {
     // Boss movement
