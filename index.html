@@ -1142,41 +1142,42 @@
         }
 
         function getEnemyStats(wave, isStrong, isBoss = false) {
-            if (isBoss) {
-    let speed;
-    if (wave === 5) speed = 0.2;
-    else if (wave === 10) speed = 0.4;
-    else speed = 0.8;
+    if (isBoss) {
+        let speed;
+        if (wave === 5) speed = 0.2;
+        else if (wave === 10) speed = 0.4;
+        else speed = 0.8;
 
-    return {
-        speed: speed,
-        shootInterval: 11,
-        health: 350,
-        damage: 15,
-        projectileSize: 6  // ДОБАВЬТЕ ЭТУ СТРОКУ - размер снаряда босса
-    };
+        return {
+            speed: speed,
+            shootInterval: 11,
+            health: 350,
+            damage: 15,
+            projectileSize: 6
+        };
+    }
+
+    let speed, shootInterval, health, damage;
+
+    if (wave <= 5) {
+        speed = 0.2 + wave * 0.08;
+        shootInterval = 100 + Math.random() * 50;
+        health = isStrong ? 30 : 15;
+        damage = 5;
+    } else if (wave <= 10) {
+        speed = 0.3 + wave * 0.12;
+        shootInterval = 60 + Math.random() * 30;
+        health = isStrong ? 40 + (wave - 5) * 5 : 20 + (wave - 5) * 3;
+        damage = 7;
+    } else {
+        speed = 1 + wave * 0.2;
+        shootInterval = 40 + Math.random() * 20;
+        health = isStrong ? 50 + (wave - 10) * 8 : 30 + (wave - 10) * 5;
+        damage = 10 + Math.floor((wave - 10) / 5) * 5;
+    }
+
+    return { speed, shootInterval, health, damage };  // ✅ ДОБАВЬТЕ ЗДЕСЬ!
 }
-
-            let speed, shootInterval, health, damage;
-
-            if (wave <= 5) {
-                speed = 0.2 + wave * 0.08;
-                shootInterval = 100 + Math.random() * 50;
-                health = isStrong ? 30 : 15;
-                damage = 5;
-            } else if (wave <= 10) {
-                speed = 0.3 + wave * 0.12;
-                shootInterval = 60 + Math.random() * 30;
-                health = isStrong ? 40 + (wave - 5) * 5 : 20 + (wave - 5) * 3;
-                damage = 7;
-            } else {
-                speed = 1 + wave * 0.2;
-                shootInterval = 40 + Math.random() * 20;
-                health = isStrong ? 50 + (wave - 10) * 8 : 30 + (wave - 10) * 5;
-                damage = 10 + Math.floor((wave - 10) / 5) * 5;
-                return { speed, shootInterval, health, damage };
-            }
-        }
 
         function checkShelterCollision(x, y, radius) {
             for (const shelter of game.shelters) {
