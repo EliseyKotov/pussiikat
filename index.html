@@ -939,6 +939,8 @@
             projectileSize: 5,
             projectileDamage: 10,
             fireRate: 10,
+            tripleShot: false,  // ← ДОБАВИТЬ ЭТУ СТРОКУ
+            fireCounter: 0,
             lastComboRewardAt: 0,
 
             wave: 1,
@@ -1060,18 +1062,18 @@
         // ==================== BOOSTERS CONFIGURATION ====================
         const boosters = [
             {
-                id: 'rapid',
-                name: '🚀 Rapid Fire',
-                desc: 'Triple fire rate for 10s',
-                cost: 200,
-                duration: 10000,
-                fn: () => {
-                    game.fireRate *= 3;
-                },
-                fnEnd: () => {
-                    game.fireRate /= 3;
-                }
-            },
+    id: 'rapid',
+    name: '🚀 Triple Shot',
+    desc: 'Fire 3 projectiles per shot for 10s',
+    cost: 200,
+    duration: 10000,
+    fn: () => {
+        game.tripleShot = true;
+    },
+    fnEnd: () => {
+        game.tripleShot = false;
+    }
+},
             {
                 id: 'slow',
                 name: '❄️ Time Slow',
@@ -1338,24 +1340,37 @@
         }
 
         function fireProjectileTowards(targetX, targetY) {
-    // Используем время вместо счетчика кадров
-    const now = Date.now();
-    if (!game.lastFireTime) game.lastFireTime = 0;
+    if (game.fireCounter > 0) return;
+    game.fireCounter = game.fireRate;
     
-    const fireDelay = 1000 / game.fireRate;  // Преобразуем fireRate в миллисекунды
-    
-    if (now - game.lastFireTime < fireDelay) return;
-    
-    game.lastFireTime = now;
     const angle = Math.atan2(targetY - game.playerY, targetX - game.playerX);
     const speed = game.projectileSpeed;
-    game.projectiles.push({
-        x: game.playerX,
-        y: game.playerY,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-        radius: game.projectileSize,
-        color: '#00D9FF'
+    
+    if (game.tripleShot) {
+        // 3 снаряда под разными углами
+        const angles = [angle - 0.3, angle, angle + 0.3];
+        angles.forEach(a => {
+            game.projectiles.push({
+                x: game.playerX,
+                y: game.playerY,
+                vx: Math.cos(a) * speed,
+                vy: Math.sin(a) * speed,
+                radius: game.projectileSize,
+                color: '#00D9FF'
+            });
+        });
+    } else {
+        // Обычный выстрел
+        game.projectiles.push({
+            x: game.playerX,
+            y: game.playerY,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            radius: game.projectileSize,
+            color: '#00D9FF'
+        });
+    }
+}
     });
 }
 
