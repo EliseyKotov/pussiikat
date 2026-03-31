@@ -936,6 +936,7 @@
             comboTimer: 0,
             comboTimeout: 3000,
             projectileSpeed: 5,
+            projectileSize: 5,
             projectileDamage: 10,
             fireRate: 10,
             fireCounter: 0,
@@ -994,7 +995,7 @@
                 desc: 'Increase max health by 25',
                 baseCost: 80,
                 costMultiplier: 1.2,
-                maxLevel: 5,
+                maxLevel: 7,
                 fn: (level) => {
                     game.maxHealth += 25;
                     game.health = game.maxHealth;
@@ -1040,24 +1041,25 @@
                 }
             },
             {
-                id: 'firerate',
-                name: '🔥 Fire Rate',
-                desc: 'Increase fire rate by 20%',
-                baseCost: 100,
-                costMultiplier: 1.3,
-                maxLevel: 4,
-                fn: (level) => {
-                    game.fireRate *= 0.8;
-                    game.upgradePurchases.firerate++;
-                }
-            },
+    id: 'bigprojectile',
+    name: '🔫 Big Shot',
+    desc: 'Increase projectile size for 12s',
+    cost: 200,
+    duration: 12000,
+    fn: () => {
+        game.projectileSize = 12;  // Увеличиваем размер
+    },
+    fnEnd: () => {
+        game.projectileSize = 5;  // Возвращаем обычный размер
+    }
+},
             {
                 id: 'regen',
                 name: '✨ Health Regen',
                 desc: 'Regenerate health every 5s',
                 baseCost: 150,
                 costMultiplier: 1.25,
-                maxLevel: 3,
+                maxLevel: 5,
                 fn: (level) => {
                     game.upgradePurchases.regen++;
                     if (!game.regenActive) {
@@ -1141,18 +1143,19 @@
 
         function getEnemyStats(wave, isStrong, isBoss = false) {
             if (isBoss) {
-                let speed;
-                if (wave === 5) speed = 0.2;
-                else if (wave === 10) speed = 0.4;
-                else speed = 0.8;
+    let speed;
+    if (wave === 5) speed = 0.2;
+    else if (wave === 10) speed = 0.4;
+    else speed = 0.8;
 
-                return {
-                    speed: speed,
-                    shootInterval: 11,
-                    health: 300 + (wave-5) * 100,
-                    damage: 15 + Math.floor((wave - 5) / 2) * 2
-                };
-            }
+    return {
+        speed: speed,
+        shootInterval: 11,
+        health: 350,
+        damage: 15,
+        projectileSize: 6  // ДОБАВЬТЕ ЭТУ СТРОКУ - размер снаряда босса
+    };
+}
 
             let speed, shootInterval, health, damage;
 
@@ -1342,7 +1345,7 @@
                 y: game.playerY,
                 vx: Math.cos(angle) * speed,
                 vy: Math.sin(angle) * speed,
-                radius: 5,
+                radius: game.projectileSize,
                 color: '#00D9FF'
             });
         }
@@ -1707,16 +1710,17 @@
                 if (enemy.shootTimer >= enemy.shootInterval) {
                     const angle = Math.atan2(game.playerY - enemy.y, game.playerX - enemy.x);
                     game.enemyProjectiles.push({
-                        x: enemy.x,
-                        y: enemy.y,
-                        vx: Math.cos(angle) * 3,
-                        vy: Math.sin(angle) * 3,
-                        radius: 4,
-                        color: '#FF1493',
-                        damage: enemy.damage
-                    });
-                    enemy.shootTimer = 0;
-                }
+                        const stats = getEnemyStats(game.wave, false, enemy.isBoss);
+game.enemyProjectiles.push({
+    x: enemy.x,
+    y: enemy.y,
+    vx: Math.cos(angle) * 3,
+    vy: Math.sin(angle) * 3,
+    radius: enemy.isBoss ? 6 : 4,  // Больший размер для босса
+    color: '#FF1493',
+    damage: enemy.damage
+});
+                    }
             }
 
             // ========== UPDATE PLAYER PROJECTILES ==========
