@@ -939,7 +939,7 @@
             projectileSize: 5,
             projectileDamage: 10,
             fireRate: 5,
-            tripleShot: true,  // ← ДОБАВИТЬ ЭТУ СТРОКУ
+            tripleShot: false,  // ← ДОБАВИТЬ ЭТУ СТРОКУ
             fireCounter: 0,
             lastComboRewardAt: 0,
 
@@ -973,7 +973,7 @@
                 damage: 0,
                 speed: 0,
                 regen: 0,
-                firerate: 0
+    
             },
 
             statistics: {
@@ -1067,12 +1067,8 @@
     desc: 'Fire 3 projectiles per shot for 10s',
     cost: 200,
     duration: 10000,
-    fn: () => {
-        game.tripleShot = true;
-    },
-    fnEnd: () => {
-        game.tripleShot = false;
-    }
+    fn: () => { game.tripleShot = true; },
+    fnEnd: () => { game.tripleShot = false; }
 },
             {
                 id: 'slow',
