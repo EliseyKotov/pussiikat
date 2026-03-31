@@ -1149,8 +1149,8 @@
                 return {
                     speed: speed,
                     shootInterval: 11,
-                    health: 350,
-                    damage: 15
+                    health: 300 + (wave-5) * 100,
+                    damage: 15 + Math.floor((wave - 5) / 2) * 2
                 };
             }
 
@@ -1535,7 +1535,7 @@
                     vx: (Math.random() - 0.5) * 2,
                     vy: (Math.random() - 0.5) * 2,
                     speed: stats.speed,
-                    radius: 25,
+                    radius: 40,
                     health: stats.health,
                     maxHealth: stats.health,
                     color: '#FF6B00',
@@ -1666,8 +1666,8 @@
                 
                 // Enemy movement
                 if (!enemy.isBoss) {
-                    enemy.vx += (Math.random() - 0.5) * 1;
-                    enemy.vy += (Math.random() - 0.5) * 1;
+                    enemy.vx += (Math.random() - 0.4) * 1;
+                    enemy.vy += (Math.random() - 0.1) * 1;
                     
                     enemy.vx = Math.max(-3, Math.min(3, enemy.vx));
                     enemy.vy = Math.max(-3, Math.min(3, enemy.vy));
