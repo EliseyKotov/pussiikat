@@ -668,8 +668,8 @@ const game = {
         touchId: null,
         mouseActive: false,
         stickX: 0, stickY: 0,
-        radius: 62,
-        stickRadius: 27
+        radius: 50,
+        stickRadius: 21
     },
 
     combo: 0, comboTimer: 0, comboTimeout: 180,
@@ -1134,7 +1134,7 @@ function setupEventListeners() {
 
 // ===== JOYSTICK HELPERS =====
 function getJoystickBase() {
-    return { x: 90, y: game.height - 90 };
+    return { x: 68, y: game.height - 68 };
 }
 
 function isInJoystickZone(x, y) {
