@@ -1762,23 +1762,35 @@ for (let i = game.projectiles.length - 1; i >= 0; i--) {
 
             enemy.health -= damage;
             game.projectiles.splice(i, 1);
+// KILL REWARDS с комбо бонусами
+const baseReward = enemy.isBoss ? 1000 : (enemy.isStrong ? 100 : 50);
+const tokenReward = Math.floor(baseReward * (1 + game.combo * 0.15));
+game.tokens += tokenReward;
 
-            // ✅ ПОПАДАНИЕ - комбо +1
-            game.combo++;
-            game.comboTimer = game.comboTimeout;
+// 🎁 КОМБО БОНУСЫ - ВРЕМЕННЫЕ БУСТЕРЫ
+if (game.combo >= 3 && game.combo % 3 === 0) {
+    // Каждый 3x комбо - активируем случайный бустер
+    const randomBooster = boosters[Math.floor(Math.random() * boosters.length)];
+    activateBooster(randomBooster);
+    createParticles(game.playerX, game.playerY, '#FFD700'); // Золотые частицы
+    console.log(`🎉 КОМБО ${game.combo}x! Активирован: ${randomBooster.name}`);
+}
 
-            if (enemy.health <= 0) {
-                game.enemies.splice(j, 1);
-                
-                // KILL REWARDS
-                const baseReward = enemy.isBoss ? 1000 : (enemy.isStrong ? 100 : 50);
-                const reward = Math.floor(baseReward * (1 + game.combo * 0.15));
-                game.tokens += reward;
-                game.enemiesDefeated++;
-                game.challengeProgress++;
-                
-                game.statistics.totalTokensEarned += reward;
-                game.statistics.totalEnemiesDefeated++;
+if (game.combo >= 5 && game.combo % 5 === 0) {
+    // Каждый 5x комбо - двойной бустер
+    const booster1 = boosters[Math.floor(Math.random() * boosters.length)];
+    const booster2 = boosters[Math.floor(Math.random() * boosters.length)];
+    activateBooster(booster1);
+    activateBooster(booster2);
+    createParticles(game.playerX, game.playerY, '#FF00FF'); // Фиолетовые частицы
+    console.log(`🔥 ЭПИК КОМБО ${game.combo}x! Активированы: ${booster1.name} + ${booster2.name}`);
+}
+
+game.enemiesDefeated++;
+game.challengeProgress++;
+
+game.statistics.totalTokensEarned += tokenReward;
+game.statistics.totalEnemiesDefeated++;
 
                 createParticles(enemy.x, enemy.y, enemy.color);
                 
