@@ -1041,19 +1041,6 @@
                 }
             },
             {
-    id: 'bigprojectile',
-    name: '🔫 Big Shot',
-    desc: 'Increase projectile size for 12s',
-    cost: 200,
-    duration: 12000,
-    fn: () => {
-        game.projectileSize = 12;  // Увеличиваем размер
-    },
-    fnEnd: () => {
-        game.projectileSize = 5;  // Возвращаем обычный размер
-    }
-},
-            {
                 id: 'regen',
                 name: '✨ Health Regen',
                 desc: 'Regenerate health every 5s',
@@ -1119,6 +1106,19 @@
                 }
             },
             {
+                id: 'bigprojectile',
+                name: '🔫 Big Shot',
+                desc: 'Increase projectile size for 12s',
+                cost: 200,
+                duration: 12000,
+                fn: () => {
+                    game.projectileSize = 12;
+                },
+                fnEnd: () => {
+                    game.projectileSize = 5;
+                }
+            },
+            {
                 id: 'hppotion',
                 name: '🍎 HP Potion',
                 desc: 'Restore 50 health instantly',
@@ -1176,7 +1176,7 @@
         damage = 10 + Math.floor((wave - 10) / 5) * 5;
     }
 
-    return { speed, shootInterval, health, damage };  // ✅ ДОБАВЬТЕ ЗДЕСЬ!
+    return { speed, shootInterval, health, damage, projectileSize: 4 };
 }
 
         function checkShelterCollision(x, y, radius) {
@@ -1338,6 +1338,8 @@
         }
 
         function fireProjectileTowards(targetX, targetY) {
+            if (game.fireCounter > 0) return;
+            game.fireCounter = game.fireRate;
             const angle = Math.atan2(targetY - game.playerY, targetX - game.playerX);
             const speed = game.projectileSpeed;
             game.projectiles.push({
@@ -1649,6 +1651,8 @@
             game.playerX += game.playerSpeed;
             game.playerX = Math.max(game.playerRadius, Math.min(game.playerX, game.width - game.playerRadius));
 
+            if (game.fireCounter > 0) game.fireCounter--;
+
             if (game.comboTimer > 0) {
                 game.comboTimer--;
             } else {
@@ -1706,20 +1710,21 @@
                 }
 
                 // Enemy shooting
-enemy.shootTimer++;
-if (enemy.shootTimer >= enemy.shootInterval) {
-    const angle = Math.atan2(game.playerY - enemy.y, game.playerX - enemy.x);
-    game.enemyProjectiles.push({
-        x: enemy.x,
-        y: enemy.y,
-        vx: Math.cos(angle) * 3,
-        vy: Math.sin(angle) * 3,
-        radius: enemy.isBoss ? 6 : 4,
-        color: '#FF1493',
-        damage: enemy.damage
-    });
-    enemy.shootTimer = 0;  // ✅ ДОБАВЬТЕ ЭТУ СТРОКУ!
-}
+                enemy.shootTimer++;
+                if (enemy.shootTimer >= enemy.shootInterval) {
+                    const angle = Math.atan2(game.playerY - enemy.y, game.playerX - enemy.x);
+                    game.enemyProjectiles.push({
+                        x: enemy.x,
+                        y: enemy.y,
+                        vx: Math.cos(angle) * 3,
+                        vy: Math.sin(angle) * 3,
+                        radius: enemy.isBoss ? 6 : 4,
+                        color: '#FF1493',
+                        damage: enemy.damage
+                    });
+                    enemy.shootTimer = 0;
+                }
+            }
 
             // ========== UPDATE PLAYER PROJECTILES ==========
             for (let i = game.projectiles.length - 1; i >= 0; i--) {
