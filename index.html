@@ -1690,12 +1690,15 @@
                 enemy.x += enemy.vx * slowMultiplier;
                 enemy.y += enemy.vy * slowMultiplier;
 
-                // Boundary checks
-                const maxY = game.height * ENEMY_SPAWN_MAX_Y_RATIO;
-                if (enemy.x < enemy.radius) enemy.x = enemy.radius;
-                if (enemy.x > game.width - enemy.radius) enemy.x = game.width - enemy.radius;
-                if (enemy.y < enemy.radius) enemy.y = enemy.radius;
-                if (enemy.y > maxY) enemy.y = maxY;
+                // Boundary clamping (враги остаются в границах, но продолжают двигаться)
+const maxY = game.height * ENEMY_SPAWN_MAX_Y_RATIO;
+
+if (enemy.x < enemy.radius) enemy.x = enemy.radius;
+if (enemy.x > game.width - enemy.radius) enemy.x = game.width - enemy.radius;
+if (enemy.y < enemy.radius) enemy.y = enemy.radius;
+if (enemy.y > maxY) enemy.y = maxY;
+
+// НЕ инвертируем скорость - враги просто продолжают двигаться случайно
 
                 // Check shelter collision
                 for (const shelter of game.shelters) {
