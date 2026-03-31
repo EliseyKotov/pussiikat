@@ -54,8 +54,8 @@
             position: absolute;
             top: max(10px, var(--safe-top));
             left: max(10px, var(--safe-left));
-            background: rgba(6, 9, 24, 0.92);
-            backdrop-filter: blur(10px);
+            background: rgba(6, 9, 24, 0.45);
+            backdrop-filter: blur(6px);
             padding: 10px 14px;
             border-radius: 8px;
             border: 1.5px solid rgba(0,217,255,0.5);
@@ -605,7 +605,7 @@
     <div class="level-info" id="levelInfo">
         <h2>ARC RAIDER</h2>
         <p>🎮 Защищайся от дронов!</p>
-        <p>Кликай чтобы стрелять</p>
+        <p>Тап/клик — выстрел · Удержание — заряд 🔥</p>
         <p>🕹️ Джойстик (слева) или стрелки/A,D</p>
         <p style="margin-top:12px;font-size:0.85em;color:#aaa;">Зарабатывай токены и покупай апгрейды!</p>
     </div>
@@ -643,8 +643,10 @@
 // ===== CONSTANTS =====
 const ENEMY_MODELS = ['arc1', 'arc2', 'arc3', 'arc4'];
 const PLAYER_MODEL = 'arcraider';
-const BOSS_MODEL_5_10 = 'arcboss';
-const BOSS_MODEL_15 = 'arcboss';
+function getBossModel(wave) {
+    // Wave 5,15,25...= arcboss | Wave 10,20,30...= arcboss2
+    return (Math.floor(wave / 5) % 2 === 1) ? 'arcboss' : 'arcboss2';
+}
 const ENEMY_SPAWN_MAX_Y_RATIO = 0.66;
 const SAFE_ZONE_RATIO = 0.85;
 const SHELTER_Y_RATIO = 0.75;
@@ -670,6 +672,14 @@ const game = {
         stickX: 0, stickY: 0,
         radius: 50,
         stickRadius: 21
+    },
+
+    chargeState: {
+        active: false,
+        touchId: null,
+        mouseActive: false,
+        timer: 0,
+        targetX: 0, targetY: 0
     },
 
     combo: 0, comboTimer: 0, comboTimeout: 180,
@@ -782,8 +792,14 @@ const upgrades = [
     },
     {
         id: 'shield', name: '🛡️ Shield',
-        desc: 'Щит +50 HP', baseCost: 100, costMultiplier: 1.15, maxLevel: 3,
-        fn: () => { game.shielded = true; game.shieldHealth = game.shieldMaxHealth; game.shieldPurchased = true; game.upgradePurchases.shield++; }
+        desc: 'Щит +50 HP/ур · восст. каждую волну', baseCost: 100, costMultiplier: 1.15, maxLevel: 3,
+        fn: () => {
+            game.upgradePurchases.shield++;
+            game.shieldMaxHealth = 50 * game.upgradePurchases.shield;
+            game.shielded = true;
+            game.shieldHealth = game.shieldMaxHealth;
+            game.shieldPurchased = true;
+        }
     },
     {
         id: 'damage', name: '💥 Урон снаряда',
@@ -797,7 +813,7 @@ const upgrades = [
     },
     {
         id: 'regen', name: '✨ Регенерация',
-        desc: 'Восст. здоровья каждые 5с', baseCost: 150, costMultiplier: 1.25, maxLevel: 5,
+        desc: 'Восст. здоровья каждые 2.5с', baseCost: 150, costMultiplier: 1.25, maxLevel: 5,
         fn: () => {
             game.upgradePurchases.regen++;
             if (!game.regenActive) { game.regenActive = true; startHealthRegen(); }
@@ -823,8 +839,16 @@ const boosters = [
     {
         id: 'shield_plus', name: '🛡️+ Мегащит', desc: 'Временный щит 15с',
         cost: 180, duration: 15000,
-        fn: () => { game.shielded = true; game.shieldHealth = game.shieldMaxHealth * 2; },
-        fnEnd: () => { if (!game.shieldPurchased) { game.shielded = false; game.shieldHealth = 0; } }
+        fn: () => { game.shielded = true; game.shieldHealth = Math.max(game.shieldMaxHealth, 50) + 100; },
+        fnEnd: () => {
+            if (game.shieldPurchased) {
+                game.shielded = true;
+                game.shieldHealth = game.shieldMaxHealth;
+            } else {
+                game.shielded = false;
+                game.shieldHealth = 0;
+            }
+        }
     },
     {
         id: 'bigprojectile', name: '🔫 Большой снаряд', desc: 'Крупный снаряд 12с',
@@ -917,7 +941,7 @@ function startHealthRegen() {
             createFloatingText(game.playerX, game.playerY - 20, `+${amount}`, '#06FFA5', 16);
             updateHUD();
         }
-    }, 5000);
+    }, 2500);
 }
 
 // ===== FLOATING TEXT =====
@@ -1062,8 +1086,13 @@ function loadImages() {
         img.src = name + '.png';
         game.images[name] = img;
     });
+    // arcboss2 is .avif
+    const boss2 = new Image();
+    boss2.onload = () => game.imagesLoaded++;
+    boss2.onerror = () => game.imagesLoaded++;
+    boss2.src = 'arcboss2.avif';
+    game.images['arcboss2'] = boss2;
 }
-
 // ===== INIT =====
 function init() {
     game.canvas = document.getElementById('gameCanvas');
@@ -1143,6 +1172,110 @@ function isInJoystickZone(x, y) {
     return Math.sqrt(dx * dx + dy * dy) < game.joystick.radius * 1.9;
 }
 
+// ===== QUICK-BUY BUTTONS =====
+const QUICK_BUY_IDS = ['hppotion', 'shield_plus', 'slow'];
+
+function getQuickBuyButtons() {
+    const jb = getJoystickBase();
+    const btnSize = 54;
+    const gap = 10;
+    const startX = jb.x + game.joystick.radius + 22;
+    return QUICK_BUY_IDS.map((id, i) => ({
+        id,
+        booster: boosters.find(b => b.id === id),
+        x: startX + i * (btnSize + gap) + btnSize / 2,
+        y: jb.y,
+        size: btnSize
+    }));
+}
+
+function getQuickBuyButtonAt(cx, cy) {
+    for (const btn of getQuickBuyButtons()) {
+        const half = btn.size / 2;
+        if (cx >= btn.x - half && cx <= btn.x + half && cy >= btn.y - half && cy <= btn.y + half)
+            return btn;
+    }
+    return null;
+}
+
+function buyQuickBooster(id) {
+    const booster = boosters.find(b => b.id === id);
+    if (!booster) return;
+    if (game.tokens < booster.cost) return;
+    if (booster.duration > 0 && game.activeBoosters[id] && game.activeBoosters[id] > Date.now()) return;
+    game.tokens -= booster.cost;
+    activateBooster(booster);
+    game.statistics.boosterUsages++;
+    updateHUD();
+    SFX.pickup();
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.arcTo(x + w, y, x + w, y + r, r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+    ctx.lineTo(x + r, y + h);
+    ctx.arcTo(x, y + h, x, y + h - r, r);
+    ctx.lineTo(x, y + r);
+    ctx.arcTo(x, y, x + r, y, r);
+    ctx.closePath();
+}
+
+function drawQuickBuyButtons(ctx) {
+    if (!game.isRunning) return;
+    const icons = { hppotion: '🍎', shield_plus: '🛡', slow: '❄' };
+    const btns = getQuickBuyButtons();
+    for (const btn of btns) {
+        const { booster, x, y, size } = btn;
+        if (!booster) continue;
+        const isActive = booster.duration > 0 && game.activeBoosters[btn.id] && game.activeBoosters[btn.id] > Date.now();
+        const canAfford = game.tokens >= booster.cost;
+        const half = size / 2;
+        ctx.save();
+
+        // Background
+        ctx.globalAlpha = 0.75;
+        ctx.fillStyle = isActive ? 'rgba(6,255,165,0.22)' : (canAfford ? 'rgba(255,183,3,0.18)' : 'rgba(20,20,55,0.55)');
+        roundRect(ctx, x - half, y - half, size, size, 11);
+        ctx.fill();
+
+        // Border
+        ctx.globalAlpha = canAfford && !isActive ? 0.9 : 0.4;
+        ctx.strokeStyle = isActive ? '#06FFA5' : (canAfford ? '#FFB703' : '#334466');
+        ctx.lineWidth = isActive ? 2 : 1.5;
+        ctx.shadowColor = canAfford ? (isActive ? '#06FFA5' : '#FFB703') : 'transparent';
+        ctx.shadowBlur = canAfford ? 7 : 0;
+        roundRect(ctx, x - half, y - half, size, size, 11);
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // Icon
+        ctx.globalAlpha = canAfford ? 1 : 0.45;
+        ctx.font = '22px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#fff';
+        ctx.fillText(icons[btn.id] || '?', x, y - 9);
+
+        // Cost / timer
+        ctx.font = 'bold 10px Arial';
+        ctx.textBaseline = 'alphabetic';
+        if (isActive && booster.duration > 0) {
+            const secs = Math.ceil((game.activeBoosters[btn.id] - Date.now()) / 1000);
+            ctx.fillStyle = '#06FFA5';
+            ctx.fillText(`${secs}с`, x, y + 20);
+        } else {
+            ctx.fillStyle = canAfford ? '#FFB703' : '#556677';
+            ctx.fillText(`${booster.cost}💰`, x, y + 20);
+        }
+        ctx.globalAlpha = 1;
+        ctx.restore();
+    }
+}
+
 function applyJoystickPosition(cx, cy) {
     const b = getJoystickBase();
     let dx = cx - b.x;
@@ -1165,9 +1298,9 @@ function releaseJoystick() {
 // ===== INPUT =====
 function handleCanvasClick(e) {
     if (game.isPaused || !game.isRunning || game.isShopBreak) return;
-    if (game.joystick.mouseActive) return; // ignore click after joystick drag
-    const rect = game.canvas.getBoundingClientRect();
-    fireProjectileTowards(e.clientX - rect.left, e.clientY - rect.top);
+    if (game.joystick.mouseActive) return;
+    if (game._skipNextClick) { game._skipNextClick = false; return; }
+    // Only fire on click if charge wasn't used (charge fires on mouseup)
 }
 
 function handleTouchStart(e) {
@@ -1177,10 +1310,22 @@ function handleTouchStart(e) {
         const t = e.changedTouches[i];
         const cx = t.clientX - rect.left;
         const cy = t.clientY - rect.top;
+        // Quick-buy buttons take priority
+        if (game.isRunning) {
+            const qbtn = getQuickBuyButtonAt(cx, cy);
+            if (qbtn) { buyQuickBooster(qbtn.id); continue; }
+        }
         if (!game.joystick.active && isInJoystickZone(cx, cy)) {
             game.joystick.active = true;
             game.joystick.touchId = t.identifier;
             applyJoystickPosition(cx, cy);
+        } else if (!game.chargeState.active && game.isRunning && !game.isPaused && !game.isShopBreak) {
+            // Start charge tracking for this touch
+            game.chargeState.active = true;
+            game.chargeState.touchId = t.identifier;
+            game.chargeState.timer = 0;
+            game.chargeState.targetX = cx;
+            game.chargeState.targetY = cy;
         }
     }
 }
@@ -1192,6 +1337,9 @@ function handleTouchMove(e) {
         const t = e.changedTouches[i];
         if (t.identifier === game.joystick.touchId) {
             applyJoystickPosition(t.clientX - rect.left, t.clientY - rect.top);
+        } else if (t.identifier === game.chargeState.touchId) {
+            game.chargeState.targetX = t.clientX - rect.left;
+            game.chargeState.targetY = t.clientY - rect.top;
         }
     }
 }
@@ -1203,8 +1351,19 @@ function handleTouchEnd(e) {
         const t = e.changedTouches[i];
         if (t.identifier === game.joystick.touchId) {
             releaseJoystick();
-        } else if (game.isRunning && !game.isPaused && !game.isShopBreak) {
-            fireProjectileTowards(t.clientX - rect.left, t.clientY - rect.top);
+        } else if (t.identifier === game.chargeState.touchId) {
+            if (game.isRunning && !game.isPaused && !game.isShopBreak) {
+                const cx = game.chargeState.targetX;
+                const cy = game.chargeState.targetY;
+                if (game.chargeState.timer >= 18) {
+                    fireChargedShot(cx, cy, game.chargeState.timer);
+                } else {
+                    fireProjectileTowards(cx, cy);
+                }
+            }
+            game.chargeState.active = false;
+            game.chargeState.touchId = null;
+            game.chargeState.timer = 0;
         }
     }
 }
@@ -1213,21 +1372,68 @@ function handleMouseDownJoystick(e) {
     const rect = game.canvas.getBoundingClientRect();
     const cx = e.clientX - rect.left;
     const cy = e.clientY - rect.top;
+    // Quick-buy buttons take priority
+    if (game.isRunning) {
+        const qbtn = getQuickBuyButtonAt(cx, cy);
+        if (qbtn) { buyQuickBooster(qbtn.id); game._skipNextClick = true; return; }
+    }
     if (isInJoystickZone(cx, cy)) {
         game.joystick.mouseActive = true;
         game.joystick.active = true;
         applyJoystickPosition(cx, cy);
+    } else if (game.isRunning && !game.isPaused && !game.isShopBreak) {
+        game.chargeState.active = true;
+        game.chargeState.mouseActive = true;
+        game.chargeState.timer = 0;
+        game.chargeState.targetX = cx;
+        game.chargeState.targetY = cy;
     }
 }
 
 function handleMouseMoveJoystick(e) {
-    if (!game.joystick.mouseActive) return;
     const rect = game.canvas.getBoundingClientRect();
-    applyJoystickPosition(e.clientX - rect.left, e.clientY - rect.top);
+    if (game.joystick.mouseActive) {
+        applyJoystickPosition(e.clientX - rect.left, e.clientY - rect.top);
+    } else if (game.chargeState.mouseActive) {
+        game.chargeState.targetX = e.clientX - rect.left;
+        game.chargeState.targetY = e.clientY - rect.top;
+    }
 }
 
-function handleMouseUpJoystick() {
-    if (game.joystick.mouseActive) releaseJoystick();
+function handleMouseUpJoystick(e) {
+    if (game.joystick.mouseActive) {
+        releaseJoystick();
+    } else if (game.chargeState.mouseActive) {
+        if (game.isRunning && !game.isPaused && !game.isShopBreak) {
+            if (game.chargeState.timer >= 18) {
+                fireChargedShot(game.chargeState.targetX, game.chargeState.targetY, game.chargeState.timer);
+            } else {
+                fireProjectileTowards(game.chargeState.targetX, game.chargeState.targetY);
+            }
+        }
+        game.chargeState.active = false;
+        game.chargeState.mouseActive = false;
+        game.chargeState.timer = 0;
+        game._skipNextClick = true;
+    }
+}
+
+const CHARGE_MAX = 90; // frames for full charge
+
+function fireChargedShot(tx, ty, chargeTimer) {
+    SFX.shoot();
+    const chargeRatio = Math.min(1, chargeTimer / CHARGE_MAX);
+    const damage = game.projectileDamage * (2 + chargeRatio * 6);
+    const size = game.projectileSize * (2.5 + chargeRatio * 2.5);
+    const spd = game.projectileSpeed * 0.85;
+    const angle = Math.atan2(ty - game.playerY, tx - game.playerX);
+    const color = chargeRatio >= 1 ? '#FFFFFF' : (chargeRatio > 0.5 ? '#FFE066' : '#FFB703');
+    game.projectiles.push({
+        x: game.playerX, y: game.playerY,
+        vx: Math.cos(angle) * spd, vy: Math.sin(angle) * spd,
+        radius: size, color,
+        damage, charged: true, chargeRatio
+    });
 }
 
 function fireProjectileTowards(tx, ty) {
@@ -1270,10 +1476,39 @@ function handleKeyUp(e) {
 // ===== PAUSE =====
 function togglePause() {
     if (!game.isRunning) return;
+    // During shop break: just toggle menu visibility, don't touch isPaused
+    if (game.isShopBreak) {
+        const menu = document.getElementById('pauseMenu');
+        const isOpen = menu.classList.contains('active');
+        menu.classList.toggle('active');
+        document.getElementById('pauseOverlay').style.display = isOpen ? 'none' : 'block';
+        return;
+    }
     game.isPaused = !game.isPaused;
     document.getElementById('pauseMenu').classList.toggle('active');
     document.getElementById('pauseOverlay').style.display = game.isPaused ? 'block' : 'none';
     if (game.isPaused) updatePauseMenu();
+}
+
+function openShopBreakMenu() {
+    updatePauseMenu();
+    // Switch to store tab
+    document.querySelectorAll('.pause-menu-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.pause-menu-content').forEach(c => c.classList.remove('active'));
+    const storeTab = document.querySelector('[data-tab="store"]');
+    if (storeTab) storeTab.classList.add('active');
+    const storeContent = document.getElementById('tab-store');
+    if (storeContent) storeContent.classList.add('active');
+    updatePauseStore();
+    document.getElementById('pauseMenu').classList.add('active');
+    document.getElementById('pauseOverlay').style.display = 'block';
+}
+
+function closeShopBreakMenu() {
+    if (!game.isPaused) {
+        document.getElementById('pauseMenu').classList.remove('active');
+        document.getElementById('pauseOverlay').style.display = 'none';
+    }
 }
 
 function updatePauseMenu() {
@@ -1451,6 +1686,9 @@ function startShopBreak(callback) {
     display.style.display = 'block';
     timerEl.textContent = timeLeft;
 
+    // Open store menu automatically
+    openShopBreakMenu();
+
     const interval = setInterval(() => {
         timeLeft--;
         timerEl.textContent = timeLeft;
@@ -1458,6 +1696,7 @@ function startShopBreak(callback) {
             clearInterval(interval);
             display.style.display = 'none';
             game.isShopBreak = false;
+            closeShopBreakMenu();
             callback();
         }
     }, 1000);
@@ -1472,13 +1711,28 @@ function startWave() {
     game.bossRageTriggered = false;
     challengeStats.currentWaveNoDamage = true;
 
+    // Restore shield from upgrade at wave start (no time limit, only damage depletes it)
+    if (game.shieldPurchased) {
+        game.shielded = true;
+        game.shieldHealth = game.shieldMaxHealth;
+    }
+
     const isBossWaveCheck = game.wave % 5 === 0;
     if (isBossWaveCheck) SFX.bossWave(); else SFX.wave();
 
     const waveTitleDisplay = document.getElementById('waveTitleDisplay');
-    waveTitleDisplay.textContent = isBossWaveCheck ? `⚠️ БОСС ВОЛНА ${game.wave}` : `ВОЛНА ${game.wave}`;
+    const isMiniWave = !isBossWaveCheck && game.wave >= 3 && game.wave % 3 === 0;
+    if (isBossWaveCheck && game.wave === 20) {
+        waveTitleDisplay.textContent = `💀 ДВОЙНОЙ БОСС — ВОЛНА ${game.wave}`;
+    } else if (isBossWaveCheck) {
+        waveTitleDisplay.textContent = `⚠️ БОСС ВОЛНА ${game.wave}`;
+    } else if (isMiniWave) {
+        waveTitleDisplay.textContent = `⚡ МИНИ-БОСС — ВОЛНА ${game.wave}`;
+    } else {
+        waveTitleDisplay.textContent = `ВОЛНА ${game.wave}`;
+    }
     waveTitleDisplay.style.display = 'block';
-    setTimeout(() => { waveTitleDisplay.style.display = 'none'; }, 1200);
+    setTimeout(() => { waveTitleDisplay.style.display = 'none'; }, 1400);
 
     if (game.wave >= 5) {
         const sw = game.width / 4;
@@ -1487,20 +1741,36 @@ function startWave() {
     }
 
     const isBossWave = game.wave % 5 === 0;
+    const isDoubleBossWave = game.wave === 20;
     if (isBossWave) {
-        game.totalEnemiesInWave = 1;
-        const bossModel = game.wave === 15 ? BOSS_MODEL_15 : BOSS_MODEL_5_10;
+        const bossCount = isDoubleBossWave ? 2 : 1;
+        game.totalEnemiesInWave = bossCount;
         const stats = getEnemyStats(game.wave, false, true);
+        const bossModel1 = getBossModel(game.wave);
         game.enemies.push({
-            x: game.width / 2, y: game.height * 0.3,
+            x: isDoubleBossWave ? game.width * 0.33 : game.width / 2,
+            y: game.height * 0.3,
             vx: (Math.random() - 0.5) * 1.5, vy: (Math.random() - 0.5) * 1.5,
             speed: stats.speed, radius: 42,
             health: stats.health, maxHealth: stats.health,
-            color: '#FF6B00', isStrong: true, model: bossModel,
+            color: '#FF6B00', isStrong: true, model: bossModel1,
             shootTimer: 0, shootInterval: stats.shootInterval,
             damage: stats.damage, isBoss: true, spawnDelay: 0,
             rageMode: false
         });
+        if (isDoubleBossWave) {
+            const stats2 = getEnemyStats(game.wave, false, true);
+            game.enemies.push({
+                x: game.width * 0.67, y: game.height * 0.22,
+                vx: (Math.random() - 0.5) * 1.5, vy: (Math.random() - 0.5) * 1.5,
+                speed: stats2.speed * 1.1, radius: 42,
+                health: stats2.health, maxHealth: stats2.health,
+                color: '#AA00FF', isStrong: true, model: 'arcboss2',
+                shootTimer: 0, shootInterval: stats2.shootInterval,
+                damage: stats2.damage, isBoss: true, spawnDelay: 50,
+                rageMode: false
+            });
+        }
     } else {
         const baseEnemies = 3 + game.wave * 2;
         game.totalEnemiesInWave = baseEnemies;
@@ -1528,6 +1798,25 @@ function startWave() {
                 isBoss: false,
                 spawnDelay: Math.floor(i / 3) * 100,
                 pattern
+            });
+        }
+
+        // Mini-boss every 3rd non-boss wave (waves 3,6,9,12...)
+        if (game.wave >= 3 && game.wave % 3 === 0) {
+            const miniStats = getEnemyStats(game.wave, true, false);
+            miniStats.health = Math.floor(miniStats.health * 4.0);
+            const miniModel = ENEMY_MODELS[game.wave % ENEMY_MODELS.length];
+            game.totalEnemiesInWave++;
+            game.enemies.push({
+                x: game.width / 2, y: game.height * 0.18,
+                vx: (Math.random() - 0.5) * 1, vy: 0.2,
+                speed: miniStats.speed * 0.75, radius: 30,
+                health: miniStats.health, maxHealth: miniStats.health,
+                color: '#FF8800', isStrong: true, isElite: false, isMini: true, model: miniModel,
+                shootTimer: 0, shootInterval: Math.max(28, miniStats.shootInterval * 0.75),
+                damage: miniStats.damage * 1.4, isBoss: false,
+                spawnDelay: Math.ceil(baseEnemies / 3) * 100 + 60,
+                pattern: 'chase'
             });
         }
 
@@ -1610,6 +1899,11 @@ function gameLoop() {
 // ===== UPDATE =====
 function update() {
     if (!game.isRunning || game.isShopBreak) return;
+
+    // Charge timer
+    if (game.chargeState.active) {
+        game.chargeState.timer = Math.min(game.chargeState.timer + 1, CHARGE_MAX);
+    }
 
     // Player movement (joystick overrides keyboard when active)
     const effectiveSpeed = game.joystick.active
@@ -1767,7 +2061,7 @@ function update() {
             if (e.spawnDelay > 0) continue;
             if (Math.hypot(p.x - e.x, p.y - e.y) < p.radius + e.radius) {
                 hit = true;
-                let dmg = game.projectileDamage;
+                let dmg = p.damage || game.projectileDamage;
                 if (game.activeBoosters['dmg']) dmg *= 2;
 
                 e.health -= dmg;
@@ -2199,6 +2493,17 @@ function draw() {
             ctx.fillText(e.rageMode ? '😡 RAGE!' : 'BOSS', 0, -e.radius - 20);
         }
 
+        // Mini-boss label
+        if (e.isMini) {
+            ctx.shadowColor = '#FF8800';
+            ctx.shadowBlur = 12;
+            ctx.fillStyle = '#FF8800';
+            ctx.font = `bold 11px Arial`;
+            ctx.textAlign = 'center';
+            ctx.fillText('⚡ MINI-BOSS', 0, -e.radius - 16);
+            ctx.shadowBlur = 0;
+        }
+
         // Elite label
         if (e.isElite && !e.isBoss) {
             ctx.fillStyle = '#CC44FF';
@@ -2317,6 +2622,37 @@ function draw() {
 
     // ===== PLAYER PROJECTILES =====
     for (const p of game.projectiles) {
+        if (p.charged) {
+            // Charged shot: big glow + outer ring + bright core
+            const cr = p.chargeRatio || 1;
+            ctx.shadowColor = p.color;
+            ctx.shadowBlur = 28 + cr * 20;
+            ctx.fillStyle = p.color;
+            ctx.globalAlpha = 0.35;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius * 1.6, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.globalAlpha = 1;
+            ctx.fillStyle = p.color;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fill();
+            // White hot core
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = '#fff';
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius * 0.45, 0, Math.PI * 2);
+            ctx.fill();
+            // Ring
+            ctx.strokeStyle = p.color;
+            ctx.lineWidth = 2;
+            ctx.shadowColor = p.color;
+            ctx.shadowBlur = 15;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius + 5, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+        } else {
         ctx.shadowColor = p.color;
         ctx.shadowBlur = 18;
         ctx.fillStyle = p.color;
@@ -2329,6 +2665,7 @@ function draw() {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius * 0.4, 0, Math.PI * 2);
         ctx.fill();
+        }
     }
 
     // ===== ENEMY PROJECTILES =====
@@ -2374,7 +2711,7 @@ function draw() {
 
     // Shield visual
     if (game.shielded && game.shieldHealth > 0) {
-        const shieldPct = game.shieldHealth / (game.shieldMaxHealth * 2);
+        const shieldPct = Math.min(1, game.shieldHealth / Math.max(1, game.shieldMaxHealth));
         ctx.strokeStyle = `rgba(0, 217, 255, ${0.5 + shieldPct * 0.5})`;
         ctx.shadowColor = '#00D9FF';
         ctx.shadowBlur = 20;
@@ -2389,6 +2726,54 @@ function draw() {
         ctx.beginPath();
         ctx.arc(game.playerX, game.playerY, game.playerRadius + 20, 0, Math.PI * 2);
         ctx.stroke();
+    }
+
+    // ===== CHARGE INDICATOR =====
+    if (game.chargeState.active && game.chargeState.timer > 5) {
+        const ratio = Math.min(1, game.chargeState.timer / CHARGE_MAX);
+        const pulsePhase = (Date.now() / 120) % (Math.PI * 2);
+        const pulse = Math.sin(pulsePhase) * 0.18 + 0.82;
+        const ringR = game.playerRadius + 12 + ratio * 38;
+        const ringAlpha = 0.35 + ratio * 0.55;
+        const ringColor = ratio >= 1 ? '#FFFFFF' : (ratio > 0.5 ? '#FFE066' : '#FFB703');
+
+        // Outer ring
+        ctx.globalAlpha = ringAlpha * pulse;
+        ctx.strokeStyle = ringColor;
+        ctx.lineWidth = 3 + ratio * 4;
+        ctx.shadowColor = ringColor;
+        ctx.shadowBlur = 18 + ratio * 22;
+        ctx.beginPath();
+        ctx.arc(game.playerX, game.playerY, ringR * pulse, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Inner fill
+        ctx.globalAlpha = ratio * 0.22 * pulse;
+        ctx.fillStyle = ringColor;
+        ctx.beginPath();
+        ctx.arc(game.playerX, game.playerY, ringR * pulse, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Progress arc (shows charge %)
+        ctx.globalAlpha = 0.9;
+        ctx.strokeStyle = ringColor;
+        ctx.lineWidth = 4;
+        ctx.shadowBlur = 10;
+        ctx.beginPath();
+        ctx.arc(game.playerX, game.playerY, game.playerRadius + 8, -Math.PI / 2, -Math.PI / 2 + ratio * Math.PI * 2);
+        ctx.stroke();
+
+        if (ratio >= 1) {
+            ctx.globalAlpha = 0.85;
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 11px Arial';
+            ctx.textAlign = 'center';
+            ctx.shadowColor = '#FFB703';
+            ctx.shadowBlur = 12;
+            ctx.fillText('MAX!', game.playerX, game.playerY - game.playerRadius - 28);
+        }
+        ctx.globalAlpha = 1;
+        ctx.shadowBlur = 0;
     }
 
     // Triple shot glow
@@ -2423,6 +2808,9 @@ function draw() {
         ctx.fillStyle = 'rgba(0,0,0,0.35)';
         ctx.fillRect(0, 0, W, H);
     }
+
+    // ===== QUICK-BUY BUTTONS =====
+    drawQuickBuyButtons(ctx);
 
     // ===== VIRTUAL JOYSTICK =====
     drawJoystick(ctx);
