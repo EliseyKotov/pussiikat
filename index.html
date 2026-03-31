@@ -1671,19 +1671,12 @@
                     continue;
                 }
                 
-            // Enemy movement - change direction less frequently
+            // Enemy movement - continuously change direction with frequency
 if (!enemy.isBoss) {
-    // Инициализируем счётчик для нового врага
-    if (enemy.directionTimer === undefined) {
-        enemy.directionTimer = Math.random() * 30; // Разная частота для каждого врага
-    }
-    
-    enemy.directionTimer--;
-    
-    if (enemy.directionTimer <= 0) {
+    // Меняем направление с вероятностью каждый кадр
+    if (Math.random() < 0.25) { // 15% вероятность каждый кадр
         enemy.vx = (Math.random() - 0.5) * 2;
         enemy.vy = (Math.random() - 0.5) * 2;
-        enemy.directionTimer = 20 + Math.random() * 10; // 20-30 кадров
     }
 } else {
     // Boss movement
