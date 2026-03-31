@@ -1408,6 +1408,8 @@ function startWave() {
     game.shelters = [];
     game.bossRageTriggered = false;
     challengeStats.currentWaveNoDamage = true;
+    game.projectiles = [];          // Очистить снаряды игрока
+    game.enemyProjectiles = [];     // Очистить снаряды врагов
 
     const isBossWaveCheck = game.wave % 5 === 0;
     if (isBossWaveCheck) SFX.bossWave(); else SFX.wave();
@@ -1417,7 +1419,7 @@ function startWave() {
     waveTitleDisplay.style.display = 'block';
     setTimeout(() => { waveTitleDisplay.style.display = 'none'; }, 1200);
 
-    if (game.wave >= 5) {
+    if (game.wave >= 3) {
         const sw = game.width / 4;
         const sx = Math.random() * (game.width - sw);
         game.shelters.push({ x: sx, y: game.height * SHELTER_Y_RATIO, width: sw, height: 15 });
