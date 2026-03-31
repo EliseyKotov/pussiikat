@@ -938,7 +938,7 @@
             projectileSpeed: 5,
             projectileSize: 5,
             projectileDamage: 10,
-            fireRate: 10,
+            fireRate: 5,
             tripleShot: false,  // ← ДОБАВИТЬ ЭТУ СТРОКУ
             fireCounter: 0,
             lastComboRewardAt: 0,
@@ -1670,7 +1670,13 @@
 
             game.playerX += game.playerSpeed;
             game.playerX = Math.max(game.playerRadius, Math.min(game.playerX, game.width - game.playerRadius));
+    if (game.fireCounter > 0) game.fireCounter--;
 
+    if (game.comboTimer > 0) {
+        game.comboTimer--;
+    } else {
+        game.combo = 0;
+    }
 
             if (game.comboTimer > 0) {
                 game.comboTimer--;
