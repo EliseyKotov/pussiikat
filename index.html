@@ -1174,9 +1174,8 @@
                 shootInterval = 40 + Math.random() * 20;
                 health = isStrong ? 50 + (wave - 10) * 8 : 30 + (wave - 10) * 5;
                 damage = 10 + Math.floor((wave - 10) / 5) * 5;
+                return { speed, shootInterval, health, damage };
             }
-
-            return { speed, shootInterval, health, damage };
         }
 
         function checkShelterCollision(x, y, radius) {
@@ -1706,22 +1705,20 @@
                 }
 
                 // Enemy shooting
-                enemy.shootTimer++;
-                if (enemy.shootTimer >= enemy.shootInterval) {
-                    const angle = Math.atan2(game.playerY - enemy.y, game.playerX - enemy.x);
-                    game.enemyProjectiles.push({
-                        const stats = getEnemyStats(game.wave, false, enemy.isBoss);
-game.enemyProjectiles.push({
-    x: enemy.x,
-    y: enemy.y,
-    vx: Math.cos(angle) * 3,
-    vy: Math.sin(angle) * 3,
-    radius: enemy.isBoss ? 6 : 4,  // Больший размер для босса
-    color: '#FF1493',
-    damage: enemy.damage
-});
-                    }
-            }
+enemy.shootTimer++;
+if (enemy.shootTimer >= enemy.shootInterval) {
+    const angle = Math.atan2(game.playerY - enemy.y, game.playerX - enemy.x);
+    game.enemyProjectiles.push({
+        x: enemy.x,
+        y: enemy.y,
+        vx: Math.cos(angle) * 3,
+        vy: Math.sin(angle) * 3,
+        radius: enemy.isBoss ? 6 : 4,
+        color: '#FF1493',
+        damage: enemy.damage
+    });
+    enemy.shootTimer = 0;  // ✅ ДОБАВЬТЕ ЭТУ СТРОКУ!
+}
 
             // ========== UPDATE PLAYER PROJECTILES ==========
             for (let i = game.projectiles.length - 1; i >= 0; i--) {
