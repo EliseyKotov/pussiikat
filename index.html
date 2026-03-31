@@ -940,6 +940,7 @@
             projectileDamage: 10,
             fireRate: 10,
             fireCounter: 0,
+            lastComboRewardAt: 0,
 
             wave: 1,
             totalEnemiesInWave: 0,
@@ -1740,13 +1741,14 @@ for (let i = game.projectiles.length - 1; i >= 0; i--) {
         continue;
     }
 
-    if (proj.x < 0 || proj.x > game.width || proj.y < 0 || proj.y > game.height) {
-        // 🔥 ПРОМАХ - снаряд вышел за границу экрана
-        game.combo = 0;
-        game.comboTimer = 0;
-        game.projectiles.splice(i, 1);
-        continue;
-    }
+   if (proj.x < 0 || proj.x > game.width || proj.y < 0 || proj.y > game.height) {
+    // 🔥 ПРОМАХ - снаряд вышел за границу экрана
+    game.combo = 0;
+    game.comboTimer = 0;
+    game.lastComboRewardAt = 0;  // 👈 ДОБАВИТЬ
+    game.projectiles.splice(i, 1);
+    continue;
+}
 
     let hitEnemy = false;
     
@@ -1775,14 +1777,26 @@ for (let i = game.projectiles.length - 1; i >= 0; i--) {
                 const tokenReward = Math.floor(baseReward * (1 + game.combo * 0.15));
                 game.tokens += tokenReward;
                 
-                // 🎁 КОМБ�� БОНУСЫ - ВРЕМЕННЫЕ БУСТЕРЫ
-                if (game.combo >= 3 && game.combo % 3 === 0) {
-                    // Каждый 3x комбо - активируем случайный бустер
-                    const randomBooster = boosters[Math.floor(Math.random() * boosters.length)];
-                    activateBooster(randomBooster);
-                    createParticles(game.playerX, game.playerY, '#FFD700');
-                    console.log(`🎉 КОМБО ${game.combo}x! Активирован: ${randomBooster.name}`);
-                }
+                // 🎁 КОМБО БОНУСЫ - ВРЕМЕННЫЕ БУСТЕРЫ
+if (game.combo % 3 === 0 && game.combo > game.lastComboRewardAt) {
+    game.lastComboRewardAt = game.combo;
+    
+    const randomBooster = boosters[Math.floor(Math.random() * boosters.length)];
+    activateBooster(randomBooster);
+    createParticles(game.playerX, game.playerY, '#FFD700');
+    console.log(`🎉 КОМБО ${game.combo}x! Активирован: ${randomBooster.name}`);
+}
+
+if (game.combo % 5 === 0 && game.combo % 3 !== 0 && game.combo > game.lastComboRewardAt) {
+    game.lastComboRewardAt = game.combo;
+    
+    const booster1 = boosters[Math.floor(Math.random() * boosters.length)];
+    const booster2 = boosters[Math.floor(Math.random() * boosters.length)];
+    activateBooster(booster1);
+    activateBooster(booster2);
+    createParticles(game.playerX, game.playerY, '#FF00FF');
+    console.log(`🔥 ЭПИК КОМБО ${game.combo}x! Активированы: ${booster1.name} + ${booster2.name}`);
+}
                 
                 if (game.combo >= 5 && game.combo % 5 === 0) {
                     // Каждый 5x комбо - двойной бустер
