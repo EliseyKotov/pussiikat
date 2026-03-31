@@ -1750,46 +1750,49 @@ if (enemy.y > maxY) enemy.y = maxY;
                     const dist = Math.hypot(proj.x - enemy.x, proj.y - enemy.y);
                     const minDist = proj.radius + enemy.radius;
 
-                    if (dist < minDist) {
-                        let damage = game.projectileDamage;
-                        if (game.activeBoosters['dmg']) damage *= 2;
+                  if (dist < minDist) {
+    let damage = game.projectileDamage;
+    if (game.activeBoosters['dmg']) damage *= 2;
 
-                        enemy.health -= damage;
-                        game.projectiles.splice(i, 1);
+    enemy.health -= damage;
+    game.projectiles.splice(i, 1);
 
-                        if (enemy.health <= 0) {
-                            game.enemies.splice(j, 1);
-                            game.combo++;
-                            game.comboTimer = game.comboTimeout;
+    // 🔥 COMBO НА ПОПАДАНИЯХ (не на убийствах)
+    game.combo++;
+    game.comboTimer = game.comboTimeout;
 
-                            // KILL REWARDS
-                            const baseReward = enemy.isBoss ? 1000 : (enemy.isStrong ? 100 : 50);
-                            const reward = Math.floor(baseReward * (1 + game.combo * 0.15));
-                            game.tokens += reward;
-                            game.enemiesDefeated++;
-                            game.challengeProgress++;
-                            
-                            game.statistics.totalTokensEarned += reward;
-                            game.statistics.totalEnemiesDefeated++;
+    if (enemy.health <= 0) {
+        game.enemies.splice(j, 1);
+        
+        // KILL REWARDS с множителем от комбо
+        const baseReward = enemy.isBoss ? 1000 : (enemy.isStrong ? 100 : 50);
+        const reward = Math.floor(baseReward * (1 + game.combo * 0.15));
+        game.tokens += reward;
+        game.enemiesDefeated++;
+        game.challengeProgress++;
+        
+        game.statistics.totalTokensEarned += reward;
+        game.statistics.totalEnemiesDefeated++;
 
-                            createParticles(enemy.x, enemy.y, enemy.color);
-                            
-                            // Create drops
-                            const dropChance = getDropChance(enemy.isStrong, enemy.isBoss);
-                            if (dropChance === 'drop') {
-                                createDrop(enemy.x, enemy.y);
-                            }
+        createParticles(enemy.x, enemy.y, enemy.color);
+        
+        // Create drops
+        const dropChance = getDropChance(enemy.isStrong, enemy.isBoss);
+        if (dropChance === 'drop') {
+            createDrop(enemy.x, enemy.y);
+        }
 
-                            showCombo();
-                            
-                            if (game.enemiesDefeated === game.totalEnemiesInWave) {
-                                startWave();
-                            }
-                        } else {
-                            createParticles(proj.x, proj.y, '#FFB703');
-                        }
-                        break;
-                    }
+        showCombo();
+        
+        if (game.enemiesDefeated === game.totalEnemiesInWave) {
+            startWave();
+        }
+    } else {
+        createParticles(proj.x, proj.y, '#FFB703');
+        showCombo(); // Показываем комбо и при попадании
+    }
+    break;
+}
                 }
             }
 
