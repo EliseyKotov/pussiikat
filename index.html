@@ -1537,8 +1537,8 @@
                 game.enemies.push({
                     x: game.width / 2,
                     y: game.height * 0.3,
-                    vx: (Math.random() - 0.5) * 2,
-                    vy: (Math.random() - 0.5) * 2,
+                    vx: (Math.random() - 0.5) * 1.5,
+                    vy: (Math.random() - 0.5) * 1.5,
                     speed: stats.speed,
                     radius: 40,
                     health: stats.health,
@@ -1675,7 +1675,7 @@
 if (!enemy.isBoss) {
     // Генерируем полностью новую случайную скорость каждый кадр
     enemy.vx = (Math.random() - 0.5) * 5;
-    enemy.vy = (Math.random() - 0.5) * 5;
+    enemy.vy = (Math.random() - 0.5) * 3;
 } else {
     // Boss movement
     if (Math.random() < 0.1) {
