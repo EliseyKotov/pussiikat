@@ -256,8 +256,8 @@
         .pause-store-header {
             background: rgba(255,183,3,0.1);
             border: 1.5px solid rgba(255,183,3,0.4);
-            border-radius: 8px; padding: 13px;
-            margin-bottom: 18px;
+            border-radius: 10px; padding: 13px;
+            margin-bottom: 14px;
             display: flex; justify-content: space-between; align-items: center;
         }
         .pause-store-header-title { color: var(--accent-token); font-weight: bold; font-size: 13px; }
@@ -266,42 +266,90 @@
             border: 1.5px solid var(--accent-token);
             border-radius: 8px; padding: 7px 14px;
             display: flex; align-items: center; gap: 7px;
-            font-weight: bold; font-size: 14px; color: var(--accent-token);
+            font-weight: bold; font-size: 15px; color: var(--accent-token);
         }
-        .pause-store-tokens-icon { font-size: 16px; }
+        .pause-store-tokens-icon { font-size: 17px; }
+        .store-section-divider {
+            display: flex; align-items: center; gap: 8px;
+            margin: 14px 0 10px;
+        }
+        .store-section-divider-line {
+            flex: 1; height: 1px; background: rgba(255,255,255,0.1);
+        }
+        .store-section-divider-label {
+            font-size: 10px; font-weight: bold; letter-spacing: 1.5px;
+            color: rgba(255,255,255,0.45); text-transform: uppercase;
+        }
         .pause-store-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
             gap: 10px;
         }
         .pause-store-item {
-            background: rgba(255,183,3,0.08);
-            border: 1.5px solid rgba(255,183,3,0.5);
-            color: #fff; padding: 11px; border-radius: 8px;
+            background: rgba(255,183,3,0.07);
+            border: 1.5px solid rgba(255,183,3,0.4);
+            color: #fff; padding: 12px; border-radius: 10px;
             cursor: pointer; font-size: 11px;
             transition: all 0.2s; touch-action: manipulation;
             min-height: 110px; display: flex; flex-direction: column;
             justify-content: space-between; position: relative; overflow: hidden;
         }
         .pause-store-item.booster {
-            border-color: rgba(255,0,110,0.5);
-            background: rgba(255,0,110,0.08);
+            border-color: rgba(255,0,110,0.45);
+            background: rgba(255,0,110,0.07);
+        }
+        .pause-store-item.booster-active {
+            border-color: rgba(6,255,165,0.8) !important;
+            background: rgba(6,255,165,0.08) !important;
+            box-shadow: 0 0 10px rgba(6,255,165,0.3);
+            animation: boosterPulse 1.5s ease-in-out infinite;
+        }
+        @keyframes boosterPulse {
+            0%,100% { box-shadow: 0 0 8px rgba(6,255,165,0.25); }
+            50% { box-shadow: 0 0 18px rgba(6,255,165,0.6); }
+        }
+        .pause-store-item.weapon-item {
+            border-color: rgba(180,90,255,0.55);
+            background: rgba(120,50,200,0.1);
+            min-height: 105px;
+        }
+        .pause-store-item.weapon-owned {
+            border-color: rgba(6,255,165,0.7);
+            background: rgba(6,255,165,0.07);
+        }
+        .pause-store-item.weapon-active-item {
+            border-color: #00D9FF;
+            background: rgba(0,217,255,0.1);
+            box-shadow: 0 0 10px rgba(0,217,255,0.3);
         }
         .pause-store-item:active:not([data-disabled="true"]) {
             transform: scale(0.97);
-            background: rgba(255,183,3,0.2);
         }
-        .pause-store-item[data-disabled="true"] { opacity: 0.45; cursor: not-allowed; }
+        .pause-store-item[data-disabled="true"] { opacity: 0.42; cursor: not-allowed; }
         .pause-store-item.maxed {
-            border-color: rgba(255,255,0,0.5);
-            background: rgba(255,255,0,0.08);
+            border-color: rgba(6,255,165,0.55);
+            background: rgba(6,255,165,0.06);
         }
-        .pause-store-name { color: var(--accent-token); font-weight: bold; margin-bottom: 3px; font-size: 12px; }
+        .pause-store-name { color: var(--accent-token); font-weight: bold; margin-bottom: 4px; font-size: 12px; }
         .pause-store-item.booster .pause-store-name { color: #FF70A6; }
-        .pause-store-item.maxed .pause-store-name { color: #FFFF00; }
-        .pause-store-level { color: #FFD700; font-weight: bold; font-size: 9px; margin-bottom: 3px; }
-        .pause-store-desc { color: #aaa; font-size: 10px; margin-bottom: 5px; line-height: 1.3; flex-grow: 1; }
+        .pause-store-item.booster-active .pause-store-name { color: #06FFA5; }
+        .pause-store-item.maxed .pause-store-name { color: #06FFA5; }
+        .pause-store-item.weapon-item .pause-store-name { color: #CC88FF; }
+        .pause-store-item.weapon-owned .pause-store-name { color: #06FFA5; }
+        .pause-store-item.weapon-active-item .pause-store-name { color: #00D9FF; }
+        .level-dots { display: flex; gap: 3px; margin-bottom: 5px; }
+        .level-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .level-dot.filled { background: #FFD700; box-shadow: 0 0 4px #FFD70080; }
+        .level-dot.empty { background: rgba(255,255,255,0.18); }
+        .pause-store-desc { color: #999; font-size: 10px; margin-bottom: 5px; line-height: 1.35; flex-grow: 1; }
         .pause-store-cost { color: var(--accent-token); font-weight: bold; font-size: 11px; text-align: right; }
+        .pause-store-deficit { color: #FF5566; font-size: 10px; text-align: right; margin-top: 2px; }
+        .weapon-store-note {
+            font-size: 10px; color: rgba(200,150,255,0.7); margin-bottom: 10px;
+            text-align: center; padding: 5px 8px;
+            border: 1px solid rgba(180,90,255,0.2); border-radius: 6px;
+            background: rgba(120,50,200,0.07);
+        }
 
         /* ===== CHALLENGES ===== */
         .challenge-item {
@@ -584,14 +632,13 @@
                     <span id="storeTokensCount">0</span>
                 </div>
             </div>
-            <div class="pause-section">
-                <div class="pause-section-title">Апгрейды</div>
-                <div class="pause-store-grid" id="pauseStoreUpgrades"></div>
-            </div>
-            <div class="pause-section">
-                <div class="pause-section-title">Бустеры</div>
-                <div class="pause-store-grid" id="pauseStoreBoosters"></div>
-            </div>
+            <div class="store-section-divider"><div class="store-section-divider-line"></div><div class="store-section-divider-label">⬆️ Улучшения</div><div class="store-section-divider-line"></div></div>
+            <div class="pause-store-grid" id="pauseStoreUpgrades"></div>
+            <div class="store-section-divider"><div class="store-section-divider-line"></div><div class="store-section-divider-label">🔫 Оружие</div><div class="store-section-divider-line"></div></div>
+            <div class="weapon-store-note">Можно купить одно оружие за игру. Переключение — на панели внизу.</div>
+            <div class="pause-store-grid" id="pauseStoreWeapons"></div>
+            <div class="store-section-divider"><div class="store-section-divider-line"></div><div class="store-section-divider-label">⚡ Бустеры</div><div class="store-section-divider-line"></div></div>
+            <div class="pause-store-grid" id="pauseStoreBoosters"></div>
         </div>
     </div>
 
@@ -691,6 +738,7 @@ const game = {
     heat: 0, heatMax: 100, overheated: false, overheatTimer: 0,
     rageMode: false, rageShotCount: 0,
     playerTrail: [],
+    weapon: 'standard', weaponPurchased: null,
 
     wave: 0,
     totalEnemiesInWave: 0, enemiesDefeated: 0,
@@ -871,6 +919,18 @@ const boosters = [
         },
         fnEnd: () => {}
     }
+];
+
+// ===== WEAPONS =====
+const weapons = [
+    { id: 'standard', name: '⚡ Стандарт', icon: '⚡',
+      desc: 'Быстрый, универсальный. Высокий перегрев.', cost: 0, heatPerShot: 20 },
+    { id: 'shotgun', name: '🔫 Дробовик', icon: '🔫',
+      desc: '5 снарядов конусом. Мощный вблизи, слабее издали.', cost: 350, heatPerShot: 14 },
+    { id: 'sniper', name: '🎯 Снайпер', icon: '🎯',
+      desc: 'Огромный урон, медленная стрельба. Почти не греется.', cost: 400, heatPerShot: 4 },
+    { id: 'plasma', name: '💥 Плазма', icon: '💥',
+      desc: 'Медленный снаряд с взрывом по площади при попадании.', cost: 450, heatPerShot: 12 }
 ];
 
 // ===== HELPERS =====
@@ -1205,6 +1265,92 @@ function getQuickBuyButtonAt(cx, cy) {
     return null;
 }
 
+// Weapon selector buttons (row above quick-buy, shown when a weapon is purchased)
+function getWeaponSwitchButtons() {
+    if (!game.weaponPurchased) return [];
+    const jb = getJoystickBase();
+    const btnSize = 50;
+    const gap = 8;
+    const startX = jb.x + game.joystick.radius + 22;
+    const availWeapons = weapons.filter(w => w.id === 'standard' || w.id === game.weaponPurchased);
+    return availWeapons.map((w, i) => ({
+        id: w.id, weapon: w,
+        x: startX + i * (btnSize + gap) + btnSize / 2,
+        y: jb.y - 64,
+        size: btnSize
+    }));
+}
+
+function getWeaponSwitchButtonAt(cx, cy) {
+    for (const btn of getWeaponSwitchButtons()) {
+        const half = btn.size / 2;
+        if (cx >= btn.x - half && cx <= btn.x + half && cy >= btn.y - half && cy <= btn.y + half)
+            return btn;
+    }
+    return null;
+}
+
+function switchWeapon(id) {
+    game.weapon = id;
+    SFX.pickup && SFX.pickup();
+}
+
+function drawWeaponSwitchButtons(ctx) {
+    if (!game.isRunning || !game.weaponPurchased) return;
+    const btns = getWeaponSwitchButtons();
+    for (const btn of btns) {
+        const { weapon, x, y, size } = btn;
+        const isActive = game.weapon === btn.id;
+        const half = size / 2;
+        ctx.save();
+
+        ctx.globalAlpha = 0.85;
+        ctx.fillStyle = isActive
+            ? 'rgba(0,217,255,0.22)'
+            : 'rgba(120,50,200,0.18)';
+        roundRect(ctx, x - half, y - half, size, size, 10);
+        ctx.fill();
+
+        ctx.globalAlpha = isActive ? 1 : 0.55;
+        ctx.strokeStyle = isActive ? '#00D9FF' : 'rgba(180,90,255,0.6)';
+        ctx.lineWidth = isActive ? 2.2 : 1.5;
+        if (isActive) {
+            ctx.shadowColor = '#00D9FF'; ctx.shadowBlur = 10;
+        }
+        roundRect(ctx, x - half, y - half, size, size, 10);
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        ctx.globalAlpha = isActive ? 1 : 0.6;
+        ctx.font = '20px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#fff';
+        ctx.fillText(weapon.icon, x, y - 8);
+
+        ctx.font = `bold 9px Arial`;
+        ctx.textBaseline = 'alphabetic';
+        ctx.fillStyle = isActive ? '#00D9FF' : '#CC88FF';
+        const label = weapon.name.split(' ')[1] || weapon.name;
+        ctx.fillText(label, x, y + 16);
+
+        ctx.globalAlpha = 1;
+        ctx.restore();
+    }
+    // Label above row
+    const firstBtn = btns[0];
+    if (firstBtn) {
+        ctx.save();
+        ctx.globalAlpha = 0.5;
+        ctx.font = 'bold 9px Arial';
+        ctx.fillStyle = '#CC88FF';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'alphabetic';
+        ctx.fillText('ОРУЖИЕ', firstBtn.x - firstBtn.size / 2, firstBtn.y - firstBtn.size / 2 - 4);
+        ctx.restore();
+    }
+}
+
 function buyQuickBooster(id) {
     const booster = boosters.find(b => b.id === id);
     if (!booster) return;
@@ -1317,8 +1463,10 @@ function handleTouchStart(e) {
         const t = e.changedTouches[i];
         const cx = t.clientX - rect.left;
         const cy = t.clientY - rect.top;
-        // Quick-buy buttons take priority
+        // Quick-buy and weapon switch buttons take priority
         if (game.isRunning) {
+            const wsBtn = getWeaponSwitchButtonAt(cx, cy);
+            if (wsBtn) { switchWeapon(wsBtn.id); continue; }
             const qbtn = getQuickBuyButtonAt(cx, cy);
             if (qbtn) { buyQuickBooster(qbtn.id); continue; }
         }
@@ -1379,8 +1527,10 @@ function handleMouseDownJoystick(e) {
     const rect = game.canvas.getBoundingClientRect();
     const cx = e.clientX - rect.left;
     const cy = e.clientY - rect.top;
-    // Quick-buy buttons take priority
+    // Quick-buy and weapon switch buttons take priority
     if (game.isRunning) {
+        const wsBtn = getWeaponSwitchButtonAt(cx, cy);
+        if (wsBtn) { switchWeapon(wsBtn.id); game._skipNextClick = true; return; }
         const qbtn = getQuickBuyButtonAt(cx, cy);
         if (qbtn) { buyQuickBooster(qbtn.id); game._skipNextClick = true; return; }
     }
@@ -1448,9 +1598,11 @@ function fireChargedShot(tx, ty, chargeTimer) {
 function fireProjectileTowards(tx, ty) {
     if (game.fireCounter > 0) return;
     if (game.overheated) return;
+    const weapDef = weapons.find(w => w.id === game.weapon) || weapons[0];
     const rageBoost = game.rageMode ? 0.7 : 1;
-    game.fireCounter = Math.max(1, Math.floor(game.fireRate * rageBoost));
-    game.heat = Math.min(game.heatMax, game.heat + 12);
+    const fireRateMult = game.weapon === 'sniper' ? 3.5 : 1;
+    game.fireCounter = Math.max(1, Math.floor(game.fireRate * fireRateMult * rageBoost));
+    game.heat = Math.min(game.heatMax, game.heat + weapDef.heatPerShot);
     game.rageShotCount = (game.rageShotCount || 0) + 1;
     // Every 5th shot in rage mode → auto charged
     if (game.rageMode && game.rageShotCount % 5 === 0) {
@@ -1460,23 +1612,59 @@ function fireProjectileTowards(tx, ty) {
     SFX.shoot();
     const angle = Math.atan2(ty - game.playerY, tx - game.playerX);
     const speed = game.projectileSpeed;
-    const color = game.activeBoosters['dmg'] ? '#FF6600' : '#00D9FF';
 
-    if (game.tripleShot) {
-        [-0.22, 0, 0.22].forEach(offset => {
+    if (game.weapon === 'shotgun') {
+        const offsets = [-0.35, -0.18, 0, 0.18, 0.35];
+        const dmg = Math.ceil(game.projectileDamage * 0.6);
+        const col = game.activeBoosters['dmg'] ? '#FF8800' : '#FFB703';
+        offsets.forEach(offset => {
             const a = angle + offset;
             game.projectiles.push({
                 x: game.playerX, y: game.playerY,
                 vx: Math.cos(a) * speed, vy: Math.sin(a) * speed,
-                radius: game.projectileSize, color
+                radius: game.projectileSize * 0.85,
+                color: col, damage: dmg, weapon: 'shotgun'
             });
         });
-    } else {
+    } else if (game.weapon === 'sniper') {
+        const dmg = game.projectileDamage * 3;
         game.projectiles.push({
             x: game.playerX, y: game.playerY,
-            vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
-            radius: game.projectileSize, color
+            vx: Math.cos(angle) * speed * 2.2,
+            vy: Math.sin(angle) * speed * 2.2,
+            radius: game.projectileSize * 1.8,
+            color: game.activeBoosters['dmg'] ? '#FF2200' : '#FF5555',
+            damage: dmg, weapon: 'sniper'
         });
+    } else if (game.weapon === 'plasma') {
+        const dmg = game.projectileDamage * 2;
+        game.projectiles.push({
+            x: game.playerX, y: game.playerY,
+            vx: Math.cos(angle) * speed * 0.55,
+            vy: Math.sin(angle) * speed * 0.55,
+            radius: game.projectileSize * 2.8,
+            color: '#CC44FF',
+            damage: dmg, weapon: 'plasma', plasma: true
+        });
+    } else {
+        // Standard
+        const color = game.activeBoosters['dmg'] ? '#FF6600' : '#00D9FF';
+        if (game.tripleShot) {
+            [-0.22, 0, 0.22].forEach(offset => {
+                const a = angle + offset;
+                game.projectiles.push({
+                    x: game.playerX, y: game.playerY,
+                    vx: Math.cos(a) * speed, vy: Math.sin(a) * speed,
+                    radius: game.projectileSize, color
+                });
+            });
+        } else {
+            game.projectiles.push({
+                x: game.playerX, y: game.playerY,
+                vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+                radius: game.projectileSize, color
+            });
+        }
     }
 }
 
@@ -1573,27 +1761,40 @@ function updateChallengesUI() {
     });
 }
 
+function makeLevelDots(level, maxLevel) {
+    return `<div class="level-dots">${Array.from({length: maxLevel}, (_, i) =>
+        `<div class="level-dot ${i < level ? 'filled' : 'empty'}"></div>`
+    ).join('')}</div>`;
+}
+
 function updatePauseStore() {
     document.getElementById('storeTokensCount').textContent = game.tokens;
     const upg = document.getElementById('pauseStoreUpgrades');
     const bst = document.getElementById('pauseStoreBoosters');
+    const wpn = document.getElementById('pauseStoreWeapons');
     upg.innerHTML = '';
     bst.innerHTML = '';
+    wpn.innerHTML = '';
 
+    // --- UPGRADES ---
     upgrades.forEach(upgrade => {
         const level = game.upgradePurchases[upgrade.id] || 0;
         const cost = getUpgradeCost(upgrade.id, level);
         const isMaxed = level >= upgrade.maxLevel;
         const canBuy = game.tokens >= cost && !isMaxed;
+        const deficit = !isMaxed && !canBuy ? cost - game.tokens : 0;
 
         const btn = document.createElement('div');
         btn.className = 'pause-store-item' + (isMaxed ? ' maxed' : '');
         btn.setAttribute('data-disabled', (!canBuy).toString());
         btn.innerHTML = `
             <div class="pause-store-name">${upgrade.name}</div>
-            <div class="pause-store-level">Lv. ${level}/${upgrade.maxLevel}</div>
+            ${makeLevelDots(level, upgrade.maxLevel)}
             <div class="pause-store-desc">${upgrade.desc}</div>
-            <div class="pause-store-cost">${isMaxed ? '<span style="color:#FFFF00">МАКС</span>' : `💰 ${cost}`}</div>
+            <div class="pause-store-cost">${isMaxed
+                ? '<span style="color:#06FFA5">✓ МАКСИМУМ</span>'
+                : `💰 ${cost}`}</div>
+            ${deficit > 0 ? `<div class="pause-store-deficit">−${deficit} токенов</div>` : ''}
         `;
         if (canBuy) {
             btn.onclick = () => {
@@ -1608,25 +1809,76 @@ function updatePauseStore() {
         upg.appendChild(btn);
     });
 
-    bst.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:var(--accent-token);font-size:12px;padding:8px">Подбирай бустеры с врагов или покупай здесь!</div>`;
-
-    boosters.forEach(booster => {
-        const isHPPotion = booster.id === 'hppotion';
-        const isActive = !isHPPotion && game.activeBoosters[booster.id];
-        const canBuy = game.tokens >= booster.cost && !isActive;
+    // --- WEAPONS ---
+    weapons.forEach(w => {
+        if (w.id === 'standard') return; // always available, no purchase needed
+        const isOwned = game.weaponPurchased === w.id;
+        const isActive = game.weapon === w.id;
+        const alreadyBoughtAnother = game.weaponPurchased && game.weaponPurchased !== w.id;
+        const canBuy = !isOwned && !alreadyBoughtAnother && game.tokens >= w.cost;
+        const deficit = !isOwned && !alreadyBoughtAnother && !canBuy ? w.cost - game.tokens : 0;
 
         const btn = document.createElement('div');
-        btn.className = 'pause-store-item booster';
+        let cls = 'pause-store-item weapon-item';
+        if (isOwned && isActive) cls += ' weapon-active-item';
+        else if (isOwned) cls += ' weapon-owned';
+        if (alreadyBoughtAnother || (isOwned)) btn.setAttribute('data-disabled', (!canBuy && !isOwned).toString());
+        else btn.setAttribute('data-disabled', (!canBuy).toString());
+        btn.className = cls;
+
+        const badge = isActive ? ' <span style="color:#00D9FF;font-size:9px">● АКТИВНО</span>'
+            : isOwned ? ' <span style="color:#06FFA5;font-size:9px">✓ КУПЛЕНО</span>'
+            : alreadyBoughtAnother ? '<span style="color:#888;font-size:9px">недоступно</span>'
+            : '';
+        btn.innerHTML = `
+            <div class="pause-store-name">${w.name}${badge}</div>
+            <div class="pause-store-desc">${w.desc}</div>
+            <div class="pause-store-cost">${isOwned
+                ? `<span style="color:#06FFA5">Переключение снизу</span>`
+                : alreadyBoughtAnother
+                    ? '<span style="color:#555">—</span>'
+                    : `💰 ${w.cost}`}</div>
+            ${deficit > 0 ? `<div class="pause-store-deficit">−${deficit} токенов</div>` : ''}
+        `;
+        if (canBuy) {
+            btn.onclick = () => {
+                if (game.tokens >= w.cost && !game.weaponPurchased) {
+                    game.tokens -= w.cost;
+                    game.weaponPurchased = w.id;
+                    game.weapon = w.id;
+                    game.statistics.upgradePurchases++;
+                    updatePauseStore(); updateHUD();
+                    createFloatingText(game.playerX, game.playerY - 40,
+                        `${w.icon} ${w.name.split(' ')[1]} готово!`, '#CC88FF', 20);
+                }
+            };
+        }
+        wpn.appendChild(btn);
+    });
+
+    // --- BOOSTERS ---
+    boosters.forEach(booster => {
+        const isHPPotion = booster.id === 'hppotion';
+        const isActive = !isHPPotion && game.activeBoosters[booster.id] && game.activeBoosters[booster.id] > Date.now();
+        const canBuy = game.tokens >= booster.cost && !isActive;
+        const deficit = !canBuy && !isActive ? Math.max(0, booster.cost - game.tokens) : 0;
+
+        const btn = document.createElement('div');
+        btn.className = 'pause-store-item booster' + (isActive ? ' booster-active' : '');
         btn.setAttribute('data-disabled', (!canBuy).toString());
-        let timeLeft = '';
-        if (isActive) {
+
+        let costHtml;
+        if (isActive && booster.duration > 0) {
             const secs = Math.ceil((game.activeBoosters[booster.id] - Date.now()) / 1000);
-            timeLeft = `<span style="color:var(--success-color);font-size:10px">⏱ ${secs}с</span>`;
+            costHtml = `<span style="color:#06FFA5;font-size:11px">⏱ ${secs}с</span>`;
+        } else {
+            costHtml = `💰 ${booster.cost}`;
         }
         btn.innerHTML = `
             <div class="pause-store-name">${booster.name}</div>
             <div class="pause-store-desc">${booster.desc}</div>
-            <div class="pause-store-cost">${isActive ? timeLeft : `💰 ${booster.cost}`}</div>
+            <div class="pause-store-cost">${costHtml}</div>
+            ${deficit > 0 ? `<div class="pause-store-deficit">−${deficit} токенов</div>` : ''}
         `;
         if (canBuy) {
             btn.onclick = () => {
@@ -2096,43 +2348,128 @@ function update() {
 
         // Enemy movement patterns
         if (e.isBoss) {
-            if (Math.random() < (e.rageMode ? 0.15 : 0.08)) {
-                e.vx = (Math.random() - 0.5) * e.speed * (e.rageMode ? 20 : 14);
-                e.vy = (Math.random() - 0.5) * e.speed * (e.rageMode ? 20 : 14);
+            // Boss phase tracking
+            const hpRatio = e.health / e.maxHealth;
+            const newPhase = hpRatio > 0.66 ? 1 : hpRatio > 0.33 ? 2 : 3;
+            if (!e.bossPhase) e.bossPhase = 1;
+            if (newPhase > e.bossPhase) {
+                e.bossPhase = newPhase;
+                const phaseLabels = ['', '', '⚠️ ФАЗА 2', '🔥 ФИНАЛЬНАЯ ФАЗА'];
+                createFloatingText(e.x, e.y - 55, phaseLabels[newPhase], '#FF8800', 22);
+                SFX.bossRage && SFX.bossRage();
+            }
+
+            if (e.model === 'arcboss' && e.bossPhase === 3) {
+                // Phase 3: aggressively chase player
+                const dx = game.playerX - e.x, dy = game.playerY - e.y;
+                const dist = Math.hypot(dx, dy);
+                if (dist > 0) {
+                    e.vx += (dx / dist) * 0.35; e.vy += (dy / dist) * 0.35;
+                    const maxV = e.speed * 6;
+                    const vel = Math.hypot(e.vx, e.vy);
+                    if (vel > maxV) { e.vx = e.vx / vel * maxV; e.vy = e.vy / vel * maxV; }
+                }
+            } else if (e.model === 'arcboss2' && e.bossPhase >= 2) {
+                // Phase 2/3: move to a corner and camp there
+                if (!e.cornerTarget || (Math.hypot(e.x - e.cornerTarget.x, e.y - e.cornerTarget.y) < 15 && e.bossPhase === 3)) {
+                    e.cornerTarget = {
+                        x: Math.random() < 0.5 ? game.width * 0.12 : game.width * 0.88,
+                        y: game.height * 0.1 + Math.random() * game.height * 0.1
+                    };
+                }
+                const dx = e.cornerTarget.x - e.x, dy = e.cornerTarget.y - e.y;
+                const dist = Math.hypot(dx, dy);
+                if (dist > 12) {
+                    e.vx += (dx / dist) * 0.25; e.vy += (dy / dist) * 0.25;
+                    const maxV = e.speed * 5;
+                    const vel = Math.hypot(e.vx, e.vy);
+                    if (vel > maxV) { e.vx = e.vx / vel * maxV; e.vy = e.vy / vel * maxV; }
+                } else {
+                    e.vx *= 0.85; e.vy *= 0.85;
+                }
+            } else {
+                // Phase 1: random drift
+                if (Math.random() < (e.rageMode ? 0.15 : 0.08)) {
+                    e.vx = (Math.random() - 0.5) * e.speed * (e.rageMode ? 20 : 14);
+                    e.vy = (Math.random() - 0.5) * e.speed * (e.rageMode ? 20 : 14);
+                }
             }
         } else {
             switch (e.pattern) {
-                case 'chase':
-                    // Chase player
+
+                case 'chase': {
+                    // Steer toward player with gentle sinusoidal lateral wobble
                     const dx = game.playerX - e.x;
                     const dy = game.playerY - e.y;
                     const dist = Math.hypot(dx, dy);
                     if (dist > 0) {
-                        e.vx += (dx / dist) * 0.15;
-                        e.vy += (dy / dist) * 0.15;
-                        const maxV = e.speed * 3;
+                        if (!e.wobblePhase) e.wobblePhase = Math.random() * Math.PI * 2;
+                        e.wobblePhase += 0.055;
+                        const nx = dx / dist, ny = dy / dist;
+                        // Perpendicular (lateral wobble)
+                        const wobble = Math.sin(e.wobblePhase) * 0.09;
+                        e.vx += nx * 0.18 + (-ny) * wobble;
+                        e.vy += ny * 0.18 + nx * wobble;
+                        const maxV = e.speed * 3.5;
                         const vel = Math.hypot(e.vx, e.vy);
                         if (vel > maxV) { e.vx = e.vx / vel * maxV; e.vy = e.vy / vel * maxV; }
                     }
+                    e.vx *= 0.96; e.vy *= 0.96;
                     break;
-                case 'strafe':
-                    // Strafe left/right
-                    if (Math.random() < 0.03) e.vx = (Math.random() > 0.5 ? 1 : -1) * e.speed * 3;
-                    if (Math.random() < 0.01) e.vy = (Math.random() - 0.5) * e.speed;
-                    break;
-                case 'sniper':
-                    // Stay far back, barely moves
-                    if (Math.random() < 0.01) {
-                        e.vx = (Math.random() - 0.5) * 1.5;
-                        e.vy = (Math.random() - 0.5) * 0.5;
+                }
+
+                case 'strafe': {
+                    // Orbit around the player at a preferred distance, occasionally flip side
+                    if (!e.strafeAngle) {
+                        e.strafeAngle = Math.atan2(e.y - game.playerY, e.x - game.playerX);
+                        e.strafeDir = Math.random() < 0.5 ? 1 : -1;
+                        e.strafeDist = 170 + Math.random() * 110;
                     }
+                    e.strafeAngle += e.strafeDir * 0.025;
+                    if (Math.random() < 0.004) e.strafeDir *= -1; // occasionally flip
+                    const tx = game.playerX + Math.cos(e.strafeAngle) * e.strafeDist;
+                    const ty = game.playerY + Math.sin(e.strafeAngle) * e.strafeDist;
+                    e.vx += (tx - e.x) * 0.055;
+                    e.vy += (ty - e.y) * 0.055;
+                    const maxV = e.speed * 4;
+                    const vel = Math.hypot(e.vx, e.vy);
+                    if (vel > maxV) { e.vx = e.vx / vel * maxV; e.vy = e.vy / vel * maxV; }
+                    e.vx *= 0.9; e.vy *= 0.9;
                     break;
-                default:
-                    // Random movement
-                    if (Math.random() < 0.015) {
-                        e.vx = (Math.random() - 0.5) * 3.5;
-                        e.vy = (Math.random() - 0.5) * 3.5;
+                }
+
+                case 'sniper': {
+                    // Maintain preferred distance from player, pace laterally
+                    if (e.snipeOffset === undefined) e.snipeOffset = 0;
+                    e.snipeOffset += (Math.random() - 0.5) * 0.035;
+                    e.snipeOffset = Math.max(-0.7, Math.min(0.7, e.snipeOffset));
+                    const dx2 = game.playerX - e.x;
+                    const dy2 = game.playerY - e.y;
+                    const dist2 = Math.hypot(dx2, dy2);
+                    const preferred = 270;
+                    if (dist2 > 0) {
+                        const push = (dist2 - preferred) * 0.004;
+                        e.vx += (dx2 / dist2) * push + (-dy2 / dist2) * e.snipeOffset * e.speed * 0.9;
+                        e.vy += (dy2 / dist2) * push + (dx2 / dist2) * e.snipeOffset * e.speed * 0.9;
                     }
+                    const maxV = e.speed * 2;
+                    const vel2 = Math.hypot(e.vx, e.vy);
+                    if (vel2 > maxV) { e.vx = e.vx / vel2 * maxV; e.vy = e.vy / vel2 * maxV; }
+                    e.vx *= 0.93; e.vy *= 0.93;
+                    break;
+                }
+
+                default: {
+                    // Organic wander: wander angle drifts smoothly, speed stays consistent
+                    if (e.wanderAngle === undefined) e.wanderAngle = Math.random() * Math.PI * 2;
+                    e.wanderAngle += (Math.random() - 0.5) * 0.1;
+                    const wSpeed = e.speed * 2.5;
+                    const targetVx = Math.cos(e.wanderAngle) * wSpeed;
+                    const targetVy = Math.sin(e.wanderAngle) * wSpeed;
+                    e.vx += (targetVx - e.vx) * 0.04;
+                    e.vy += (targetVy - e.vy) * 0.04;
+                    break;
+                }
             }
         }
 
@@ -2157,28 +2494,74 @@ function update() {
 
         // Shooting
         e.shootTimer++;
-        const shootInterval = e.rageMode ? Math.max(4, e.shootInterval * 0.5) : e.shootInterval;
-        if (e.shootTimer >= shootInterval) {
+        let effectiveShootInterval;
+        if (e.isBoss) {
+            const phase = e.bossPhase || 1;
+            effectiveShootInterval = phase === 3
+                ? Math.max(5, e.shootInterval * 0.38)
+                : phase === 2
+                    ? Math.max(8, e.shootInterval * 0.62)
+                    : e.shootInterval;
+        } else {
+            effectiveShootInterval = e.rageMode ? Math.max(4, e.shootInterval * 0.5) : e.shootInterval;
+        }
+        if (e.shootTimer >= effectiveShootInterval) {
             e.shootTimer = 0;
             const angle = Math.atan2(game.playerY - e.y, game.playerX - e.x);
-            const spd = e.isBoss ? (e.rageMode ? 4.5 : 3) : 3;
-            game.enemyProjectiles.push({
-                x: e.x, y: e.y,
-                vx: Math.cos(angle) * spd, vy: Math.sin(angle) * spd,
-                radius: e.isBoss ? 7 : 4,
-                color: e.isBoss ? '#FF3300' : '#FF1493',
-                damage: e.damage
-            });
-            // Boss rage shoots extra bullets
-            if (e.rageMode) {
-                [-0.25, 0.25].forEach(offset => {
+            const phase = e.bossPhase || 1;
+            const spd = e.isBoss ? (phase === 3 ? 5.5 : phase === 2 ? 4 : 3) : 3;
+
+            if (e.isBoss && e.model === 'arcboss' && phase >= 2) {
+                // arcboss phase 2+: fan shots toward player
+                const count = phase === 3 ? 5 : 3;
+                const spread = 0.22;
+                for (let fi = 0; fi < count; fi++) {
+                    const offset = (fi - Math.floor(count / 2)) * spread;
                     game.enemyProjectiles.push({
                         x: e.x, y: e.y,
                         vx: Math.cos(angle + offset) * spd,
                         vy: Math.sin(angle + offset) * spd,
-                        radius: 5, color: '#FF6600', damage: e.damage * 0.7
+                        radius: 6, color: phase === 3 ? '#FF1100' : '#FF4400',
+                        damage: e.damage
                     });
+                }
+            } else if (e.isBoss && e.model === 'arcboss2' && phase >= 2) {
+                // arcboss2 phase 2+: horizontal wave shots from corner
+                const count = phase === 3 ? 5 : 3;
+                const baseAngle = Math.PI * 0.5; // horizontal sweep
+                const spread = 0.28;
+                for (let fi = 0; fi < count; fi++) {
+                    const offset = (fi - Math.floor(count / 2)) * spread;
+                    // Mix: 30% aim at player, 70% horizontal sweep
+                    const mixAngle = angle * 0.3 + (baseAngle * Math.sign(game.playerX - e.x || 1) + offset) * 0.7;
+                    game.enemyProjectiles.push({
+                        x: e.x, y: e.y,
+                        vx: Math.cos(mixAngle) * spd,
+                        vy: Math.sin(mixAngle) * spd,
+                        radius: 6, color: phase === 3 ? '#CC00FF' : '#AA44FF',
+                        damage: e.damage
+                    });
+                }
+            } else {
+                // Standard single shot (phase 1 or normal enemies)
+                game.enemyProjectiles.push({
+                    x: e.x, y: e.y,
+                    vx: Math.cos(angle) * spd, vy: Math.sin(angle) * spd,
+                    radius: e.isBoss ? 7 : 4,
+                    color: e.isBoss ? '#FF3300' : '#FF1493',
+                    damage: e.damage
                 });
+                // Boss rage: extra side bullets
+                if (e.isBoss && e.rageMode) {
+                    [-0.25, 0.25].forEach(offset => {
+                        game.enemyProjectiles.push({
+                            x: e.x, y: e.y,
+                            vx: Math.cos(angle + offset) * spd,
+                            vy: Math.sin(angle + offset) * spd,
+                            radius: 5, color: '#FF6600', damage: e.damage * 0.7
+                        });
+                    });
+                }
             }
         }
     }
@@ -2207,6 +2590,21 @@ function update() {
                 if (game.activeBoosters['dmg']) dmg *= 2;
 
                 e.health -= dmg;
+
+                // Plasma AoE explosion
+                if (p.plasma) {
+                    const aoeRadius = 75;
+                    for (let k = 0; k < game.enemies.length; k++) {
+                        const ae = game.enemies[k];
+                        if (ae === e || (ae.entryAnim && ae.entryAnim.active)) continue;
+                        if (Math.hypot(p.x - ae.x, p.y - ae.y) < aoeRadius + ae.radius) {
+                            const aoeDmg = Math.floor(dmg * 0.5);
+                            ae.health -= aoeDmg;
+                            createFloatingText(ae.x, ae.y - 15, `-${aoeDmg}`, '#CC44FF', 14);
+                        }
+                    }
+                    createExplosion(p.x, p.y, '#CC44FF', 20);
+                }
 
                 if (p.pierce && p.hitSet) {
                     p.hitSet.add(e); // pierce: track hit, keep projectile
@@ -3039,6 +3437,7 @@ function draw() {
 
     // ===== QUICK-BUY BUTTONS =====
     drawQuickBuyButtons(ctx);
+    drawWeaponSwitchButtons(ctx);
 
     // ===== VIRTUAL JOYSTICK =====
     drawJoystick(ctx);
