@@ -924,13 +924,13 @@ const boosters = [
 // ===== WEAPONS =====
 const weapons = [
     { id: 'standard', name: '⚡ Стандарт', icon: '⚡',
-      desc: 'Быстрый, универсальный. Очень высокий перегрев.', cost: 0, heatPerShot: 28 },
+      desc: 'Быстрый, универсальный. Высокий перегрев.', cost: 0, heatPerShot: 24 },
     { id: 'shotgun', name: '🔫 Дробовик', icon: '🔫',
-      desc: '5 снарядов конусом. Мощный вблизи, слабее издали.', cost: 350, heatPerShot: 20 },
+      desc: '5 снарядов конусом. Мощный вблизи, слабее издали.', cost: 350, heatPerShot: 17 },
     { id: 'sniper', name: '🎯 Снайпер', icon: '🎯',
       desc: 'Огромный урон, медленная стрельба. Почти не греется.', cost: 400, heatPerShot: 5 },
     { id: 'plasma', name: '💥 Плазма', icon: '💥',
-      desc: 'Медленный снаряд с взрывом по площади при попадании.', cost: 450, heatPerShot: 18 }
+      desc: 'Медленный снаряд с взрывом по площади при попадании.', cost: 450, heatPerShot: 15 }
 ];
 
 // ===== HELPERS =====
@@ -2230,14 +2230,13 @@ function update() {
         if (game.overheatTimer <= 0) {
             game.overheated = false;
             game.heat = 0;
-            game.postOverheatDelay = 21;
             createFloatingText(game.playerX, game.playerY - 35, 'ГОТОВ!', '#06FFA5', 16);
         }
     } else {
         // Check overheat BEFORE cooling — otherwise heat -= 0.22 makes it drop below heatMax every frame
         if (game.heat >= game.heatMax) {
             game.overheated = true;
-            game.overheatTimer = 120;
+            game.overheatTimer = 90;
             createFloatingText(game.playerX, game.playerY - 35, '🔥 ПЕРЕГРЕВ!', '#FF4400', 20);
         }
         if (game.heat > 0) game.heat = Math.max(0, game.heat - 0.22);
