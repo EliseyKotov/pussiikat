@@ -924,13 +924,13 @@ const boosters = [
 // ===== WEAPONS =====
 const weapons = [
     { id: 'standard', name: '⚡ Стандарт', icon: '⚡',
-      desc: 'Быстрый, универсальный. Высокий перегрев.', cost: 0, heatPerShot: 20 },
+      desc: 'Быстрый, универсальный. Очень высокий перегрев.', cost: 0, heatPerShot: 28 },
     { id: 'shotgun', name: '🔫 Дробовик', icon: '🔫',
-      desc: '5 снарядов конусом. Мощный вблизи, слабее издали.', cost: 350, heatPerShot: 14 },
+      desc: '5 снарядов конусом. Мощный вблизи, слабее издали.', cost: 350, heatPerShot: 20 },
     { id: 'sniper', name: '🎯 Снайпер', icon: '🎯',
-      desc: 'Огромный урон, медленная стрельба. Почти не греется.', cost: 400, heatPerShot: 4 },
+      desc: 'Огромный урон, медленная стрельба. Почти не греется.', cost: 400, heatPerShot: 5 },
     { id: 'plasma', name: '💥 Плазма', icon: '💥',
-      desc: 'Медленный снаряд с взрывом по площади при попадании.', cost: 450, heatPerShot: 12 }
+      desc: 'Медленный снаряд с взрывом по площади при попадании.', cost: 450, heatPerShot: 18 }
 ];
 
 // ===== HELPERS =====
@@ -1592,7 +1592,7 @@ function fireChargedShot(tx, ty, chargeTimer) {
         charged: true, chargeRatio,
         pierce: true, hitSet: new Set()
     });
-    game.heat = Math.min(game.heatMax, game.heat + 15);
+    game.heat = Math.min(game.heatMax, game.heat + 22);
 }
 
 function fireProjectileTowards(tx, ty) {
@@ -2051,9 +2051,6 @@ function startWave() {
             const targetY = Math.random() * (maxSpawnY - 200) + 100;
             const stats = getEnemyStats(game.wave, isStrong || isElite);
             if (isElite) { stats.health = Math.floor(stats.health * 2.2); }
-            const patterns = ['random', 'chase', 'strafe', 'sniper'];
-            const pattern = isElite ? 'chase' : patterns[Math.floor(Math.random() * patterns.length)];
-
             // Assign entry animation type
             const animRoll = Math.random();
             let entryType, startX, startY;
@@ -2090,7 +2087,8 @@ function startWave() {
                 damage: isElite ? stats.damage * 1.5 : stats.damage,
                 isBoss: false,
                 spawnDelay: Math.floor(i / 3) * 100,
-                pattern,
+                wanderAngle: Math.random() * Math.PI * 2,
+                wanderRate: 0.06 + Math.random() * 0.08,
                 entryAnim: entryType === 'normal' ? null : {
                     active: true, type: entryType,
                     timer: entryType === 'dive' ? 55 : entryType === 'flank' ? 65 : 50,
@@ -2115,7 +2113,8 @@ function startWave() {
                 shootTimer: 0, shootInterval: Math.max(28, miniStats.shootInterval * 0.75),
                 damage: miniStats.damage * 1.4, isBoss: false,
                 spawnDelay: Math.ceil(baseEnemies / 3) * 100 + 60,
-                pattern: 'chase'
+                wanderAngle: Math.random() * Math.PI * 2,
+                wanderRate: 0.05
             });
         }
 
@@ -2222,10 +2221,10 @@ function update() {
             createFloatingText(game.playerX, game.playerY - 35, 'ГОТОВ!', '#06FFA5', 16);
         }
     } else {
-        if (game.heat > 0) game.heat = Math.max(0, game.heat - 0.6);
+        if (game.heat > 0) game.heat = Math.max(0, game.heat - 0.38);
         if (game.heat >= game.heatMax) {
             game.overheated = true;
-            game.overheatTimer = 90;
+            game.overheatTimer = 120;
             createFloatingText(game.playerX, game.playerY - 35, '🔥 ПЕРЕГРЕВ!', '#FF4400', 20);
         }
     }
@@ -2395,82 +2394,16 @@ function update() {
                 }
             }
         } else {
-            switch (e.pattern) {
-
-                case 'chase': {
-                    // Steer toward player with gentle sinusoidal lateral wobble
-                    const dx = game.playerX - e.x;
-                    const dy = game.playerY - e.y;
-                    const dist = Math.hypot(dx, dy);
-                    if (dist > 0) {
-                        if (!e.wobblePhase) e.wobblePhase = Math.random() * Math.PI * 2;
-                        e.wobblePhase += 0.055;
-                        const nx = dx / dist, ny = dy / dist;
-                        // Perpendicular (lateral wobble)
-                        const wobble = Math.sin(e.wobblePhase) * 0.09;
-                        e.vx += nx * 0.18 + (-ny) * wobble;
-                        e.vy += ny * 0.18 + nx * wobble;
-                        const maxV = e.speed * 3.5;
-                        const vel = Math.hypot(e.vx, e.vy);
-                        if (vel > maxV) { e.vx = e.vx / vel * maxV; e.vy = e.vy / vel * maxV; }
-                    }
-                    e.vx *= 0.96; e.vy *= 0.96;
-                    break;
-                }
-
-                case 'strafe': {
-                    // Orbit around the player at a preferred distance, occasionally flip side
-                    if (!e.strafeAngle) {
-                        e.strafeAngle = Math.atan2(e.y - game.playerY, e.x - game.playerX);
-                        e.strafeDir = Math.random() < 0.5 ? 1 : -1;
-                        e.strafeDist = 170 + Math.random() * 110;
-                    }
-                    e.strafeAngle += e.strafeDir * 0.025;
-                    if (Math.random() < 0.004) e.strafeDir *= -1; // occasionally flip
-                    const tx = game.playerX + Math.cos(e.strafeAngle) * e.strafeDist;
-                    const ty = game.playerY + Math.sin(e.strafeAngle) * e.strafeDist;
-                    e.vx += (tx - e.x) * 0.055;
-                    e.vy += (ty - e.y) * 0.055;
-                    const maxV = e.speed * 4;
-                    const vel = Math.hypot(e.vx, e.vy);
-                    if (vel > maxV) { e.vx = e.vx / vel * maxV; e.vy = e.vy / vel * maxV; }
-                    e.vx *= 0.9; e.vy *= 0.9;
-                    break;
-                }
-
-                case 'sniper': {
-                    // Maintain preferred distance from player, pace laterally
-                    if (e.snipeOffset === undefined) e.snipeOffset = 0;
-                    e.snipeOffset += (Math.random() - 0.5) * 0.035;
-                    e.snipeOffset = Math.max(-0.7, Math.min(0.7, e.snipeOffset));
-                    const dx2 = game.playerX - e.x;
-                    const dy2 = game.playerY - e.y;
-                    const dist2 = Math.hypot(dx2, dy2);
-                    const preferred = 270;
-                    if (dist2 > 0) {
-                        const push = (dist2 - preferred) * 0.004;
-                        e.vx += (dx2 / dist2) * push + (-dy2 / dist2) * e.snipeOffset * e.speed * 0.9;
-                        e.vy += (dy2 / dist2) * push + (dx2 / dist2) * e.snipeOffset * e.speed * 0.9;
-                    }
-                    const maxV = e.speed * 2;
-                    const vel2 = Math.hypot(e.vx, e.vy);
-                    if (vel2 > maxV) { e.vx = e.vx / vel2 * maxV; e.vy = e.vy / vel2 * maxV; }
-                    e.vx *= 0.93; e.vy *= 0.93;
-                    break;
-                }
-
-                default: {
-                    // Organic wander: wander angle drifts smoothly, speed stays consistent
-                    if (e.wanderAngle === undefined) e.wanderAngle = Math.random() * Math.PI * 2;
-                    e.wanderAngle += (Math.random() - 0.5) * 0.1;
-                    const wSpeed = e.speed * 2.5;
-                    const targetVx = Math.cos(e.wanderAngle) * wSpeed;
-                    const targetVy = Math.sin(e.wanderAngle) * wSpeed;
-                    e.vx += (targetVx - e.vx) * 0.04;
-                    e.vy += (targetVy - e.vy) * 0.04;
-                    break;
-                }
-            }
+            // Unified smooth wander: angle drifts slowly, each enemy has its own drift rate
+            if (e.wanderAngle === undefined) e.wanderAngle = Math.random() * Math.PI * 2;
+            if (e.wanderRate === undefined) e.wanderRate = 0.06 + Math.random() * 0.08;
+            e.wanderAngle += (Math.random() - 0.5) * e.wanderRate;
+            const wSpeed = e.speed * 2.8;
+            const targetVx = Math.cos(e.wanderAngle) * wSpeed;
+            const targetVy = Math.sin(e.wanderAngle) * wSpeed;
+            // Lerp velocity toward target direction — smooth turns, no snaps
+            e.vx += (targetVx - e.vx) * 0.045;
+            e.vy += (targetVy - e.vy) * 0.045;
         }
 
         e.x += e.vx * slowMult;
