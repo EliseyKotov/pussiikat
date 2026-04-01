@@ -924,13 +924,13 @@ const boosters = [
 // ===== WEAPONS =====
 const weapons = [
     { id: 'standard', name: '⚡ Стандарт', icon: '⚡',
-      desc: 'Быстрый, универсальный. Высокий перегрев.', cost: 0, heatPerShot: 24 },
+      desc: 'Быстрый, универсальный. Низкий перегрев.', cost: 0, heatPerShot: 12 },
     { id: 'shotgun', name: '🔫 Дробовик', icon: '🔫',
-      desc: '5 снарядов конусом. Мощный вблизи, слабее издали.', cost: 350, heatPerShot: 17 },
+      desc: '5 снарядов конусом. Мощный вблизи, слабее издали.', cost: 350, heatPerShot: 20 },
     { id: 'sniper', name: '🎯 Снайпер', icon: '🎯',
-      desc: 'Огромный урон, медленная стрельба. Почти не греется.', cost: 400, heatPerShot: 5 },
+      desc: 'Огромный урон, медленная стрельба. Перегрев за 2 выстрела.', cost: 400, heatPerShot: 50 },
     { id: 'plasma', name: '💥 Плазма', icon: '💥',
-      desc: 'Медленный снаряд с взрывом по площади при попадании.', cost: 450, heatPerShot: 15 }
+      desc: 'Мощный взрыв по площади. Перегрев с первого выстрела.', cost: 450, heatPerShot: 100 }
 ];
 
 // ===== HELPERS =====
@@ -2236,7 +2236,7 @@ function update() {
         // Check overheat BEFORE cooling — otherwise heat -= 0.22 makes it drop below heatMax every frame
         if (game.heat >= game.heatMax) {
             game.overheated = true;
-            game.overheatTimer = 90;
+            game.overheatTimer = 70;
             createFloatingText(game.playerX, game.playerY - 35, '🔥 ПЕРЕГРЕВ!', '#FF4400', 20);
         }
         if (game.heat > 0) game.heat = Math.max(0, game.heat - 0.22);
