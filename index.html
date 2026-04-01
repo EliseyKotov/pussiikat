@@ -1578,6 +1578,8 @@ function handleMouseUpJoystick(e) {
 const CHARGE_MAX = 90; // frames for full charge
 
 function fireChargedShot(tx, ty, chargeTimer) {
+    if (game.overheated) return;
+    if (game.postOverheatDelay > 0) return;
     SFX.shoot();
     const chargeRatio = Math.min(1, chargeTimer / CHARGE_MAX);
     const size = game.projectileSize * (2.5 + chargeRatio * 2.5);
@@ -2232,12 +2234,13 @@ function update() {
             createFloatingText(game.playerX, game.playerY - 35, 'ГОТОВ!', '#06FFA5', 16);
         }
     } else {
-        if (game.heat > 0) game.heat = Math.max(0, game.heat - 0.22);
+        // Check overheat BEFORE cooling — otherwise heat -= 0.22 makes it drop below heatMax every frame
         if (game.heat >= game.heatMax) {
             game.overheated = true;
             game.overheatTimer = 120;
             createFloatingText(game.playerX, game.playerY - 35, '🔥 ПЕРЕГРЕВ!', '#FF4400', 20);
         }
+        if (game.heat > 0) game.heat = Math.max(0, game.heat - 0.22);
     }
 
     // ===== RAGE MODE =====
