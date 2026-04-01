@@ -2099,9 +2099,9 @@ function startWave() {
                 wanderRate: 0.10 + Math.random() * 0.12,
                 entryAnim: {
                     active: true, type: entryType,
-                    timer: entryType === 'dive' ? 80 : entryType === 'flank' ? 95 : 75,
+                    timer: entryType === 'dive' ? 143 : entryType === 'flank' ? 169 : 137,
                     phase: 0, targetX, targetY,
-                    baseVy: 1.6
+                    baseVy: 1.0
                 }
             });
         }
@@ -2298,8 +2298,8 @@ function update() {
                 }
                 e.y += e.vy;
             } else if (ea.type === 'zigzag') {
-                ea.phase += 0.13;
-                e.vx = Math.sin(ea.phase) * 3;
+                ea.phase += 0.09;
+                e.vx = Math.sin(ea.phase) * 2;
                 e.vy = ea.baseVy;
                 e.x += e.vx;
                 e.y += e.vy;
@@ -2312,7 +2312,7 @@ function update() {
                 }
             } else if (ea.type === 'dive') {
                 const dy = ea.targetY - e.y;
-                e.vy = dy > 10 ? Math.min(6, dy * 0.10 + 2) : dy * 0.18;
+                e.vy = dy > 10 ? Math.min(4, dy * 0.065 + 1.2) : dy * 0.12;
                 e.vx = 0;
                 e.x += e.vx;
                 e.y += e.vy;
@@ -2326,8 +2326,8 @@ function update() {
             } else if (ea.type === 'flank') {
                 const dx = ea.targetX - e.x;
                 const dy = ea.targetY - e.y;
-                e.vx = dx * 0.07;
-                e.vy = dy * 0.07;
+                e.vx = dx * 0.045;
+                e.vy = dy * 0.045;
                 e.x += e.vx;
                 e.y += e.vy;
                 ea.timer--;
