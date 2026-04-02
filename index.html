@@ -505,6 +505,57 @@
         .pause-menu-content::-webkit-scrollbar-track { background: rgba(0,217,255,0.05); }
         .pause-menu-content::-webkit-scrollbar-thumb { background: rgba(0,217,255,0.4); border-radius: 3px; }
 
+        /* ===== LEVEL UP OVERLAY ===== */
+        #levelUpOverlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.92);
+            z-index: 10000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding: 24px;
+            box-sizing: border-box;
+        }
+        .lu-title {
+            font-size: 2.2em; font-weight: bold;
+            color: #FFD700;
+            text-shadow: 0 0 24px #FFD700, 0 0 50px #FFB703;
+            letter-spacing: 3px;
+            animation: luPulse 0.8s ease-out;
+        }
+        @keyframes luPulse {
+            0% { transform: scale(0.5); opacity: 0; }
+            60% { transform: scale(1.15); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .lu-subtitle { color: #00D9FF; font-size: 1em; opacity: 0.9; }
+        .lu-choices {
+            display: flex; gap: 16px; flex-wrap: wrap;
+            justify-content: center; margin-top: 8px;
+        }
+        .level-passive-btn {
+            background: rgba(0,217,255,0.08);
+            border: 2px solid rgba(0,217,255,0.5);
+            border-radius: 14px;
+            padding: 22px 20px;
+            color: #fff;
+            cursor: pointer;
+            text-align: center;
+            min-width: 150px; max-width: 220px;
+            transition: border-color 0.2s, background 0.2s, transform 0.15s;
+            font-family: inherit;
+        }
+        .level-passive-btn:hover {
+            border-color: #FFD700;
+            background: rgba(255,215,0,0.12);
+            transform: scale(1.05);
+        }
+        .lp-icon { font-size: 2.2em; margin-bottom: 10px; }
+        .lp-name { font-weight: bold; font-size: 1em; margin-bottom: 6px; color: #FFD700; }
+        .lp-desc { font-size: 0.8em; opacity: 0.7; color: #ccc; }
+
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             .info-bar-top { font-size: 10px; padding: 8px 10px; min-width: 150px; }
@@ -514,6 +565,7 @@
             .combo-display { font-size: 2.5em; }
             .wave-title-display { font-size: 2.2em; }
             .highscore-bar { font-size: 10px; padding: 5px 12px; }
+            .level-passive-btn { min-width: 130px; padding: 18px 14px; }
         }
     </style>
 </head>
@@ -543,6 +595,10 @@
             <span class="info-label">Enemies:</span>
             <span class="info-value" id="enemiesValue">0</span>
         </div>
+        <div class="info-item">
+            <span class="info-label">LVL:</span>
+            <span class="info-value" id="playerLevelHud" style="color:#FFD700">1</span>
+        </div>
     </div>
 
     <!-- Highscore Bar -->
@@ -561,6 +617,13 @@
     <div class="shop-break-display" id="shopBreakDisplay">
         🛒 КУПИ АПГРЕЙДЫ!<br>
         <span style="font-size:12px;opacity:0.7">Закрой магазин чтобы продолжить</span>
+    </div>
+
+    <!-- Level Up Overlay -->
+    <div id="levelUpOverlay">
+        <div class="lu-title">⭐ УРОВЕНЬ UP!</div>
+        <div class="lu-subtitle">Уровень <span id="levelUpLevelNum">2</span> — выбери пассивный бонус</div>
+        <div id="levelUpChoices" class="lu-choices"></div>
     </div>
 
     <!-- Boss Rage Indicator -->
@@ -597,6 +660,9 @@
                 <div class="pause-info-item"><span class="pause-info-label">Волна:</span><span id="pauseWave">1</span></div>
                 <div class="pause-info-item"><span class="pause-info-label">Здоровье:</span><span id="pauseHealth">100/100</span></div>
                 <div class="pause-info-item"><span class="pause-info-label">Комбо:</span><span id="pauseCombo">0x</span></div>
+                <div class="pause-info-item"><span class="pause-info-label">Уровень:</span><span id="pausePlayerLevel" style="color:#FFD700">1</span></div>
+                <div class="pause-info-item"><span class="pause-info-label">XP:</span><span id="pausePlayerXP">0</span></div>
+                <div class="pause-info-item"><span class="pause-info-label">Крит.шанс:</span><span id="pauseCritChance">7%</span></div>
             </div>
             <div class="pause-section">
                 <div class="pause-section-title">Статистика сессии</div>
@@ -700,6 +766,66 @@ const SHELTER_Y_RATIO = 0.75;
 const STAR_COUNT = 120;
 const HIGHSCORE_KEY = 'arcraider_highscore';
 
+// ===== PLAYER LEVEL SYSTEM =====
+const LEVEL_XP_THRESHOLDS = [150, 350, 650, 1050, 1550]; // XP needed to reach levels 2,3,4,5,MAX
+const LEVEL_PASSIVES = [
+    { id: 'critUp3',   icon: '⚡', name: '+3% шанс крита',   desc: 'Критический удар ×2',       apply: () => { game.critChance += 0.03; } },
+    { id: 'hpUp20',    icon: '❤️', name: 'Макс. HP +20',      desc: 'И восстановить 20 HP',        apply: () => { game.maxHealth += 20; game.health = Math.min(game.maxHealth, game.health + 20); } },
+    { id: 'damageUp3', icon: '💥', name: 'Урон +3',           desc: 'Базовый урон всего оружия',   apply: () => { game.projectileDamage += 3; } },
+    { id: 'cooldownR', icon: '❄️', name: 'Охлаждение +12%',  desc: 'Перегрев спадает быстрее',   apply: () => { game.overheatCooldownBonus = Math.min(3, (game.overheatCooldownBonus || 1) * 1.12); } },
+    { id: 'tokenMul',  icon: '💰', name: 'Жадность +20%',     desc: 'Токены за убийства ×1.2',    apply: () => { game.tokenMultiplier = (game.tokenMultiplier || 1) * 1.2; } },
+    { id: 'critUp5',   icon: '⚡', name: '+5% шанс крита',   desc: 'Критический удар ×2',        apply: () => { game.critChance += 0.05; } },
+    { id: 'shieldUp',  icon: '🛡️', name: 'Щит/HP +15',        desc: 'Щит +15 или Макс.HP +15',    apply: () => { if (game.shieldPurchased) { game.shieldMaxHealth += 15; game.shieldHealth = Math.min(game.shieldMaxHealth, (game.shieldHealth || 0) + 15); } else { game.maxHealth += 15; game.health = Math.min(game.maxHealth, game.health + 15); } } },
+];
+
+function critRoll() {
+    return Math.random() < game.critChance;
+}
+
+function addXP(amount) {
+    if (game.playerLevel >= 5) return;
+    game.playerXP += amount;
+    const threshold = LEVEL_XP_THRESHOLDS[game.playerLevel - 1];
+    if (game.playerXP >= threshold) {
+        game.playerLevel++;
+        const pool = [...LEVEL_PASSIVES];
+        const c1 = pool.splice(Math.floor(Math.random() * pool.length), 1)[0];
+        const c2 = pool.splice(Math.floor(Math.random() * pool.length), 1)[0];
+        game.pendingLevelUp = { choices: [c1, c2], level: game.playerLevel };
+        createFloatingText(game.playerX, game.playerY - 60, `⭐ УРОВЕНЬ ${game.playerLevel}!`, '#FFD700', 22);
+    }
+}
+
+function applyLevelPassive(passiveId) {
+    const passive = LEVEL_PASSIVES.find(p => p.id === passiveId);
+    if (passive) {
+        passive.apply();
+        setTimeout(() => {
+            createFloatingText(game.playerX, game.playerY - 50, `✨ ${passive.name}`, '#FFD700', 18);
+        }, 200);
+    }
+    game.pendingLevelUp = null;
+}
+
+function showLevelUpOverlay() {
+    const overlay = document.getElementById('levelUpOverlay');
+    const choices = document.getElementById('levelUpChoices');
+    document.getElementById('levelUpLevelNum').textContent = game.pendingLevelUp.level;
+    choices.innerHTML = '';
+    game.pendingLevelUp.choices.forEach(passive => {
+        const btn = document.createElement('button');
+        btn.className = 'level-passive-btn';
+        btn.innerHTML = `<div class="lp-icon">${passive.icon}</div><div class="lp-name">${passive.name}</div><div class="lp-desc">${passive.desc}</div>`;
+        btn.onclick = () => {
+            applyLevelPassive(passive.id);
+            overlay.style.display = 'none';
+            openShopBreakMenu();
+        };
+        choices.appendChild(btn);
+    });
+    overlay.style.display = 'flex';
+}
+
 // ===== GAME STATE =====
 const game = {
     canvas: null, ctx: null,
@@ -737,6 +863,9 @@ const game = {
 
     heat: 0, heatMax: 100, overheated: false, overheatTimer: 0, postOverheatDelay: 0,
     rageMode: false, rageShotCount: 0,
+    critChance: 0.07,
+    playerLevel: 1, playerXP: 0, pendingLevelUp: null,
+    tokenMultiplier: 1, overheatCooldownBonus: 1,
     playerTrail: [],
     weapon: 'standard', weaponPurchased: null,
 
@@ -943,7 +1072,8 @@ function getUpgradeCost(id, level) {
 function getEnemyStats(wave, isStrong, isBoss = false) {
     if (isBoss) {
         let speed = wave === 5 ? 0.25 : wave === 10 ? 0.45 : 0.85;
-        return { speed, shootInterval: 11, health: 350 + wave * 20, damage: 15 + Math.floor(wave/5)*5, projectileSize: 6 };
+        const bossHP = 480 + wave * 22 + Math.max(0, wave - 5) * Math.max(0, wave - 5) * 3;
+        return { speed, shootInterval: 11, health: bossHP, damage: 15 + Math.floor(wave/5)*5, projectileSize: 6 };
     }
     const speed = 0.2 + wave * 0.08;
     let shootInterval, health, damage;
@@ -954,11 +1084,11 @@ function getEnemyStats(wave, isStrong, isBoss = false) {
     } else if (wave <= 10) {
         shootInterval = 60 + Math.random() * 30;
         health = isStrong ? 40 + (wave - 5) * 5 : 20 + (wave - 5) * 3;
-        damage = 7;
+        damage = 5 + Math.floor((wave - 5) * 0.8);
     } else {
         shootInterval = 40 + Math.random() * 20;
         health = isStrong ? 50 + (wave - 10) * 8 : 30 + (wave - 10) * 5;
-        damage = 10 + Math.floor((wave - 10) / 5) * 5;
+        damage = 9 + Math.floor((wave - 10) * 1.8);
     }
     return { speed, shootInterval, health, damage, projectileSize: 4 };
 }
@@ -1585,12 +1715,15 @@ function fireChargedShot(tx, ty, chargeTimer) {
     const size = game.projectileSize * (2.5 + chargeRatio * 2.5);
     const spd = game.projectileSpeed * 0.85;
     const angle = Math.atan2(ty - game.playerY, tx - game.playerX);
-    const color = chargeRatio >= 1 ? '#FFFFFF' : (chargeRatio > 0.5 ? '#FFE066' : '#FFB703');
+    const isCrit = critRoll();
+    const baseDmg = game.projectileDamage;
+    const dmg = isCrit ? baseDmg * 2 : baseDmg;
+    const color = isCrit ? '#FFD700' : (chargeRatio >= 1 ? '#FFFFFF' : (chargeRatio > 0.5 ? '#FFE066' : '#FFB703'));
     game.projectiles.push({
         x: game.playerX, y: game.playerY,
         vx: Math.cos(angle) * spd, vy: Math.sin(angle) * spd,
         radius: size, color,
-        damage: game.projectileDamage,
+        damage: dmg, crit: isCrit,
         charged: true, chargeRatio,
         pierce: true, hitSet: new Set()
     });
@@ -1615,25 +1748,28 @@ function fireProjectileTowards(tx, ty) {
     SFX.shoot();
     const angle = Math.atan2(ty - game.playerY, tx - game.playerX);
     const speed = game.projectileSpeed;
+    const isCrit = critRoll();
 
     if (game.weapon === 'shotgun') {
         const offsets = game.tripleShot
             ? [-0.5, -0.35, -0.18, 0, 0.18, 0.35, 0.5]
             : [-0.35, -0.18, 0, 0.18, 0.35];
-        const dmg = Math.ceil(game.projectileDamage * 0.6);
-        const col = game.activeBoosters['dmg'] ? '#FF8800' : '#FFB703';
+        const baseDmg = Math.ceil(game.projectileDamage * 0.6);
+        const dmg = isCrit ? baseDmg * 2 : baseDmg;
+        const col = isCrit ? '#FFD700' : (game.activeBoosters['dmg'] ? '#FF8800' : '#FFB703');
         offsets.forEach(offset => {
             const a = angle + offset;
             game.projectiles.push({
                 x: game.playerX, y: game.playerY,
                 vx: Math.cos(a) * speed, vy: Math.sin(a) * speed,
                 radius: game.projectileSize * 0.85,
-                color: col, damage: dmg, weapon: 'shotgun'
+                color: col, damage: dmg, weapon: 'shotgun', crit: isCrit
             });
         });
     } else if (game.weapon === 'sniper') {
-        const dmg = game.projectileDamage * 5;
-        const col = game.activeBoosters['dmg'] ? '#FF2200' : '#FF5555';
+        const baseDmg = game.projectileDamage * 5;
+        const dmg = isCrit ? baseDmg * 2 : baseDmg;
+        const col = isCrit ? '#FFD700' : (game.activeBoosters['dmg'] ? '#FF2200' : '#FF5555');
         const sniperAngles = game.tripleShot ? [-0.18, 0, 0.18] : [0];
         sniperAngles.forEach(offset => {
             const a = angle + offset;
@@ -1642,11 +1778,12 @@ function fireProjectileTowards(tx, ty) {
                 vx: Math.cos(a) * speed * 2.2,
                 vy: Math.sin(a) * speed * 2.2,
                 radius: game.projectileSize * 1.8,
-                color: col, damage: dmg, weapon: 'sniper'
+                color: col, damage: dmg, weapon: 'sniper', crit: isCrit
             });
         });
     } else if (game.weapon === 'plasma') {
-        const dmg = game.projectileDamage * 3;
+        const baseDmg = game.projectileDamage * 3;
+        const dmg = isCrit ? baseDmg * 2 : baseDmg;
         const plasmaAngles = game.tripleShot ? [-0.25, 0, 0.25] : [0];
         plasmaAngles.forEach(offset => {
             const a = angle + offset;
@@ -1655,27 +1792,29 @@ function fireProjectileTowards(tx, ty) {
                 vx: Math.cos(a) * speed * 0.55,
                 vy: Math.sin(a) * speed * 0.55,
                 radius: game.projectileSize * 2.8,
-                color: '#CC44FF',
-                damage: dmg, weapon: 'plasma', plasma: true
+                color: isCrit ? '#FFD700' : '#CC44FF',
+                damage: dmg, weapon: 'plasma', plasma: true, crit: isCrit
             });
         });
     } else {
         // Standard
-        const color = game.activeBoosters['dmg'] ? '#FF6600' : '#00D9FF';
+        const baseDmg = game.projectileDamage;
+        const dmg = isCrit ? baseDmg * 2 : baseDmg;
+        const color = isCrit ? '#FFD700' : (game.activeBoosters['dmg'] ? '#FF6600' : '#00D9FF');
         if (game.tripleShot) {
             [-0.22, 0, 0.22].forEach(offset => {
                 const a = angle + offset;
                 game.projectiles.push({
                     x: game.playerX, y: game.playerY,
                     vx: Math.cos(a) * speed, vy: Math.sin(a) * speed,
-                    radius: game.projectileSize, color
+                    radius: game.projectileSize, color, damage: dmg, crit: isCrit
                 });
             });
         } else {
             game.projectiles.push({
                 x: game.playerX, y: game.playerY,
                 vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
-                radius: game.projectileSize, color
+                radius: game.projectileSize, color, damage: dmg, crit: isCrit
             });
         }
     }
@@ -1736,6 +1875,10 @@ function updatePauseMenu() {
     document.getElementById('pauseWave').textContent = game.wave;
     document.getElementById('pauseHealth').textContent = `${Math.max(0, Math.floor(game.health))}/${game.maxHealth}`;
     document.getElementById('pauseCombo').textContent = `${game.combo}x`;
+    document.getElementById('pausePlayerLevel').textContent = game.playerLevel >= 5 ? '5 (MAX)' : game.playerLevel;
+    const nextXP = game.playerLevel < 5 ? LEVEL_XP_THRESHOLDS[game.playerLevel - 1] : '—';
+    document.getElementById('pausePlayerXP').textContent = game.playerLevel >= 5 ? `${game.playerXP} (MAX)` : `${game.playerXP} / ${nextXP}`;
+    document.getElementById('pauseCritChance').textContent = `${Math.round(game.critChance * 100)}%`;
     document.getElementById('statEnemies').textContent = game.statistics.totalEnemiesDefeated;
     document.getElementById('statCombo').textContent = game.statistics.highestCombo + 'x';
     document.getElementById('statDmg').textContent = Math.floor(game.statistics.totalDamageTaken);
@@ -1967,7 +2110,11 @@ function startShopBreak(callback) {
     game.isShopBreak = true;
     _shopBreakCallback = callback;
     document.getElementById('shopBreakDisplay').style.display = 'block';
-    openShopBreakMenu();
+    if (game.pendingLevelUp) {
+        showLevelUpOverlay();
+    } else {
+        openShopBreakMenu();
+    }
 }
 
 function endShopBreak() {
@@ -2184,6 +2331,7 @@ function updateHUD() {
     document.getElementById('waveValue').textContent = game.wave;
     document.getElementById('enemiesValue').textContent = game.enemies.filter(e => e.spawnDelay <= 0).length;
     document.getElementById('scoreValue').textContent = game.score;
+    document.getElementById('playerLevelHud').textContent = game.playerLevel >= 5 ? '5 MAX' : game.playerLevel;
 
     const hp = Math.max(0, game.health / game.maxHealth) * 100;
     document.getElementById('healthFill').style.width = hp + '%';
@@ -2249,7 +2397,7 @@ function update() {
             game.overheatTimer = 70;
             createFloatingText(game.playerX, game.playerY - 35, '🔥 ПЕРЕГРЕВ!', '#FF4400', 20);
         }
-        if (game.heat > 0) game.heat = Math.max(0, game.heat - 0.22);
+        if (game.heat > 0) game.heat = Math.max(0, game.heat - 0.22 * (game.overheatCooldownBonus || 1));
     }
 
     // ===== RAGE MODE =====
@@ -2615,7 +2763,11 @@ function update() {
                 if (e.isBoss) SFX.hitElite(); else if (e.isElite) SFX.hitElite(); else SFX.hit();
 
                 // Floating damage number
-                createFloatingText(e.x, e.y - 20, `-${dmg}`, game.activeBoosters['dmg'] ? '#FF6600' : '#fff', 16);
+                if (p.crit) {
+                    createFloatingText(e.x, e.y - 20, `⚡ -${dmg}`, '#FFD700', 20);
+                } else {
+                    createFloatingText(e.x, e.y - 20, `-${dmg}`, game.activeBoosters['dmg'] ? '#FF6600' : '#fff', 16);
+                }
 
                 game.combo++;
                 game.comboTimer = game.comboTimeout;
@@ -2625,7 +2777,7 @@ function update() {
                 if (e.health <= 0) {
                     if (e.isBoss) SFX.bossExplode(); else SFX.explode();
                     const baseReward = e.isBoss ? 1000 : (e.isElite ? 200 : e.isStrong ? 100 : 50);
-                    const tokenReward = Math.floor(baseReward * (1 + game.combo * 0.12));
+                    const tokenReward = Math.floor(baseReward * (1 + game.combo * 0.12) * (game.tokenMultiplier || 1));
                     const scoreGain = Math.floor(baseReward * (1 + game.combo * 0.2) * (game.wave * 0.1 + 1));
 
                     game.tokens += tokenReward;
@@ -2641,6 +2793,9 @@ function update() {
                         createExplosion(game.playerX, game.playerY, '#FFD700', 15);
                         createFloatingText(game.playerX, game.playerY - 50, `🎁 ${rb.name}`, '#FFD700', 20);
                     }
+
+                    const xpGain = e.isBoss ? 80 : (e.isElite ? 30 : e.isStrong ? 15 : 7);
+                    addXP(xpGain);
 
                     game.enemiesDefeated++;
                     game.statistics.totalEnemiesDefeated++;
@@ -2688,12 +2843,14 @@ function update() {
         delete dead._aoeDead;
         if (dead.isBoss) SFX.bossExplode(); else SFX.explode();
         const baseReward = dead.isBoss ? 1000 : (dead.isElite ? 200 : dead.isStrong ? 100 : 50);
-        const tokenReward = Math.floor(baseReward * (1 + game.combo * 0.12));
+        const tokenReward = Math.floor(baseReward * (1 + game.combo * 0.12) * (game.tokenMultiplier || 1));
         const scoreGain = Math.floor(baseReward * (1 + game.combo * 0.2) * (game.wave * 0.1 + 1));
         game.tokens += tokenReward;
         game.score += scoreGain;
         game.statistics.totalTokensEarned += tokenReward;
         createFloatingText(dead.x, dead.y - 35, `+${tokenReward} 💰`, '#FFB703', 18);
+        const xpGainAoE = dead.isBoss ? 80 : (dead.isElite ? 30 : dead.isStrong ? 15 : 7);
+        addXP(xpGainAoE);
         game.enemiesDefeated++;
         game.statistics.totalEnemiesDefeated++;
         challengeStats.kills++;
@@ -2969,12 +3126,12 @@ function draw() {
     // ===== BACKGROUND: Dark cyber space (changes every 5 waves) =====
     const _era = Math.floor((Math.max(1, game.wave) - 1) / 5) % 6;
     const _bgPalette = [
-        { bg: '#060918', grid: 'rgba(0,217,255,0.06)',   star: '#AADDFF' }, // waves 1-5:  deep blue
-        { bg: '#03100a', grid: 'rgba(0,255,140,0.06)',   star: '#88FFCC' }, // waves 6-10: dark teal
-        { bg: '#0d0618', grid: 'rgba(160,0,255,0.06)',   star: '#CCAAFF' }, // waves 11-15: purple
-        { bg: '#180506', grid: 'rgba(255,60,0,0.06)',    star: '#FFBBAA' }, // waves 16-20: dark red
-        { bg: '#050f10', grid: 'rgba(0,200,255,0.07)',   star: '#AAEEFF' }, // waves 21-25: ice
-        { bg: '#0e0e04', grid: 'rgba(200,200,0,0.06)',   star: '#EEFF88' }, // waves 26+:  gold
+        { bg: '#0c1c40', grid: 'rgba(0,217,255,0.14)',   star: '#C0E0FF' }, // waves 1-5:  blue
+        { bg: '#0a2018', grid: 'rgba(0,255,140,0.14)',   star: '#99FFDD' }, // waves 6-10: teal
+        { bg: '#1c0d38', grid: 'rgba(180,0,255,0.14)',   star: '#E0CCFF' }, // waves 11-15: purple
+        { bg: '#2e0a0a', grid: 'rgba(255,70,0,0.15)',    star: '#FFD0BB' }, // waves 16-20: red
+        { bg: '#082028', grid: 'rgba(0,220,255,0.15)',   star: '#BBEEFD' }, // waves 21-25: ice
+        { bg: '#201e06', grid: 'rgba(230,220,0,0.14)',   star: '#F5FF99' }, // waves 26+:  gold
     ];
     const _bp = _bgPalette[_era];
     ctx.fillStyle = _bp.bg;
