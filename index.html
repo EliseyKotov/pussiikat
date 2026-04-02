@@ -1617,7 +1617,9 @@ function fireProjectileTowards(tx, ty) {
     const speed = game.projectileSpeed;
 
     if (game.weapon === 'shotgun') {
-        const offsets = [-0.35, -0.18, 0, 0.18, 0.35];
+        const offsets = game.tripleShot
+            ? [-0.5, -0.35, -0.18, 0, 0.18, 0.35, 0.5]
+            : [-0.35, -0.18, 0, 0.18, 0.35];
         const dmg = Math.ceil(game.projectileDamage * 0.6);
         const col = game.activeBoosters['dmg'] ? '#FF8800' : '#FFB703';
         offsets.forEach(offset => {
@@ -1630,24 +1632,32 @@ function fireProjectileTowards(tx, ty) {
             });
         });
     } else if (game.weapon === 'sniper') {
-        const dmg = game.projectileDamage * 3;
-        game.projectiles.push({
-            x: game.playerX, y: game.playerY,
-            vx: Math.cos(angle) * speed * 2.2,
-            vy: Math.sin(angle) * speed * 2.2,
-            radius: game.projectileSize * 1.8,
-            color: game.activeBoosters['dmg'] ? '#FF2200' : '#FF5555',
-            damage: dmg, weapon: 'sniper'
+        const dmg = game.projectileDamage * 5;
+        const col = game.activeBoosters['dmg'] ? '#FF2200' : '#FF5555';
+        const sniperAngles = game.tripleShot ? [-0.18, 0, 0.18] : [0];
+        sniperAngles.forEach(offset => {
+            const a = angle + offset;
+            game.projectiles.push({
+                x: game.playerX, y: game.playerY,
+                vx: Math.cos(a) * speed * 2.2,
+                vy: Math.sin(a) * speed * 2.2,
+                radius: game.projectileSize * 1.8,
+                color: col, damage: dmg, weapon: 'sniper'
+            });
         });
     } else if (game.weapon === 'plasma') {
-        const dmg = game.projectileDamage * 2;
-        game.projectiles.push({
-            x: game.playerX, y: game.playerY,
-            vx: Math.cos(angle) * speed * 0.55,
-            vy: Math.sin(angle) * speed * 0.55,
-            radius: game.projectileSize * 2.8,
-            color: '#CC44FF',
-            damage: dmg, weapon: 'plasma', plasma: true
+        const dmg = game.projectileDamage * 3;
+        const plasmaAngles = game.tripleShot ? [-0.25, 0, 0.25] : [0];
+        plasmaAngles.forEach(offset => {
+            const a = angle + offset;
+            game.projectiles.push({
+                x: game.playerX, y: game.playerY,
+                vx: Math.cos(a) * speed * 0.55,
+                vy: Math.sin(a) * speed * 0.55,
+                radius: game.projectileSize * 2.8,
+                color: '#CC44FF',
+                damage: dmg, weapon: 'plasma', plasma: true
+            });
         });
     } else {
         // Standard
@@ -2581,7 +2591,7 @@ function update() {
 
                 // Plasma AoE explosion
                 if (p.plasma) {
-                    const aoeRadius = 75;
+                    const aoeRadius = 120;
                     for (let k = 0; k < game.enemies.length; k++) {
                         const ae = game.enemies[k];
                         if (ae === e || (ae.entryAnim && ae.entryAnim.active)) continue;
