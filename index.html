@@ -2599,6 +2599,7 @@ function update() {
                             const aoeDmg = Math.floor(dmg * 0.5);
                             ae.health = Math.max(0, ae.health - aoeDmg);
                             createFloatingText(ae.x, ae.y - 15, `-${aoeDmg}`, '#CC44FF', 14);
+                            if (ae.health <= 0) ae._aoeDead = true;
                         }
                     }
                     createExplosion(p.x, p.y, '#CC44FF', 20);
@@ -2677,6 +2678,47 @@ function update() {
 
                 if (!p.pierce) break; // normal shot stops at first enemy
             }
+        }
+    }
+
+    // ===== AoE DEATH CLEANUP =====
+    for (let k = game.enemies.length - 1; k >= 0; k--) {
+        const dead = game.enemies[k];
+        if (!dead._aoeDead) continue;
+        delete dead._aoeDead;
+        if (dead.isBoss) SFX.bossExplode(); else SFX.explode();
+        const baseReward = dead.isBoss ? 1000 : (dead.isElite ? 200 : dead.isStrong ? 100 : 50);
+        const tokenReward = Math.floor(baseReward * (1 + game.combo * 0.12));
+        const scoreGain = Math.floor(baseReward * (1 + game.combo * 0.2) * (game.wave * 0.1 + 1));
+        game.tokens += tokenReward;
+        game.score += scoreGain;
+        game.statistics.totalTokensEarned += tokenReward;
+        createFloatingText(dead.x, dead.y - 35, `+${tokenReward} 💰`, '#FFB703', 18);
+        game.enemiesDefeated++;
+        game.statistics.totalEnemiesDefeated++;
+        challengeStats.kills++;
+        updateChallenges('kills', 1);
+        updateChallenges('totalTokens', tokenReward);
+        challengeStats.totalTokens += tokenReward;
+        if (dead.isBoss) {
+            challengeStats.bossKills++;
+            updateChallenges('bossKills', challengeStats.bossKills);
+        }
+        createExplosion(dead.x, dead.y, dead.color, dead.isBoss ? 30 : 12);
+        const dropResult = getDropChance(dead.isStrong, dead.isBoss);
+        if (dropResult) createDrop(dead.x, dead.y);
+        game.enemies.splice(k, 1);
+        showCombo();
+        if (game.enemiesDefeated >= game.totalEnemiesInWave) {
+            if (challengeStats.currentWaveNoDamage) {
+                challengeStats.nodamWaves++;
+                updateChallenges('nodamWaves', challengeStats.nodamWaves);
+            } else {
+                challengeStats.nodamWaves = 0;
+            }
+            game.enemies = [];
+            startShopBreak(() => startWave());
+            break;
         }
     }
 
