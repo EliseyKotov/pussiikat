@@ -2597,7 +2597,7 @@ function update() {
                         if (ae === e || (ae.entryAnim && ae.entryAnim.active)) continue;
                         if (Math.hypot(p.x - ae.x, p.y - ae.y) < aoeRadius + ae.radius) {
                             const aoeDmg = Math.floor(dmg * 0.5);
-                            ae.health -= aoeDmg;
+                            ae.health = Math.max(0, ae.health - aoeDmg);
                             createFloatingText(ae.x, ae.y - 15, `-${aoeDmg}`, '#CC44FF', 14);
                         }
                     }
@@ -2924,15 +2924,25 @@ function draw() {
     ctx.save();
     if (game.shakeAmount > 0.1) ctx.translate(game.shakeDX, game.shakeDY);
 
-    // ===== BACKGROUND: Dark cyber space =====
-    ctx.fillStyle = '#060918';
+    // ===== BACKGROUND: Dark cyber space (changes every 5 waves) =====
+    const _era = Math.floor((Math.max(1, game.wave) - 1) / 5) % 6;
+    const _bgPalette = [
+        { bg: '#060918', grid: 'rgba(0,217,255,0.06)',   star: '#AADDFF' }, // waves 1-5:  deep blue
+        { bg: '#03100a', grid: 'rgba(0,255,140,0.06)',   star: '#88FFCC' }, // waves 6-10: dark teal
+        { bg: '#0d0618', grid: 'rgba(160,0,255,0.06)',   star: '#CCAAFF' }, // waves 11-15: purple
+        { bg: '#180506', grid: 'rgba(255,60,0,0.06)',    star: '#FFBBAA' }, // waves 16-20: dark red
+        { bg: '#050f10', grid: 'rgba(0,200,255,0.07)',   star: '#AAEEFF' }, // waves 21-25: ice
+        { bg: '#0e0e04', grid: 'rgba(200,200,0,0.06)',   star: '#EEFF88' }, // waves 26+:  gold
+    ];
+    const _bp = _bgPalette[_era];
+    ctx.fillStyle = _bp.bg;
     ctx.fillRect(0, 0, W, H);
 
     // Stars
     for (const star of game.stars) {
         const x = ((star.x + game.bgOffset * star.speed) % W + W) % W;
         ctx.globalAlpha = star.brightness * 0.8;
-        ctx.fillStyle = '#AADDFF';
+        ctx.fillStyle = _bp.star;
         ctx.beginPath();
         ctx.arc(x, star.y, star.r, 0, Math.PI * 2);
         ctx.fill();
@@ -2940,7 +2950,7 @@ function draw() {
     ctx.globalAlpha = 1;
 
     // Grid
-    ctx.strokeStyle = 'rgba(0, 217, 255, 0.06)';
+    ctx.strokeStyle = _bp.grid;
     ctx.lineWidth = 1;
     const gridSpacing = 60;
     const gridOffX = (game.bgOffset * 0.5) % gridSpacing;
@@ -2998,32 +3008,46 @@ function draw() {
             ctx.shadowBlur = 0;
         }
 
-        // Glow ring for strong/elite/boss
-        if (e.isStrong || e.isBoss || e.isElite) {
-            const glowColor = e.rageMode ? '#FF0000' : (e.isBoss ? '#FF6B00' : e.isElite ? '#CC44FF' : '#FFFF00');
+        // Boss aura glow ring (only for bosses)
+        if (e.isBoss) {
+            const glowColor = e.rageMode ? '#FF0000' : '#FF6B00';
             ctx.shadowColor = glowColor;
-            ctx.shadowBlur = e.isBoss ? 20 : 10;
+            ctx.shadowBlur = 22;
             ctx.strokeStyle = glowColor;
-            ctx.lineWidth = e.isBoss ? 4 : 2;
+            ctx.lineWidth = 4;
             ctx.beginPath();
-            ctx.arc(0, 0, e.radius + 3, 0, Math.PI * 2);
+            ctx.arc(0, 0, e.radius + 4, 0, Math.PI * 2);
             ctx.stroke();
             ctx.shadowBlur = 0;
         }
 
-        // Health bar
-        const hpPct = e.health / e.maxHealth;
-        const barW = e.isBoss ? 60 : 30;
-        const barH = e.isBoss ? 6 : 4;
+        // Health bar — color border by enemy type
+        const hpPct = Math.max(0, Math.min(1, e.health / e.maxHealth));
+        const barW = e.isBoss ? 70 : e.isMini ? 44 : e.isElite ? 38 : 30;
+        const barH = e.isBoss ? 7 : e.isMini ? 5 : 4;
         const barX = -barW / 2;
-        const barY = -e.radius - 14;
-        ctx.fillStyle = 'rgba(0,0,0,0.6)';
+        const barY = -e.radius - 16;
+        // Type accent color for bar border
+        const barAccent = e.rageMode ? '#FF0000'
+            : e.isBoss   ? '#FF6B00'
+            : e.isMini   ? '#FF8800'
+            : e.isElite  ? '#CC44FF'
+            : e.isStrong ? '#FFD700'
+            : 'rgba(255,255,255,0.25)';
+        // Bar fill: green → yellow → red by HP ratio
+        const barFill = hpPct > 0.5 ? '#06FFA5' : hpPct > 0.25 ? '#FFB703' : '#FB5607';
+        ctx.fillStyle = 'rgba(0,0,0,0.65)';
         ctx.fillRect(barX - 1, barY - 1, barW + 2, barH + 2);
-        ctx.fillStyle = hpPct > 0.5 ? '#06FFA5' : hpPct > 0.25 ? '#FFB703' : '#FB5607';
+        ctx.fillStyle = barFill;
         ctx.fillRect(barX, barY, barW * hpPct, barH);
-        ctx.strokeStyle = 'rgba(255,255,255,0.3)';
-        ctx.lineWidth = 1;
+        ctx.strokeStyle = barAccent;
+        ctx.lineWidth = e.isBoss || e.isMini || e.isElite ? 1.5 : 1;
+        if (e.isBoss || e.isMini || e.isElite || e.isStrong) {
+            ctx.shadowColor = barAccent;
+            ctx.shadowBlur = 4;
+        }
         ctx.strokeRect(barX, barY, barW, barH);
+        ctx.shadowBlur = 0;
 
         // Boss label
         if (e.isBoss) {
